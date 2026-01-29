@@ -7,7 +7,7 @@ using TMPro;
 public class BattleTimer : MonoBehaviour
 {
     [SerializeField] private TMP_Text time_text;
-    private float remainTime = 10f;
+    private float remainTime = 60f;
     private bool isTimerRunning = false;
 
     public Action OnTimerOut;

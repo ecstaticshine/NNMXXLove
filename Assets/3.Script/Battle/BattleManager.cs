@@ -25,6 +25,9 @@ public class BattleManager : MonoBehaviour
     //퍼즈
     private bool isPaused = false;
 
+    public List<CharacterStat> allCharacters = new List<CharacterStat>();
+    public List<CharacterStat> allEnemys = new List<CharacterStat>();
+
     public static BattleManager instance = null;
 
     private void Awake()
@@ -75,6 +78,7 @@ public class BattleManager : MonoBehaviour
 
         // 아군 페이즈
         uiManager.OnPhaseChanged(currentPhase);
+        OnPhaseChanged(currentPhase);
     }
 
     public void EndBattle(bool victory)
@@ -112,5 +116,10 @@ public class BattleManager : MonoBehaviour
 
             EndBattle(false);
         }
+    }
+
+    public void RemoveUnit()
+    {
+
     }
 }
