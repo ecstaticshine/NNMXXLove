@@ -215,9 +215,9 @@ GameObject:
   - component: {fileID: 4595599963552023911}
   - component: {fileID: 2555711387579485302}
   - component: {fileID: 169910465148370766}
-  - component: {fileID: 8493503056023359330}
+  - component: {fileID: 2064410730029588832}
   m_Layer: 0
-  m_Name: Character
+  m_Name: Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -328,7 +328,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8493503056023359330
+--- !u!114 &2064410730029588832
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -337,18 +337,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5802045770561453734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcf58a9b25694ac4f8d90a440f704f10, type: 3}
+  m_Script: {fileID: 11500000, guid: d792a3388b0f7e74b93daae7d54ac300, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterStat
-  data: {fileID: 11400000, guid: d390bec420d86494d95663dc5c08c808, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::Unit
+  data: {fileID: 11400000, guid: 82a6e605e4397a94aad35b3de670572c, type: 2}
   activeBuffs: []
   currentHp: 0
   currentAttack: 0
   currentSpeed: 0
   finalSkillMultiplier: 0
   slotIndex: 0
-  breakthroughCount: 0
-  level: 1
 --- !u!1 &7271829047126803449
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,9 +491,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 550}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -275}
+  m_SizeDelta: {x: 200, y: 350}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &1763831716606743728
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -524,7 +522,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4010617647764655359, guid: 42da2fdcabf993d4fa6714ebf6cb1b5e, type: 3}
+  m_Sprite: {fileID: 8865208874398379130, guid: f1574021b33ed9d4a83543432c501d30, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

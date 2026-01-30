@@ -3,27 +3,13 @@ using UnityEngine;
 
 public enum Rarity { L, PL, TL, EL }// Love, PureLove, TrueLove, EternalLove
 
-[CreateAssetMenu(fileName = "NewUnitData", menuName = "ScriptableObjects/UnitData")]
-public class CharacterData : ScriptableObject
+[CreateAssetMenu(fileName = "NewCharacterData", menuName = "ScriptableObjects/CharacterData")]
+public class CharacterData : UnitData
 {
-    [Header("기본 정보")]
-    public string charName;
+    [Header("아군 전용 성장 데이터")]
     public Rarity rarity;
-    public Sprite unitPortrait;
-    public bool  isEnemy;    // 적인지 아군인지 확인
-
-    [Header("능력치 및 성장률")]
-    public float baseHp;
     public float hpGrowth;
-    public float baseAttack;
     public float attackGrowth;
-    public float baseSpeed;
-    public float speedGrowth;
-
-    [Header("스킬 및 범위")]
-    public SkillArea areaType; // 아까 만든 Enum
-    public int skillRange;     // +1, +2 등
-    public float skillMultiplier = 1.0f; // 스킬 데미지 배율
 
     [Header("태그 시스템")]
     public string characterTag; // 캐릭터 태그 (스플, 한방, 도트) 절대 안 바뀜
