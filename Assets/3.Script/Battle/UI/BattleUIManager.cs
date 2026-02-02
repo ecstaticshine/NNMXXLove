@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.Pool;
@@ -63,17 +64,22 @@ public void RefreshTimeline(List<Unit> turnOrder)
     }
     _activeIcons.Clear();
 
-    //재배치
-    //foreach (Character unit in turnOrder)
-    //{
-    //    // 풀에서 하나 빌려오기!
-    //    GameObject iconObj = _timelinePool.Get();
+        //재배치
+    foreach (Unit unit in turnOrder)
+        {
+            // 풀에서 하나 빌려오기!
+            GameObject iconObj = _timelinePool.Get();
 
+            UnitIcon unitIcon = iconObj.GetComponent<UnitIcon>();
 
+            if (unitIcon != null)
+            {
+                unitIcon.SetUnitData(unit);
+            }
 
-    //    _activeIcons.Add(iconObj);
-    //}
-}
+            _activeIcons.Add(iconObj);
+        }
+    }
 
 
     public void OnPhaseChanged(BattlePhase battlePhase)
@@ -84,7 +90,7 @@ public void RefreshTimeline(List<Unit> turnOrder)
 
         switch (battlePhase)
         {
-            case BattlePhase.PlayerPhase:
+            case BattlePhase.PlayerSelectPhase:
                 FadeIn(playerPhasePanel);
                 break;
             case BattlePhase.EnemyPhase:
@@ -134,5 +140,10 @@ public void RefreshTimeline(List<Unit> turnOrder)
             resultText.color = Color.red;
         }
         FadeIn(resultPanel);
+    }
+
+    public void UpdateTurnUI(int turn)
+    {
+        turnPanel.GetComponentInChildren<TMP_Text>().text = turn.ToString();
     }
 }

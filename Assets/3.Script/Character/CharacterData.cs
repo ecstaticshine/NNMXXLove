@@ -7,7 +7,6 @@ public enum Rarity { L, PL, TL, EL }// Love, PureLove, TrueLove, EternalLove
 public class CharacterData : UnitData
 {
     [Header("아군 전용 성장 데이터")]
-    public Rarity rarity;
     public float hpGrowth;
     public float attackGrowth;
 

@@ -55,6 +55,11 @@ public class Unit : MonoBehaviour
         return currentAttack;
     }
 
+    public int GetCurrentHP()
+    {
+        return currentHp;
+    }
+
     public void SetSlotIndex(int index)
     {
         this.slotIndex = index;
@@ -76,6 +81,22 @@ public class Unit : MonoBehaviour
         {
             hpBar.DOValue(currentHp, 0.5f).SetEase(Ease.OutQuad);
         }
+    }
+    public  void Heal(int healAmount)
+    {
+        // 이미 죽은 유닛은 치료하지 않음
+        if (currentHp <= 0) return;
+
+        currentHp += healAmount;
+
+        if (currentHp >= data.baseHp)
+        {
+            currentHp = data.baseHp;
+        }
+        UpdateHPUI();
+
+        // 힐 받는 연출
+        transform.DOScale(1.1f, 0.2f).SetLoops(2, LoopType.Yoyo);
     }
 
     public void TakeDamage(int damage)

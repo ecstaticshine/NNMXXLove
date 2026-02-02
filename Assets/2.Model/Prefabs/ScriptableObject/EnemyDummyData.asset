@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31325d7f0dbba254f905b233b4619108, type: 3}
   m_Name: EnemyDummyData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  unitName: "\uBE61\uCE5C \uBC84\uD130"
+  unitName: "\uBE61\uCE5C \uC774\uADF8\uB2C8"
   unitPortrait: {fileID: -2135851415287751552, guid: 7e116fbbd96db8643ad074825051b37e, type: 3}
+  unitBattleSD: {fileID: -6295731107033180628, guid: 01936ec8dc6f1274a9a94e68a2db65d4, type: 3}
+  unitAttackSD: {fileID: -7630217312728748310, guid: 847272620a3ce1e499b70119274ab624, type: 3}
+  unitTakeDamageSD: {fileID: 117189903056207879, guid: 7c762bf8fd65c8b4fa91386944ffefb4, type: 3}
+  unitFullIllust: {fileID: 6733451529479259270, guid: d93c4366f3b5eb8479f0027238cb3a9d, type: 3}
+  rarity: 3
   isEnemy: 1
   baseHp: 5000
   baseAttack: 1000
@@ -21,7 +26,6 @@ MonoBehaviour:
   areaType: 0
   skillRange: 1
   skillMultiplier: 1.2
-  rarity: 3
   hpGrowth: 0.02
   attackGrowth: 0.01
   characterTag: 

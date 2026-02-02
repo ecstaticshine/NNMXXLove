@@ -3,12 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitType { Dealer, Healer, Buffer }
+
 [CreateAssetMenu(fileName = "NewUnitData", menuName = "ScriptableObjects/UnitData")]
 public class UnitData : ScriptableObject
 {
     [Header("기본 정보")]
     public string unitName;
-    public Sprite unitPortrait;
+    public UnitType unitType;           // 유닛 타입 : 힐러 / 딜러 / 버퍼
+
+    public Sprite unitPortrait;         // 캐릭터 얼굴 이미지
+    public Sprite unitBattleSD;         // 전투 필드 배치용
+    public Sprite unitAttackSD;         // 전투 필드 공격용
+    public Sprite unitTakeDamageSD;     // 전투 필드 피격용
+    public Sprite unitFullIllust;       // 강화 상세 정보창용
+    public Rarity rarity;               // 캐릭터 등급
     public bool isEnemy;
 
     [Header("기본 능력치")]
@@ -21,3 +30,4 @@ public class UnitData : ScriptableObject
     public int skillRange;     // +1, +2 등
     public float skillMultiplier = 1.0f;
 }
+
