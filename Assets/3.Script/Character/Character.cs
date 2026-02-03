@@ -11,6 +11,9 @@ public class Character : Unit
     public int level = 1;
     private int currentSkillLevel = 1;
 
+    [Header("커스텀 태그 (유저 설정)")]
+    public string[] customTags = new string[4];
+
     protected override void Awake()
     {
         base.Awake();
@@ -36,12 +39,13 @@ public class Character : Unit
         float totalAtkGrowth = 1f + (atkGainPerLevel * (level - 1));
 
         currentHp = Mathf.RoundToInt(characterdata.baseHp * totalHpGrowth);
+        maxHp = currentHp;  //최대 체력으로
         currentAttack = Mathf.RoundToInt(characterdata.baseAttack * totalAtkGrowth);
         currentSpeed = characterdata.baseSpeed;
 
         if (hpBar != null)
         {
-            hpBar.maxValue = currentHp;
+            hpBar.maxValue = maxHp;
             hpBar.value = currentHp;
         }
 
@@ -60,6 +64,23 @@ public class Character : Unit
         level = targetLevel;
         breakthroughCount = targetBT;
         InitUnitStat(); // 데이터 설정 후 즉시 스탯 갱신
+    }
+
+    // 태그 다 가지고 오기
+    public List<string> GetAllTags()
+    {
+        List<string> tags = new List<string>();
+
+        // 1. UnitData에 기본 태그가 있다면 추가 (예: characterdata.defaultTag)
+        if (data is CharacterData cd && !string.IsNullOrEmpty(cd.defaultTag))
+            tags.Add(cd.defaultTag);
+
+        // 2. 유저가 설정한 커스텀 태그들 추가
+        foreach (var tag in customTags)
+        {
+            if (!string.IsNullOrEmpty(tag)) tags.Add(tag);
+        }
+        return tags;
     }
 
     private float Cal_Rarity(CharacterData characterData)

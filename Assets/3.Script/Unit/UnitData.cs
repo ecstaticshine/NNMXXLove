@@ -12,6 +12,9 @@ public class UnitData : ScriptableObject
     public string unitName;
     public UnitType unitType;           // 유닛 타입 : 힐러 / 딜러 / 버퍼
 
+    [Header("태그 정보")]
+    public string defaultTag; // Dot, Splash, Direct 중 하나
+
     public Sprite unitPortrait;         // 캐릭터 얼굴 이미지
     public Sprite unitBattleSD;         // 전투 필드 배치용
     public Sprite unitAttackSD;         // 전투 필드 공격용
@@ -26,7 +29,7 @@ public class UnitData : ScriptableObject
     public int baseSpeed;
 
     [Header("전투 매개변수")]
-    public SkillArea areaType;
+    public SkillArea skillArea;
     public int skillRange;     // +1, +2 등
     public float skillMultiplier = 1.0f;
 }

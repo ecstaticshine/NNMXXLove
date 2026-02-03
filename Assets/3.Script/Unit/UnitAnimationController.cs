@@ -52,7 +52,12 @@ public class UnitAnimationController : MonoBehaviour
         _idleTween?.Kill();
         transform.DOKill();
         transform.localPosition = _initialLocalPos;
-        transform.localScale = Vector3.one;
+
+        if (_data != null)
+        {
+            float targetScaleX = _data.isEnemy ? 1f : -1f;
+            transform.localScale = new Vector3(targetScaleX, 1f, 1f);
+        }
     }
 
     private void PlayIdle()

@@ -25,7 +25,7 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 
             existCharacter.SetParent(dragCharacterSlot);
             existCharacter.transform.localPosition = Vector2.zero;
-            existCharacter.transform.localScale = new Vector3(-1f, 1f, 1f);
+            existCharacter.transform.localScale = Vector3.one;
 
         }
 
@@ -34,7 +34,7 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 
         draggedObject.transform.localPosition = Vector2.zero;
 
-        draggedObject.transform.localScale = new Vector3(-1f, 1f, 1f);
+        draggedObject.transform.localScale = Vector3.one;
 
 
     }

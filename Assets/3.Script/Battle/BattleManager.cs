@@ -19,8 +19,13 @@ public class BattleManager : MonoBehaviour
     //BattleUIManager
     public BattleUIManager uiManager;
 
-    //퍼즈
+    // 퍼즈
     private bool isPaused = false;
+    // AutoBattle
+    public bool isAutoBattle = false;
+    // 배속
+    [Header("Game speed")]
+    public float currentSpeed = 1f; // 기본 1배속
 
     public List<Unit> playerTurnOrder = new List<Unit>();
     public List<Unit> enemyTurnOrder = new List<Unit>();
@@ -29,6 +34,8 @@ public class BattleManager : MonoBehaviour
     public Dictionary<int, Unit> enemySlot = new Dictionary<int, Unit>();
 
     public static BattleManager instance = null;
+
+    public SynergyManager synergyManager = new SynergyManager();
 
     private int _actionIndex = 0;
 
@@ -70,6 +77,12 @@ public class BattleManager : MonoBehaviour
         EnterTurnStart();
     }
 
+    private void RefreshSynergies()
+    {
+        synergyManager.UpdateSynergy(playerSlot);
+        synergyManager.UpdateSynergy(enemySlot);
+    }
+
     private void InitBattleUnits()
     {
         playerSlot.Clear();
@@ -97,17 +110,47 @@ public class BattleManager : MonoBehaviour
             {
                 enemySlot[unit.GetSlotIndex()] = unit;
                 enemyTurnOrder.Add(unit);
+
             }
             else
             {
                 playerSlot[unit.GetSlotIndex()] = unit;
                 playerTurnOrder.Add(unit);
+
             }
         }
         // 스피드 빠른 순서로 재정렬
         SortTurnOrder();
+    }
 
+    public void ToggleAutoBattle()
+    {
+        isAutoBattle = !isAutoBattle;
 
+        // UI 업데이트 호출 (추가된 부분)
+        uiManager.UpdateAutoBattleUI(isAutoBattle);
+
+        Debug.Log(isAutoBattle ? "AutoBattle" : "Not AutoBattle");
+
+        if (isAutoBattle && currentPhase == BattlePhase.PlayerSelectPhase)
+        {
+            OnAttackButtonClicked();
+        }
+    }
+
+    public void ChangeGameSpeed()
+    {
+        if (currentSpeed == 1f) currentSpeed = 2f;
+        else if (currentSpeed == 2f) currentSpeed = 3f;
+        else currentSpeed = 1f;
+
+        // 일시정지 상태가 아닐 때만 즉시 적용
+        if (Time.timeScale != 0f)
+        {
+            Time.timeScale = currentSpeed;
+        }
+
+        uiManager.UpdateSpeedUI(currentSpeed);
     }
 
     public void OnAttackButtonClicked()
@@ -116,7 +159,7 @@ public class BattleManager : MonoBehaviour
 
         OnPhaseChanged(BattlePhase.PlayerActionPhase);
 
-
+        StartCoroutine(ExecutePhaseActions(playerTurnOrder, enemyTurnOrder));
     }
 
     private void EnterEnemyPhase()
@@ -127,8 +170,12 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(ExecutePhaseActions(enemyTurnOrder, playerTurnOrder));
     }
 
+
     private IEnumerator ExecutePhaseActions(List<Unit> attackers, List<Unit> targets)
     {
+        // 페이즈 시작 전 시너지 한 번 갱신
+        RefreshSynergies();
+
         foreach (Unit attacker in attackers)
         {
             if (attacker == null) continue;
@@ -138,24 +185,32 @@ public class BattleManager : MonoBehaviour
             Unit target = GetTarget(attacker);
             if (target == null) continue;
 
+            // 시너지 데이터 가지고 오기
+            SynergyEffect eff = attacker.data.isEnemy ? new SynergyEffect() : synergyManager.currentEffect;
+
             Debug.Log($"{attacker.data.unitName}이(가) {target.data.unitName}을(를) 조준!");
 
-            // 공격 애니메이션 실행 (공격 상태로 변경)
-            attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
-            // 타격 시점 대기 (애니메이션 박자에 맞춰 조절)
-            yield return new WaitForSeconds(0.4f);
-
+            // 행동
             switch (attacker.data.unitType)
             {
                 case UnitType.Healer:   // 힐러
+                    // 공격 애니메이션 실행
+                    attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
+
+                    // 타격 시점 대기 (애니메이션 박자에 맞춰 조절)
+                    yield return new WaitForSeconds(0.4f);
+
                     int healAmount = Mathf.RoundToInt(attacker.GetCurrentAttack() * attacker.data.skillMultiplier);
+                    Debug.Log($"{healAmount} 만큼 힐합니다.");
                     target.Heal(healAmount);
                     break;
                 case UnitType.Buffer:
+                    // 쉴드 적용
+                    yield return StartCoroutine(ExecuteBufferAction(attacker, target, eff));
                     break;
-                default:              // 딜러
+                default:  // 딜러
                     // 실제 대미지 적용
-                    target.TakeDamage(attacker.GetCurrentAttack());
+                    yield return StartCoroutine(ExecuteDealerAction(attacker, target, eff));
                     break;
             }
 
@@ -204,9 +259,21 @@ public class BattleManager : MonoBehaviour
                     //후열일 경우, 제일 피가 적은 아군을 담당
                     return GetLowestHPTarget(allySlots);
                 }
-                break;
             case UnitType.Buffer:
-                break;
+                if (mySlot < 3) // 전열 - 자신과 같은 전열 아군들의 방어력/피해 감소 버프 (탱킹 강화)
+                {
+                    return GetLowestHPInLine(0, allySlots);
+                }
+                else if (mySlot < 6) //중열/후열 딜러들의 공격력 버프 (화력 집중)
+                {
+                    //중열일 경우, 중열 먼저
+                    return GetHighestAttackTarget(allySlots);
+                }
+                else
+                {       //아군 전체의 **스피드(Speed)**를 소량 상승
+                    //후열일 경우, 제일 피가 적은 아군을 담당
+                    return GetLowestHPTarget(allySlots);
+                }
             default:    // 딜러
                 if (mySlot < 3) // 전열
                 {
@@ -222,7 +289,6 @@ public class BattleManager : MonoBehaviour
                     //후열일 경우, 제일 피가 적은 적군을 노림
                     return GetLowestHPTarget(targetSlots);
                 }
-                break;
         }
 
         return null;
@@ -231,15 +297,17 @@ public class BattleManager : MonoBehaviour
     private Unit GetLowestHPInLine(int startIndex, Dictionary<int, Unit> allySlots)
     {
         Unit bestTarget = null;
-        float minHp = float.MaxValue;
+        float minHpRatio = 1.1f;
 
         for (int i = startIndex; i < startIndex + 3; i++)
         {
             if (allySlots.TryGetValue(i, out Unit ally))
             {
-                if (ally.GetCurrentHP() < minHp)
+                float hpRatio = (float)ally.GetCurrentHP() / ally.GetMaxHP();
+
+                if (hpRatio < minHpRatio)
                 {
-                    minHp = ally.GetCurrentHP();
+                    minHpRatio = hpRatio;
                     bestTarget = ally;
                 }
             }
@@ -355,17 +423,20 @@ public class BattleManager : MonoBehaviour
     // 턴 시작
     void EnterTurnStart()
     {
+        turnCount++;
+
+        uiManager.UpdateTurnUI(turnCount);
+
         // 타이머 시작
         battleTimer.StartTimer();
 
-        // 턴 시작 시, 아군 페이즈부터
-        currentPhase = BattlePhase.PlayerSelectPhase;
-
-        // 턴 바꾸기
-        uiManager.UpdateTurnUI(turnCount);
-
         // 아군 페이즈
-        OnPhaseChanged(currentPhase);
+        OnPhaseChanged(BattlePhase.PlayerSelectPhase);
+
+        if (isAutoBattle)
+        {
+            Invoke("OnAttackButtonClicked", 0.2f);
+        }
     }
 
     public void EndBattle(bool victory)
@@ -390,11 +461,9 @@ public class BattleManager : MonoBehaviour
                 break;
             case BattlePhase.PlayerActionPhase:
                 battleTimer.StopTimer();
-                StartCoroutine(ExecutePhaseActions(playerTurnOrder, enemyTurnOrder));
                 break;
             case BattlePhase.EnemyPhase:
                 uiManager.RefreshTimeline(enemyTurnOrder);
-                StartCoroutine(ExecutePhaseActions(enemyTurnOrder, playerTurnOrder));
                 break;
             case BattlePhase.BattleEnd:
                 break;
@@ -406,9 +475,16 @@ public class BattleManager : MonoBehaviour
     {
         if (currentPhase.Equals(BattlePhase.PlayerSelectPhase))
         {
-            currentPhase = BattlePhase.BattleEnd;
+            if (isAutoBattle)
+            {
+                OnAttackButtonClicked();
+            }
+            else
+            {
+                currentPhase = BattlePhase.BattleEnd;
 
-            EndBattle(false);
+                EndBattle(false);
+            }
         }
     }
 
@@ -418,7 +494,7 @@ public class BattleManager : MonoBehaviour
 
         if (unit.data.isEnemy)
         {
-            // 딕셔너리에서 해당 슬롯 번호(Key)를 삭제합니다.
+            // 딕셔너리에서 해당 슬롯 번호(Key)를 삭제
             if (enemySlot.ContainsKey(slotIdx))
             {
                 enemySlot.Remove(slotIdx);
@@ -428,7 +504,15 @@ public class BattleManager : MonoBehaviour
                 enemyTurnOrder.Remove(unit);
             }
 
-            uiManager.RefreshTimeline(enemyTurnOrder);
+            // [수정] 현재 플레이어 페이즈라면 플레이어 리스트로 타임라인 유지
+            if (currentPhase == BattlePhase.PlayerSelectPhase || currentPhase == BattlePhase.PlayerActionPhase)
+            {
+                uiManager.RefreshTimeline(playerTurnOrder);
+            }
+            else
+            {
+                uiManager.RefreshTimeline(enemyTurnOrder);
+            }
 
             Debug.Log($"{unit.data.unitName} 적을 물리쳤습니다. 남은 적: {enemySlot.Count}명");
 
@@ -462,4 +546,170 @@ public class BattleManager : MonoBehaviour
         // 전장에서 오브젝트를 제거합니다.
         Destroy(unit.gameObject);
     }
+    private IEnumerator ExecuteDealerAction(Unit attacker, Unit target, SynergyEffect eff)
+    {
+
+        Dictionary<int, Unit> targetSlots = attacker.data.isEnemy ? playerSlot : enemySlot;
+        List<Unit> areaTargets = GetUnitsInArea(target, attacker.data.skillArea, targetSlots);
+
+        // [Dot 태그인 경우] 시너지에 따라 연격 횟수 결정
+        int attackCount = 1;
+        if (attacker.data.defaultTag == "Dot")
+            attackCount += eff.dotExtraHits;
+
+        for (int i = 0; i < attackCount; i++)
+        {
+            // 애니메이션 및 타격
+            attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
+            yield return new WaitForSeconds(0.4f);
+
+            foreach (Unit areaUnit in areaTargets)
+            {
+                if (areaUnit == null) continue; // 그 사이 죽었을 수도 있으니 체크
+                float finalDamage = attacker.GetCurrentAttack();
+
+                // [Direct 태그인 경우] 피해 증폭
+                if (attacker.data.defaultTag == "Direct")
+                    finalDamage *= (1f + eff.directDamageMult);
+
+                target.TakeDamage(Mathf.RoundToInt(finalDamage));
+
+                // [Splash 태그인 경우] 주변 확산
+                if (attacker.data.defaultTag == "Splash" && eff.splashBonus > 0)
+                    ApplySplashDamage(target, finalDamage * eff.splashBonus, attacker.data.isEnemy);
+            }
+
+            yield return new WaitForSeconds(0.2f); // 연격 간격
+        }
+    }
+
+    private List<Unit> GetUnitsInArea(Unit mainTarget, SkillArea area, Dictionary<int, Unit> targetSlots)
+    {
+        // 공격 범위 계산
+        List<Unit> areaTargets = new List<Unit>();
+        if (mainTarget == null) return areaTargets;
+
+        // 공격할 메인 타겟 위치 확인
+        int center = mainTarget.GetSlotIndex();
+        // 슬롯 인덱스 확인
+        List<int> targetIndices = new List<int>();
+
+        // 스킬 범위에 맞춰서 범위 계산
+        switch (area)
+        {
+            case SkillArea.Single:
+                targetIndices.Add(center);
+                break;
+
+            case SkillArea.Row: // 가로줄 (0-1-2 / 3-4-5 / 6-7-8)
+                int rowStart = (center / 3) * 3;
+                // 가로줄 다 넣기
+                for (int i = rowStart; i < rowStart + 3; i++) targetIndices.Add(i);
+                break;
+
+            case SkillArea.Column: // 세로줄 (0-3-6 / 1-4-7 / 2-5-8)
+                int colStart = center % 3;
+                // 세로 줄 다 넣기
+                for (int i = colStart; i <= 8; i += 3) targetIndices.Add(i);
+                break;
+
+            case SkillArea.Cross: // 십자 (본인 + 상하좌우)
+                targetIndices.Add(center);
+                if (center % 3 != 0) targetIndices.Add(center - 1); // 왼쪽 끝이 아닐 때만 좌측 추가
+                if (center % 3 != 2) targetIndices.Add(center + 1); // 오른쪽 끝이 아닐 때만 우측 추가
+                targetIndices.Add(center - 3); // 상
+                targetIndices.Add(center + 3); // 하
+                break;
+
+            case SkillArea.All: // 전체
+                for (int i = 0; i < 9; i++) targetIndices.Add(i);
+                break;
+        }
+
+        // 실제 존재하는 유닛만 필터링
+        foreach (int idx in targetIndices)
+        {
+            if (targetSlots.TryGetValue(idx, out Unit u) && u != null)
+                areaTargets.Add(u);
+        }
+
+        return areaTargets;
+    }
+
+    private void ApplySplashDamage(Unit mainTarget, float damage, bool isEnemyAttacker)
+    {
+        int centerSlot = mainTarget.GetSlotIndex();
+        Dictionary<int, Unit> targets = isEnemyAttacker ? playerSlot : enemySlot;
+
+        // 인접 슬롯 (상하좌우)
+        int[] neighbors = { centerSlot - 1, centerSlot + 1, centerSlot - 3, centerSlot + 3 };
+        foreach (int idx in neighbors)
+        {
+            if (targets.TryGetValue(idx, out Unit neighbor))
+            {
+                neighbor.TakeDamage(Mathf.RoundToInt(damage));
+            }
+        }
+    }
+
+    private IEnumerator ExecuteBufferAction(Unit attacker, Unit target, SynergyEffect eff)
+    {
+        int mySlot = attacker.GetSlotIndex();
+        attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
+        yield return new WaitForSeconds(0.4f);
+
+        // 기반이 되는 쉴드량 계산 (버퍼의 공격력 * 스킬 계수)
+        int baseShieldAmount = Mathf.RoundToInt(attacker.GetCurrentAttack() * attacker.data.skillMultiplier);
+
+        if (mySlot < 3) // [전열] 강철의 벽
+        {
+            // 50%의 높은 내구도 / 횟수 1회 (강력한 한 방 방어)
+            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.5f);
+            ApplyBuffToLine(0, attacker.data.isEnemy, (u) => {
+                u.AddShield(1, shieldHP);
+                Debug.Log($"{u.data.unitName}: 전열 쉴드 부여 (내구도: {shieldHP})");
+            });
+        }
+        else if (mySlot < 6) // [중열] 다중 편광막
+        {
+            // 10%의 적당한 내구도 / 횟수 3회 (범위기 및 일반 공격 방어)
+            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.1f);
+            if (target != null)
+            {
+                target.AddShield(3, shieldHP);
+                Debug.Log($"{target.data.unitName}: 중열 쉴드 부여 (내구도: {shieldHP} / 3회)");
+            }
+        }
+        else // [후열] 안개 장막
+        {
+            // 5%의 낮은 내구도 / 횟수 5회 (연타 및 짤딜 방어)
+            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.05f);
+            Dictionary<int, Unit> allies = attacker.data.isEnemy ? enemySlot : playerSlot;
+            foreach (var ally in allies.Values)
+            {
+                ally.AddShield(5, shieldHP);
+            }
+            Debug.Log($"아군 전체 쉴드 부여 (내구도: {shieldHP} / 5회)");
+        }
+
+        yield return new WaitForSeconds(0.2f);
+    }
+
+    // 라인(전열/중열/후열) 전체에 버프를 주는 함수
+    private void ApplyBuffToLine(int startIndex, bool isEnemySide, Action<Unit> buffAction)
+    {
+        // 공격자가 적군이면 적군 슬롯에서, 아군이면 아군 슬롯에서 대상을 찾기.
+        Dictionary<int, Unit> slots = isEnemySide ? enemySlot : playerSlot;
+
+        // 해당 라인의 3개 슬롯(0-2, 3-5, 6-8)을 검사합니다.
+        for (int i = startIndex; i < startIndex + 3; i++)
+        {
+            if (slots.TryGetValue(i, out Unit unit) && unit != null)
+            {
+                // 전달받은 버프 로직(쉴드 추가 등)을 실행합니다.
+                buffAction?.Invoke(unit);
+            }
+        }
+    }
+
 }
