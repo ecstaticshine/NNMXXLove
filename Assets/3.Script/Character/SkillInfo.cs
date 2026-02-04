@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SkillArea { Single, Row, Column, All, CrossRange, Cross} // 단일, 가로줄, 세로줄, 전체
+public enum SkillArea { Single, Row, Column} // 단일, 가로줄, 세로줄, 전체
 
 [System.Serializable]
 public class SkillInfo

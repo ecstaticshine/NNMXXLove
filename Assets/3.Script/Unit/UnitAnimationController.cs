@@ -69,7 +69,7 @@ public class UnitAnimationController : MonoBehaviour
             .SetLoops(-1, LoopType.Yoyo);
     }
 
-    private void PlayHit()
+    public void PlayHit()
     {
         if (_data.unitTakeDamageSD) _image.sprite = _data.unitTakeDamageSD;
 

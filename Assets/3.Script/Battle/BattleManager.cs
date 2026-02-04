@@ -9,7 +9,8 @@ public class BattleManager : MonoBehaviour
 {
     //턴제 배틀 시작. //1턴 아군 -> 적군
     [SerializeField]
-    private BattlePhase currentPhase = BattlePhase.None;
+    private BattlePhase _currentPhase = BattlePhase.None;
+    public BattlePhase currentPhase => _currentPhase;
 
     public int turnCount = 0;
 
@@ -35,7 +36,8 @@ public class BattleManager : MonoBehaviour
 
     public static BattleManager instance = null;
 
-    public SynergyManager synergyManager = new SynergyManager();
+    public SynergyManager playerSynergy = new SynergyManager();
+    public SynergyManager enemySynergy = new SynergyManager();
 
     private int _actionIndex = 0;
 
@@ -71,6 +73,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         InitBattleUnits();
+        RefreshSynergies();
 
         battleTimer.OnTimerOut += HandleTimerOut;
 
@@ -79,8 +82,8 @@ public class BattleManager : MonoBehaviour
 
     private void RefreshSynergies()
     {
-        synergyManager.UpdateSynergy(playerSlot);
-        synergyManager.UpdateSynergy(enemySlot);
+        playerSynergy.UpdateSynergy(playerSlot, true);
+        enemySynergy.UpdateSynergy(enemySlot, false);
     }
 
     private void InitBattleUnits()
@@ -178,15 +181,15 @@ public class BattleManager : MonoBehaviour
 
         foreach (Unit attacker in attackers)
         {
-            if (attacker == null) continue;
+            if (attacker == null || attacker.GetCurrentHP() <= 0) continue;
             if (targets.Count <= 0) break;
 
             //타겟 찾기
             Unit target = GetTarget(attacker);
-            if (target == null) continue;
+            if (target == null || target.GetCurrentHP() <= 0) continue;
 
             // 시너지 데이터 가지고 오기
-            SynergyEffect eff = attacker.data.isEnemy ? new SynergyEffect() : synergyManager.currentEffect;
+            SynergyEffect eff = attacker.data.isEnemy ? enemySynergy.currentEffect : playerSynergy.currentEffect;
 
             Debug.Log($"{attacker.data.unitName}이(가) {target.data.unitName}을(를) 조준!");
 
@@ -448,7 +451,7 @@ public class BattleManager : MonoBehaviour
     public void OnPhaseChanged(BattlePhase battlePhase)
     {
         // 상태 업데이트
-        currentPhase = battlePhase;
+        _currentPhase = battlePhase;
 
         uiManager.OnPhaseChanged(battlePhase);
 
@@ -481,7 +484,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                currentPhase = BattlePhase.BattleEnd;
+                _currentPhase = BattlePhase.BattleEnd;
 
                 EndBattle(false);
             }
@@ -541,7 +544,10 @@ public class BattleManager : MonoBehaviour
             {
                 EndBattle(false);
             }
+
         }
+
+        RefreshSynergies();
 
         // 전장에서 오브젝트를 제거합니다.
         Destroy(unit.gameObject);
@@ -554,31 +560,66 @@ public class BattleManager : MonoBehaviour
 
         // [Dot 태그인 경우] 시너지에 따라 연격 횟수 결정
         int attackCount = 1;
-        if (attacker.data.defaultTag == "Dot")
+        if (attacker.data.defaultTag.Equals("Dot"))
+        {
             attackCount += eff.dotExtraHits;
+        }
 
         for (int i = 0; i < attackCount; i++)
         {
+
+            if (target == null || target.GetCurrentHP() <= 0) yield break;
+
+
             // 애니메이션 및 타격
             attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
             yield return new WaitForSeconds(0.4f);
 
+            // --- 합산을 위한 저장소 ---
+            HashSet<int> processedIndices = new HashSet<int>();
+
+
             foreach (Unit areaUnit in areaTargets)
             {
-                if (areaUnit == null) continue; // 그 사이 죽었을 수도 있으니 체크
+                if (areaUnit == null || areaUnit.GetCurrentHP() <= 0) continue; // 그 사이 죽었을 수도 있으니 체크
+
                 float finalDamage = attacker.GetCurrentAttack();
 
                 // [Direct 태그인 경우] 피해 증폭
-                if (attacker.data.defaultTag == "Direct")
+                if (attacker.data.defaultTag.Equals("Direct"))
                     finalDamage *= (1f + eff.directDamageMult);
 
-                target.TakeDamage(Mathf.RoundToInt(finalDamage));
-
-                // [Splash 태그인 경우] 주변 확산
-                if (attacker.data.defaultTag == "Splash" && eff.splashBonus > 0)
-                    ApplySplashDamage(target, finalDamage * eff.splashBonus, attacker.data.isEnemy);
+                areaUnit.TakeDamage(Mathf.RoundToInt(finalDamage));
+                processedIndices.Add(areaUnit.GetSlotIndex()); // 이미 맞은 놈은 기록
             }
 
+            if (attacker.data.defaultTag.Equals("Splash") && eff.splashBonus > 0 && target != null)
+            {
+                float splashDamage = attacker.GetCurrentAttack() * eff.splashBonus;
+
+                HashSet<int> allNeighbors = new HashSet<int>();
+
+                foreach (Unit areaUnit in areaTargets)
+                {
+                    if (areaUnit == null) continue;
+
+                    List<int> neighborsOfUnit = GetNeighborIndices(areaUnit.GetSlotIndex());
+                    foreach (int nIdx in neighborsOfUnit)
+                    {
+                        allNeighbors.Add(nIdx);
+                    }
+                }
+
+                // 수집된 모든 이웃 인덱스에 대해 데미지 적용
+                foreach (int idx in allNeighbors)
+                {
+                    // [조건] 이미 메인 공격을 받은 놈은 제외 && 실제 유닛이 존재하는 슬롯이어야 함
+                    if (!processedIndices.Contains(idx) && targetSlots.TryGetValue(idx, out Unit u))
+                    {
+                        u.TakeDamage(Mathf.RoundToInt(splashDamage));
+                    }
+                }
+            }
             yield return new WaitForSeconds(0.2f); // 연격 간격
         }
     }
@@ -612,18 +653,6 @@ public class BattleManager : MonoBehaviour
                 // 세로 줄 다 넣기
                 for (int i = colStart; i <= 8; i += 3) targetIndices.Add(i);
                 break;
-
-            case SkillArea.Cross: // 십자 (본인 + 상하좌우)
-                targetIndices.Add(center);
-                if (center % 3 != 0) targetIndices.Add(center - 1); // 왼쪽 끝이 아닐 때만 좌측 추가
-                if (center % 3 != 2) targetIndices.Add(center + 1); // 오른쪽 끝이 아닐 때만 우측 추가
-                targetIndices.Add(center - 3); // 상
-                targetIndices.Add(center + 3); // 하
-                break;
-
-            case SkillArea.All: // 전체
-                for (int i = 0; i < 9; i++) targetIndices.Add(i);
-                break;
         }
 
         // 실제 존재하는 유닛만 필터링
@@ -636,20 +665,23 @@ public class BattleManager : MonoBehaviour
         return areaTargets;
     }
 
-    private void ApplySplashDamage(Unit mainTarget, float damage, bool isEnemyAttacker)
+    private List<int>GetNeighborIndices(int center)
     {
-        int centerSlot = mainTarget.GetSlotIndex();
-        Dictionary<int, Unit> targets = isEnemyAttacker ? playerSlot : enemySlot;
+        List<int> neighborIndices = new List<int>();
+        int centerRow = center / 3; // 현재 행 (0, 1, 2)
 
-        // 인접 슬롯 (상하좌우)
-        int[] neighbors = { centerSlot - 1, centerSlot + 1, centerSlot - 3, centerSlot + 3 };
-        foreach (int idx in neighbors)
-        {
-            if (targets.TryGetValue(idx, out Unit neighbor))
-            {
-                neighbor.TakeDamage(Mathf.RoundToInt(damage));
-            }
-        }
+        // 1. 상 (+3) / 하 (-3) : 인덱스 범위(0~8) 내에 있으면 추가
+        if (center + 3 <= 8) neighborIndices.Add(center + 3);
+        if (center - 3 >= 0) neighborIndices.Add(center - 3);
+
+        // 2. 좌 (-1) / 우 (+1) : 같은 행(Row)일 때만 추가
+        if (center - 1 >= 0 && (center - 1) / 3 == centerRow)
+            neighborIndices.Add(center - 1);
+
+        if (center + 1 <= 8 && (center + 1) / 3 == centerRow)
+            neighborIndices.Add(center + 1);
+
+        return neighborIndices;
     }
 
     private IEnumerator ExecuteBufferAction(Unit attacker, Unit target, SynergyEffect eff)
@@ -665,7 +697,8 @@ public class BattleManager : MonoBehaviour
         {
             // 50%의 높은 내구도 / 횟수 1회 (강력한 한 방 방어)
             int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.5f);
-            ApplyBuffToLine(0, attacker.data.isEnemy, (u) => {
+            ApplyBuffToLine(0, attacker.data.isEnemy, (u) =>
+            {
                 u.AddShield(1, shieldHP);
                 Debug.Log($"{u.data.unitName}: 전열 쉴드 부여 (내구도: {shieldHP})");
             });
@@ -687,6 +720,7 @@ public class BattleManager : MonoBehaviour
             Dictionary<int, Unit> allies = attacker.data.isEnemy ? enemySlot : playerSlot;
             foreach (var ally in allies.Values)
             {
+                if (ally == null) continue;
                 ally.AddShield(5, shieldHP);
             }
             Debug.Log($"아군 전체 쉴드 부여 (내구도: {shieldHP} / 5회)");

@@ -190,7 +190,6 @@ public void RefreshTimeline(List<Unit> turnOrder)
 
             // 시각적 효과: 배속이 바뀔 때 텍스트가 살짝 커졌다 작아지게 (DOTween 활용)
             speedText.transform.DOKill();
-            speedText.transform.localScale = Vector3.one;
             speedText.transform.DOPunchScale(Vector3.one * 0.2f, 0.2f);
         }
     }
@@ -199,18 +198,15 @@ public void RefreshTimeline(List<Unit> turnOrder)
     {
         buttonImage.transform.DOKill();
 
-        if (isActive)
-        {
-            // 눌린 상태: 작아지고 어두워짐 (혹은 더 밝아짐)
-            buttonImage.transform.DOScale(0.92f, 0.1f);
-            buttonImage.color = activeColor;
-        }
-        else
-        {
-            // 원래 상태: 크기 복구 및 색상 복구
-            buttonImage.transform.DOScale(1.0f, 0.1f);
-            buttonImage.color = inactiveColor;
-        }
+
+        // [효과] 클릭했을 때 움찔하는 연출 (누를 때마다 실행)
+        buttonImage.transform.DOPunchScale(Vector3.one * -0.1f, 0.1f, 10, 1f);
+
+        buttonImage.color = isActive ? activeColor : inactiveColor;
+
+        // 원래 상태: 크기 복구 및 색상 복구
+        buttonImage.transform.DOScale(1.0f, 0.1f);
+
     }
 
     public void UpdateAutoBattleUI(bool isActive)

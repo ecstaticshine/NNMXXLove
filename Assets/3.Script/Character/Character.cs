@@ -107,7 +107,18 @@ public class Character : Unit
         };
     }
 
+    public override List<string> GetSynergyTags()
+    {
+        // 부모의 기본 태그 리스트를 가져옴 (defaultTag)
+        List<string> tags = base.GetSynergyTags();
 
+        // 2캐릭터만의 커스텀 태그 4개를 추가로 합침
+        foreach (var tag in customTags)
+        {
+            if (!string.IsNullOrEmpty(tag)) tags.Add(tag);
+        }
+        return tags;
+    }
 
 
 }

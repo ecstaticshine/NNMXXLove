@@ -13,11 +13,17 @@ MonoBehaviour:
   m_Name: EnemyMonsterDummyData
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   unitName: "\uC2AC\uB77C\uC784"
+  unitType: 0
+  defaultTag: Splash
   unitPortrait: {fileID: 8865208874398379130, guid: f1574021b33ed9d4a83543432c501d30, type: 3}
+  unitBattleSD: {fileID: 0}
+  unitAttackSD: {fileID: 0}
+  unitTakeDamageSD: {fileID: 0}
+  unitFullIllust: {fileID: 0}
+  rarity: 0
   isEnemy: 1
   baseHp: 30000
   baseAttack: 1000
   baseSpeed: 12
-  areaType: 0
-  skillRange: 0
+  skillArea: 0
   skillMultiplier: 1

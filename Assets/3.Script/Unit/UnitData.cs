@@ -30,7 +30,6 @@ public class UnitData : ScriptableObject
 
     [Header("전투 매개변수")]
     public SkillArea skillArea;
-    public int skillRange;     // +1, +2 등
     public float skillMultiplier = 1.0f;
 }
 

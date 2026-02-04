@@ -11,6 +11,5 @@ public class CharacterData : UnitData
     public float attackGrowth;
 
     [Header("태그 시스템")]
-    public string characterTag; // 캐릭터 태그 (스플, 한방, 도트) 절대 안 바뀜
     public List<string> customTags; // 캐릭터 커스텀 태그(유저가 결정한 태그)
 }
