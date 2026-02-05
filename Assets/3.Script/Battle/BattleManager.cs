@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum BattlePhase { None, PlayerSelectPhase, PlayerActionPhase, EnemyPhase, BattleEnd }
 
@@ -50,6 +51,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             Destroy(this);
+            return;
         }
     }
 
@@ -77,6 +79,20 @@ public class BattleManager : MonoBehaviour
 
         battleTimer.OnTimerOut += HandleTimerOut;
 
+        if (uiManager != null)
+        {
+            uiManager.ShowStartUI();
+        }
+        else
+        {
+            // UI 매니저가 없을 경우를 대비한 안전장치
+            BattleStart();
+        }
+    }
+
+    public void BattleStart()
+    {
+        Debug.Log("전투 개시!");
         EnterTurnStart();
     }
 
@@ -98,6 +114,8 @@ public class BattleManager : MonoBehaviour
         foreach (Unit unit in unitsInfield)
         {
             string parentName = unit.transform.parent.parent.name;
+            Image plateImage = unit.transform.parent.parent.GetChild(0).GetComponent<Image>();
+
 
             if (parentName.Contains("Slot_"))
             {
@@ -107,6 +125,8 @@ public class BattleManager : MonoBehaviour
                     unit.SetSlotIndex(index);
                 }
             }
+            // 색깔 칠하기
+            ApplyPlateColorByTag(unit, plateImage);
 
             // 이제 어느 팀인지에 따라 맵에 등록합니다.
             if (unit.data.isEnemy)
@@ -124,6 +144,50 @@ public class BattleManager : MonoBehaviour
         }
         // 스피드 빠른 순서로 재정렬
         SortTurnOrder();
+    }
+
+    private void ApplyPlateColorByTag(Unit unit, Image plate)
+    {
+        if (plate == null) return;
+
+        // 2. 유닛이 없거나 유닛의 데이터가 없다면 '기본 색상'을 칠하고 리턴 (Null 에러 방지)
+        if (unit == null || unit.data == null)
+        {
+            plate.color = new Color(1f, 1f, 1f, 0.4f); // 기본 반투명 흰색
+            return;
+        }
+        Color targetColor = Color.white; // 기본값
+
+        // 태그에 따른 색상 설정
+        switch (unit.data.defaultTag)
+        {
+            case "Direct":
+                targetColor = new Color(1f, 0.3f, 0.3f, 0.6f); // 연한 빨강
+                break;
+            case "Splash":
+                targetColor = new Color(0.3f, 0.5f, 1f, 0.6f); // 연한 파랑
+                break;
+            case "Dot":
+                targetColor = new Color(0.3f, 1f, 0.3f, 0.6f); // 연한 초록
+                break;
+            default:
+                targetColor = new Color(1f, 1f, 1f, 0.4f); // 태그 없을 시 반투명 흰색
+                break;
+        }
+
+        plate.color = targetColor;
+    }
+
+    public void UpdateSlotColor(Transform slotTransform, Unit unit = null)
+    {
+        if (slotTransform == null) return;
+
+        // 구조: Slot_X -> Plate_UI (첫 번째 자식)
+        Image plateImage = slotTransform.GetChild(0).GetComponent<Image>();
+        if (plateImage != null)
+        {
+            ApplyPlateColorByTag(unit, plateImage);
+        }
     }
 
     public void ToggleAutoBattle()
@@ -232,6 +296,7 @@ public class BattleManager : MonoBehaviour
             EnterEnemyPhase();
         else // 적군 공격이 끝났다면? 다시 아군 선택으로!
             EnterTurnStart();
+        
 
     }
 
@@ -267,14 +332,13 @@ public class BattleManager : MonoBehaviour
                 {
                     return GetLowestHPInLine(0, allySlots);
                 }
-                else if (mySlot < 6) //중열/후열 딜러들의 공격력 버프 (화력 집중)
+                else if (mySlot < 6) //중열/후열
                 {
                     //중열일 경우, 중열 먼저
                     return GetHighestAttackTarget(allySlots);
                 }
                 else
-                {       //아군 전체의 **스피드(Speed)**를 소량 상승
-                    //후열일 경우, 제일 피가 적은 아군을 담당
+                {   
                     return GetLowestHPTarget(allySlots);
                 }
             default:    // 딜러
@@ -429,6 +493,12 @@ public class BattleManager : MonoBehaviour
         turnCount++;
 
         uiManager.UpdateTurnUI(turnCount);
+        
+        if (!isPaused && !isAutoBattle)
+        {
+            Time.timeScale = 1f;
+            uiManager.UpdateSpeedUI(1f);
+        }
 
         // 타이머 시작
         battleTimer.StartTimer();
@@ -494,6 +564,12 @@ public class BattleManager : MonoBehaviour
     public void RemoveUnit(Unit unit)
     {
         int slotIdx = unit.GetSlotIndex();
+
+        // 죽으면 발판 색 초기화
+        if (unit.transform.parent != null && unit.transform.parent.parent != null)
+        {
+            UpdateSlotColor(unit.transform.parent.parent, null);
+        }
 
         if (unit.data.isEnemy)
         {
@@ -706,7 +782,7 @@ public class BattleManager : MonoBehaviour
         else if (mySlot < 6) // [중열] 다중 편광막
         {
             // 10%의 적당한 내구도 / 횟수 3회 (범위기 및 일반 공격 방어)
-            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.1f);
+            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.3f);
             if (target != null)
             {
                 target.AddShield(3, shieldHP);
@@ -716,7 +792,7 @@ public class BattleManager : MonoBehaviour
         else // [후열] 안개 장막
         {
             // 5%의 낮은 내구도 / 횟수 5회 (연타 및 짤딜 방어)
-            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.05f);
+            int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.1f);
             Dictionary<int, Unit> allies = attacker.data.isEnemy ? enemySlot : playerSlot;
             foreach (var ally in allies.Values)
             {

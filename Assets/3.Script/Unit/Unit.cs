@@ -11,10 +11,14 @@ public class Unit : MonoBehaviour
 
     [Header("UI Reference")]
     [SerializeField] protected Slider hpBar;
-    [SerializeField] protected GameObject shield;
-    [SerializeField] protected TMP_Text shieldText;
     [SerializeField] protected GameObject damageBubble;
     [SerializeField] protected TMP_Text damageText;
+
+    [Header("Shield")]
+    [SerializeField] protected GameObject shieldIcon;
+    [SerializeField] protected TMP_Text shieldText;
+    [SerializeField] protected GameObject attackIcon;
+    [SerializeField] protected TMP_Text AtkText;
 
     [Header("Heal Effect")]
     [SerializeField] protected GameObject leafPrefab;
@@ -33,6 +37,9 @@ public class Unit : MonoBehaviour
     [Header("Shield System")]
     public int shieldCount = 0; // 쉴드 횟수
     public int shieldAmount = 0; // 방어 가능한 데미지 상한선 (내구도)
+
+    [Header("Bonus Stats")]
+    [SerializeField] private int bonusAttackFromShield = 0;
 
     protected virtual void Awake()
     {
@@ -63,7 +70,7 @@ public class Unit : MonoBehaviour
 
     public int GetCurrentAttack()
     {
-        return currentAttack;
+        return currentAttack + bonusAttackFromShield;
     }
 
     public int GetCurrentHP()
@@ -125,6 +132,7 @@ public class Unit : MonoBehaviour
             if (shieldAmount >= damage)
             {
                 shieldCount--;
+                UpdateShieldUI();
                 //TODO : Blocked 추가
                 Debug.Log("쉴드가 공격을 완전히 흡수했습니다.");
                 return; // 데미지 0
@@ -133,6 +141,7 @@ public class Unit : MonoBehaviour
             {
                 directDamage = damage - shieldAmount;
                 shieldCount--;
+                UpdateShieldUI();
             }
 
         }
@@ -207,27 +216,73 @@ public class Unit : MonoBehaviour
 
     public void AddShield(int count, int amount)
     {
-        this.shieldCount = count;
-        this.shieldAmount = amount;
+        if (shieldAmount > 0)
+        {
+            //버프가 있는 상태에서 버프를 또 걸면 공격력이 오르게 함.
+            float bonusRate = 0.1f;
+            int addedAtk = Mathf.RoundToInt(amount * bonusRate);
 
-        shield.gameObject.SetActive(true);
-        shield.GetComponentInChildren<TMP_Text>().text = count.ToString();
+            bonusAttackFromShield += addedAtk; // 보너스 누적
 
-        shieldText.gameObject.SetActive(true);
-        shieldText.text = amount.ToString();
+
+            // [추가] 공격력 아이콘 및 텍스트 활성화/갱신
+            if (attackIcon != null)
+            {
+                attackIcon.SetActive(true);
+                // 연출: 아이콘이 뿅 하고 커졌다 작아지는 효과 (DOTween)
+                attackIcon.transform.DOKill();
+                attackIcon.transform.localScale = Vector3.one;
+                attackIcon.transform.DOPunchScale(Vector3.one * 0.3f, 0.4f);
+            }
+
+            if (AtkText != null)
+            {
+                AtkText.text = $"+{bonusAttackFromShield}"; // 누적된 보너스 표시
+            }
+
+        }
+
+        if (amount > this.shieldAmount || this.shieldCount <= 0)
+        {
+            this.shieldCount = count;
+            this.shieldAmount = amount;
+        }
+
+        if (shieldIcon != null) shieldIcon.SetActive(true);
+        if (shieldText != null)
+        {
+            shieldText.gameObject.SetActive(true);
+            shieldText.text = this.shieldAmount.ToString();
+        }
+
+        UpdateShieldUI();
 
         Debug.Log($"{data.unitName}에게 {count}회(내구도 {amount}) 쉴드 생성!");
+
+
     }
 
     private void UpdateShieldUI()
     {
         if (shieldCount <= 0)
         {
-            shield.SetActive(false);
+            shieldIcon.SetActive(false);
+            shieldText.gameObject.SetActive(false);
+
+            // [추가] 쉴드가 깨지면 공격력 UI도 함께 숨깁니다.
+            if (attackIcon != null) attackIcon.SetActive(false);
+
+            // 쉴드가 깨지면 공격력 보너스도 증발
+            if (bonusAttackFromShield > 0)
+            {
+                Debug.Log($"{data.unitName}의 쉴드가 사라져 추가 공격력이 환원되었습니다.");
+                bonusAttackFromShield = 0;
+            }
             return;
+
         }
         // shieldText나 개수 텍스트 갱신 로직
-        shield.GetComponentInChildren<TMP_Text>().text = shieldCount.ToString();
+        shieldIcon.GetComponentInChildren<TMP_Text>().text = shieldCount.ToString();
     }
 
     protected virtual void ShowDamagePopup(int amount)
@@ -262,4 +317,7 @@ public class Unit : MonoBehaviour
         }
         return tags;
     }
+
+
+
 }

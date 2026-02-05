@@ -22,7 +22,11 @@ public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
             Debug.Log("지금은 유닛을 옮길 수 없는 시간입니다!");
             return;
         }
-            _originalSlot = transform.parent;    // 현재 부모를 기억
+        
+        _originalSlot = transform.parent;    // 현재 부모를 기억
+
+        BattleManager.instance.UpdateSlotColor(_originalSlot.parent, null);
+
         transform.SetParent(transform.root); // 일단 가려지지 않게 최상위 부모로 옮기기
         _canvasGroup.blocksRaycasts = false; // 마우스가 캐릭터를 통과해 슬롯을 감지
     }
@@ -45,12 +49,19 @@ public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         {
             ReturnToOriginalSlot();
         }
+
+        Unit myUnit = GetComponent<Unit>();
+        BattleManager.instance.UpdateSlotColor(transform.parent.parent, myUnit);
     }
 
      public void ReturnToOriginalSlot()
     {
         transform.SetParent(_originalSlot);
         transform.localPosition = Vector3.zero;
+
+        // 돌아왔을 때도 색깔을 다시 칠해줌
+        Unit myUnit = GetComponent<Unit>();
+        BattleManager.instance.UpdateSlotColor(_originalSlot.parent, myUnit);
     }
 
     public Transform GetOriginalSlot()
