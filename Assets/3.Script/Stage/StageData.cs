@@ -1,16 +1,9 @@
-using UnityEngine;
-
-public class StageData : MonoBehaviour
+[System.Serializable]
+public class StageData
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public string stageID;
+    public int worldIndex;
+    public float posX;
+    public float posY;
+    public string prevStageId; 
 }
