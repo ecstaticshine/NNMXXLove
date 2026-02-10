@@ -34,7 +34,7 @@ public class GlobalUIManager : MonoBehaviour
     [Header("BackButton")]
     [SerializeField] private GameObject BackButton; // 뒤로가기 버튼 오브젝트
 
-    private SceneState currentState = SceneState.Home;
+    private SceneState currentState = SceneState.Adventure;
     private Stack<SceneState> stateStack = new Stack<SceneState>(); // 씬 되돌아가기 위한 스택
 
     private void Awake()
@@ -42,11 +42,11 @@ public class GlobalUIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -64,15 +64,21 @@ public class GlobalUIManager : MonoBehaviour
 
     public void ChangeState(SceneState newState, bool isBack = false)
     {
-        if (!isBack && currentState != SceneState.Home)
+        if (!isBack && currentState != newState)
         {
             stateStack.Push(currentState);
         }
 
         currentState = newState;
 
+        bool isMainTab = (currentState == SceneState.Home ||
+                      currentState == SceneState.CharacterList ||
+                      currentState == SceneState.StorySelect ||
+                      currentState == SceneState.Adventure ||
+                      currentState == SceneState.Gacha);
+
         // 1. 뒤로가기 버튼 활성화
-        BackButton.SetActive(currentState != SceneState.Home);
+        BackButton.SetActive(!isMainTab && stateStack.Count > 0);
 
         // 2. 상태에 따른 실제 씬 전환 로직 추가
         switch (currentState)
@@ -80,8 +86,8 @@ public class GlobalUIManager : MonoBehaviour
             case SceneState.Home:
                 SceneManager.LoadScene("HomeScene");
                 break;
-            case SceneState.StageSelect:
-                SceneManager.LoadScene("StageSelectScene"); // 월드맵 씬으로 이동
+            case SceneState.Adventure:
+                SceneManager.LoadScene("AdventureScene"); // 월드맵 씬으로 이동
                 break;
             case SceneState.Gacha:
                 SceneManager.LoadScene("GachaScene");
@@ -92,7 +98,7 @@ public class GlobalUIManager : MonoBehaviour
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");
                 break;
-                // ... 필요한 만큼 추가 ...
+
         }
 
         // 3. UI 업데이트 호출 (월드 버튼 노출 등)
@@ -106,6 +112,7 @@ public class GlobalUIManager : MonoBehaviour
         {
             // 스택에서 이전 상태를 꺼내서 돌아감
             SceneState previousState = stateStack.Pop();
+            Debug.Log(previousState);
             ChangeState(previousState, true);
         }
         else
@@ -123,10 +130,16 @@ public class GlobalUIManager : MonoBehaviour
 
     public void OnTabMenuButtonClicked(int targetState)
     {
+        SceneState target = (SceneState)targetState;
+        if (currentState == target)
+        {
+            return;
+        }
+
         // 1. 하단 탭으로 이동할 경우 기존의 스택 클리어
         stateStack.Clear();
 
-        SceneState target = (SceneState)targetState;
+
         // 2. 뒤로가기 버튼 숨기기
         ChangeState(target, true); // true를 넣어서 현재 상태가 스택에 쌓이지 않게 합니다.
     }

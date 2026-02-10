@@ -3,25 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StageManager : MonoBehaviour
 {
     [Header("UI References")]
     public Image backgroundImage;
+
+    [Header("Node")]
     public GameObject[] nodeObjects;
-    public Text worldNameText;
+    public GameObject linePrefab;
 
     [Header("Data Assets")]
     public TextAsset worldCsv;          // WorldData.csv
     public TextAsset stageCsv;          // StageData.csv
     public TextAsset localizationCsv;   // 현재 언어에 맞는 csv
 
+    [Header("Panels")]
+    public GameObject mainPanel;        // 메인 끄게
+    public GameObject stageSelectPanel; // 스테이지 선택창 키게
+    public GameObject stagePanel;       // 스테이지 상세창
+
     private List<Dictionary<string, string>> worldDataList;
     private List<Dictionary<string, string>> stageDataList;
     private Dictionary<string, string> localizationMap;
 
+    public static StageManager Instance = null;
+
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         worldDataList = ParseCSV(worldCsv);
         stageDataList = ParseCSV(stageCsv);
         LoadLocalization();
@@ -38,29 +57,44 @@ public class StageManager : MonoBehaviour
         // 1.  해당 월드의 정보를 확인하기 위해서 worldInfo 선언
         Dictionary<string, string> worldInfo = worldDataList[worldIndex];
 
+
+        Debug.Log($"{worldInfo["Background"]}");
         // 2. 해당 월드의 배경화면 교체
         backgroundImage.sprite = Resources.Load<Sprite>($"Backgrounds/{worldInfo["Background"]}");
 
         // 3. 월드 이름 다국어 적용
         string nameKey = worldInfo["WorldNameKey"];
-        worldNameText.text = localizationMap.ContainsKey(nameKey) ? localizationMap[nameKey] : nameKey;
+        string worldName = localizationMap.ContainsKey(nameKey) ? localizationMap[nameKey] : nameKey;
+        GlobalUIManager.Instance.SetWorldName(worldName);
+
 
         // 4. StartRow ~ EndRow를 이용한 노드 업데이트
         int startRow = int.Parse(worldInfo["StartRow"]);
         int endRow = int.Parse(worldInfo["EndRow"]);
         int nodeIdx = 0;
 
+
         for (int i = startRow; i<= endRow; i++)
         {
             if (nodeIdx >= nodeObjects.Length) break;
 
             Dictionary<string, string> stageInfo = stageDataList[i];
-            float px = float.Parse(stageInfo["PosX"]);
-            float py = float.Parse(stageInfo["PosY"]);
+            int id = int.Parse(stageInfo["StageID"]);
+            int preId = int.Parse(stageInfo["PrevStageID"]);
+            float posX = float.Parse(stageInfo["NodePosX"]);
+            float posY = float.Parse(stageInfo["NodePosY"]);
+            bool preCleared = true;
 
-            nodeObjects[nodeIdx].SetActive(true);
-            nodeObjects[nodeIdx].GetComponent<RectTransform>().anchoredPosition = new Vector2(px, py);
+            StageNode node = nodeObjects[nodeIdx].GetComponent<StageNode>();
+            node.Setup(worldIndex + 1, id, preId, posX, posY, preCleared); // 인덱스 0부터 시작해서 +1 함.
 
+            if(preId != -1)
+            {
+                Vector2 startPos = nodeObjects[nodeIdx - 1].GetComponent<StageNode>().nodePosition;
+                Vector2 endPos = node.nodePosition;
+
+                DrawLineNodeToNode(startPos, endPos);
+            }
 
             nodeIdx++;
         }
@@ -100,4 +134,26 @@ public class StageManager : MonoBehaviour
             if (split.Length >= 2) localizationMap[split[0]] = split[1];
         }
     }
+
+    public void GotoMainAdventure()
+    {
+        mainPanel.SetActive(false);
+        stageSelectPanel.SetActive(true);
+        GlobalUIManager.Instance.ChangeState(SceneState.StageSelect);
+    }
+
+    private void DrawLineNodeToNode(Vector2 start, Vector2 end)
+    {
+        GameObject line = Instantiate(linePrefab, stageSelectPanel.transform.GetChild(0).transform);
+        line.transform.SetAsFirstSibling(); // 노드 뒤로 보내기
+        RectTransform rt = line.GetComponent<RectTransform>();
+        Vector2 dir = end - start;
+        float distance = dir.magnitude;
+
+        rt.sizeDelta = new Vector2(distance, 5f); // 두께 5
+        rt.anchoredPosition = start + dir * 0.5f;
+        rt.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+    }
+
+
 }
