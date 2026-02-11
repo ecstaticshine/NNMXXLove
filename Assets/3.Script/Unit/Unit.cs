@@ -102,7 +102,9 @@ public class Unit : MonoBehaviour
     {
         if (hpBar != null)
         {
-            hpBar.DOValue(currentHp, 0.5f).SetEase(Ease.OutQuad);
+            hpBar.DOValue(currentHp, 0.5f)
+                .SetEase(Ease.OutQuad)
+                .SetLink(hpBar.gameObject);
         }
     }
     public void Heal(int healAmount)
@@ -120,7 +122,7 @@ public class Unit : MonoBehaviour
         UpdateHPUI();
 
         // Èú ¹Þ´Â ¿¬Ãâ
-        transform.DOScale(1.05f, 0.15f).SetLoops(2, LoopType.Yoyo);
+        transform.DOScale(1.05f, 0.15f).SetLoops(2, LoopType.Yoyo).SetLink(gameObject);
     }
 
     public void TakeDamage(int damage)
@@ -192,7 +194,7 @@ public class Unit : MonoBehaviour
         leafPrefab.transform.localScale = Vector3.one * 0.5f;
 
         // 2. DOTween Sequence ½ÃÀÛ
-        Sequence healSeq = DOTween.Sequence();
+        Sequence healSeq = DOTween.Sequence().SetLink(gameObject); ;
 
         // A. ³ª¹µÀÙ ¿¬Ãâ: ÁÂ¿ì·Î Èçµé¸®¸ç(»ì¶û»ì¶û) ³»·Á¿È
         healSeq.Append(leafPrefab.transform.DOLocalMoveY(120, 1.0f).SetEase(Ease.OutQuad)) // ÇÏ°­
@@ -297,13 +299,14 @@ public class Unit : MonoBehaviour
         damageBubble.gameObject.SetActive(true); // È°¼ºÈ­
 
         //¿¬Ãâ
-        damageBubble.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack);
-        damageBubble.transform.DOLocalMoveY(100f, 0.6f).SetRelative().OnComplete(() =>
+        damageBubble.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack).SetLink(damageBubble);
+        damageBubble.transform.DOLocalMoveY(100f, 0.6f).SetRelative().SetLink(damageBubble).OnComplete(() =>
         {
             // »ç¶óÁú ¶§ »ìÂ¦ ÀÛ¾ÆÁö¸é¼­ »ç¶óÁö¸é ´õ ¿¹»µ¿ä
             damageBubble.transform.DOScale(0f, 0.2f).OnComplete(() => {
                 damageBubble.SetActive(false);
-            });
+            })
+            .SetLink(damageBubble);
         });
     }
 
@@ -318,6 +321,9 @@ public class Unit : MonoBehaviour
         return tags;
     }
 
-
+    protected virtual void OnDestroy()
+    {
+        transform.DOKill();
+    }
 
 }

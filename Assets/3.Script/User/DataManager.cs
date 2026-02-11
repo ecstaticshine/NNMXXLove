@@ -7,18 +7,19 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
     public UserData userData;
-
+    public int selectedStageID; //현재 진행중인 스테이지 (임시 저장)
+   
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
             LoadData();
         }
         else
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -40,4 +41,7 @@ public class DataManager : MonoBehaviour
         string json = PlayerPrefs.GetString("SaveFile", "{}");
         userData = JsonUtility.FromJson<UserData>(json);
     }
+
+
+
 }

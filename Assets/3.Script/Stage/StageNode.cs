@@ -43,13 +43,14 @@ public class StageNode : MonoBehaviour
             nodeImage.color = Color.gray; // 락 안 풀린 것처럼 보이게
             nodeButton.interactable = false;
         }
+        //셋업 시, 자기의 번호가 붙은 스테이지 상세페이지를 클릭할 수 있는 리스너를 추가
+        nodeButton.onClick.RemoveAllListeners();
+        nodeButton.onClick.AddListener(OnclickStageNode);
     }
 
     public void OnclickStageNode()
     {
-        Debug.Log($"{stageID}번 스테이지 진입!");
-
-        // 스테이지 UI를 표시하는 곳을 설정
-        bool isLeft = nodePosition.x < 0;
+        Debug.Log($"[StageNode] 스테이지 {stageID} 클릭됨. 매니저에게 상세창 요청 중...");
+        StageManager.Instance.OpenStageDetail(stageID);
     }
 }

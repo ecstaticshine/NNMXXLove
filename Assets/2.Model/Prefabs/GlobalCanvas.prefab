@@ -1820,6 +1820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730d8712fb0ad6347beee6d409f82a0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalUIManager
+  globalUI: {fileID: 6674319178450966735}
   worldButton: {fileID: 6499123298403404446}
   worldNameText: {fileID: 3211808630551314994}
   BackButton: {fileID: 5964327689586158863}

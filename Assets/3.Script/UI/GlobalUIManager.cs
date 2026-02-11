@@ -27,6 +27,9 @@ public class GlobalUIManager : MonoBehaviour
 {
     public static GlobalUIManager Instance;
 
+    [Header("Global UI")]
+    [SerializeField] private GameObject globalUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
+
     [Header("World")]
     [SerializeField] private GameObject worldButton;
     [SerializeField] private TMP_Text worldNameText;
@@ -142,5 +145,10 @@ public class GlobalUIManager : MonoBehaviour
 
         // 2. 뒤로가기 버튼 숨기기
         ChangeState(target, true); // true를 넣어서 현재 상태가 스택에 쌓이지 않게 합니다.
+    }
+
+    public void SetBattleLayout(bool isActive)
+    {
+        globalUI.SetActive(isActive);
     }
 }

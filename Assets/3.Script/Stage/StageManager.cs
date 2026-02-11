@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
@@ -22,11 +23,16 @@ public class StageManager : MonoBehaviour
     [Header("Panels")]
     public GameObject mainPanel;        // 메인 끄게
     public GameObject stageSelectPanel; // 스테이지 선택창 키게
-    public GameObject stagePanel;       // 스테이지 상세창
+    public GameObject stageDetailPanel; // 스테이지 상세창
+    public TMP_Text titleText;          // 패널의 제목
 
     private List<Dictionary<string, string>> worldDataList;
     private List<Dictionary<string, string>> stageDataList;
     private Dictionary<string, string> localizationMap;
+
+    private string currentWorldName; // 현재 속한 월드명
+    private int currentWorldIndex;  // 현재 속한 월드 번호
+    private int currentStageIndex; // 현재 선택한 스테이지 번호
 
     public static StageManager Instance = null;
 
@@ -54,6 +60,8 @@ public class StageManager : MonoBehaviour
     // Load World
     public void LoadWorld(int worldIndex)
     {
+        currentWorldIndex = worldIndex;
+
         // 1.  해당 월드의 정보를 확인하기 위해서 worldInfo 선언
         Dictionary<string, string> worldInfo = worldDataList[worldIndex];
 
@@ -64,8 +72,9 @@ public class StageManager : MonoBehaviour
 
         // 3. 월드 이름 다국어 적용
         string nameKey = worldInfo["WorldNameKey"];
-        string worldName = localizationMap.ContainsKey(nameKey) ? localizationMap[nameKey] : nameKey;
-        GlobalUIManager.Instance.SetWorldName(worldName);
+        currentWorldName = localizationMap.ContainsKey(nameKey) ? localizationMap[nameKey] : nameKey;
+        Debug.Log(currentWorldName);
+        GlobalUIManager.Instance.SetWorldName(currentWorldName);
 
 
         // 4. StartRow ~ EndRow를 이용한 노드 업데이트
@@ -155,5 +164,29 @@ public class StageManager : MonoBehaviour
         rt.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
     }
 
+    public void OpenStageDetail(int id)
+    {
+        Dictionary<string, string> stageInfo = stageDataList.Find(x => int.Parse(x["StageID"]) == id);
 
+        if (stageInfo != null)
+        {
+            titleText.text = $"{currentWorldName} {currentWorldIndex + 1}-{stageInfo["StageID"]}";
+        }
+        currentStageIndex = id;
+        stageDetailPanel.SetActive(true);
+    }
+
+    public void OnCancelButtonOnStageDetail()
+    {
+        stageDetailPanel.SetActive(false);
+    }
+
+    public void OnClickStartBattle()
+    {
+        DataManager.Instance.selectedStageID = currentStageIndex;
+
+        GlobalUIManager.Instance.SetBattleLayout(false);
+
+        SceneManager.LoadScene("BattleScene");
+    }
 }

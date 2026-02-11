@@ -25,12 +25,15 @@ public class UnitAnimationController : MonoBehaviour
     {
         _image = GetComponent<Image>();
         _initialLocalPos = transform.localPosition;
-        _data = GetComponentInParent<Unit>().data;
+        Unit unit = GetComponentInParent<Unit>();
+        if (unit != null) _data = unit.data;
 
     }
 
     public void SetState(UnitAnimState newState)
     {
+        if (this == null) return;
+
         StopCurrentAnim();
 
         switch (newState)
@@ -66,7 +69,8 @@ public class UnitAnimationController : MonoBehaviour
  
         _idleTween = transform.DOLocalMoveY(_initialLocalPos.y + 15f, 1.2f)
             .SetEase(Ease.InOutSine)
-            .SetLoops(-1, LoopType.Yoyo);
+            .SetLoops(-1, LoopType.Yoyo)
+            .SetLink(gameObject);
     }
 
     public void PlayHit()
@@ -74,9 +78,12 @@ public class UnitAnimationController : MonoBehaviour
         if (_data.unitTakeDamageSD) _image.sprite = _data.unitTakeDamageSD;
 
         transform.DOShakePosition(0.4f, strength: 20f);
-        _image.DOColor(Color.red, 0.1f).OnComplete(() => _image.DOColor(Color.white, 0.2f));
+        _image.DOColor(Color.red, 0.1f)
+            .SetLink(gameObject)
+            .OnComplete(() => _image.DOColor(Color.white, 0.2f));
 
-        DOVirtual.DelayedCall(0.5f, () => SetState(UnitAnimState.Idle));
+        DOVirtual.DelayedCall(0.5f, () => SetState(UnitAnimState.Idle))
+            .SetLink(gameObject);
     }
 
     private void PlayAttack()
@@ -89,9 +96,17 @@ public class UnitAnimationController : MonoBehaviour
         // 이동 거리 1.2f -> 150f / 점프 높이 0.4f -> 50f 정도로 수정!
         transform.DOLocalJump(_initialLocalPos + new Vector3(dir * 150f, 0, 0), 50f, 1, 0.4f)
             .SetEase(Ease.InBack)
+            .SetLink(gameObject)
             .OnComplete(() => {
-                transform.DOLocalMove(_initialLocalPos, 0.2f);
-                DOVirtual.DelayedCall(0.2f, () => SetState(UnitAnimState.Idle));
+                transform.DOLocalMove(_initialLocalPos, 0.2f).SetLink(gameObject);
+                DOVirtual.DelayedCall(0.2f, () => SetState(UnitAnimState.Idle))
+                .SetLink(gameObject);
             });
+    }
+
+    private void OnDestroy()
+    {
+        _idleTween?.Kill();
+        transform.DOKill();
     }
 }
