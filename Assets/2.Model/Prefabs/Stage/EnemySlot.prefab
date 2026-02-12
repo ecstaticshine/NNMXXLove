@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 5524771200751946022}
   - component: {fileID: 7392705260878169396}
   - component: {fileID: 3299167514458182242}
+  - component: {fileID: 8849699332218609423}
   m_Layer: 5
-  m_Name: Boss
+  m_Name: BossMark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,6 +76,29 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!223 &8849699332218609423
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169483829591493613}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &2613618013962052434
 GameObject:
   m_ObjectHideFlags: 0
@@ -100,7 +124,7 @@ RectTransform:
   m_GameObject: {fileID: 2613618013962052434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3592334978336969764}
@@ -299,4 +323,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySlot
   portrait: {fileID: 6797293968730561809}
   levelText: {fileID: 0}
-  bossMark: {fileID: 0}
+  bossMark: {fileID: 169483829591493613}
