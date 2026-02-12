@@ -1134,6 +1134,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382348445}
   m_CullTransparentMesh: 1
+--- !u!224 &402093180 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3633871161462655283, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
+  m_PrefabInstance: {fileID: 6302596789547048307}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &450280006
 GameObject:
   m_ObjectHideFlags: 0
@@ -2239,6 +2244,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9010057967534201650, guid: 7ad62edbad8d12644a44312314e44cdb, type: 3}
   m_PrefabInstance: {fileID: 822705225}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &1049219688 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6676503061764657445, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
+  m_PrefabInstance: {fileID: 6302596789547048307}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1095684925
 GameObject:
   m_ObjectHideFlags: 0
@@ -3082,9 +3092,9 @@ MonoBehaviour:
   enemyLeftButton: {fileID: 1817862299}
   enemyRightButton: {fileID: 236995614}
   enemySection: {fileID: 724250014}
-  rewardContent: {fileID: 0}
-  dropContent: {fileID: 0}
-  itemSlotPrefab: {fileID: 0}
+  rewardContent: {fileID: 402093180}
+  dropContent: {fileID: 1049219688}
+  itemSlotPrefab: {fileID: 2868332210390915000, guid: 60946491a5c80774ba919447fd9501fd, type: 3}
   dropLeftBtn: {fileID: 1904524936}
   dropRightBtn: {fileID: 236995612}
   rewardLeftBtn: {fileID: 261681958}
@@ -4169,6 +4179,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5692230507912057234, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
+      propertyPath: m_Name
+      value: DropItemArea
+      objectReference: {fileID: 0}
     - target: {fileID: 5834644907338565916, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4324,6 +4338,10 @@ PrefabInstance:
     - target: {fileID: 6676503061764657445, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6757848079950521985, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
+      propertyPath: m_Name
+      value: EnemySlot
       objectReference: {fileID: 0}
     - target: {fileID: 6807778303493479239, guid: 7fe6a0ff189d12943993187ceb9e5771, type: 3}
       propertyPath: m_AnchorMax.y
