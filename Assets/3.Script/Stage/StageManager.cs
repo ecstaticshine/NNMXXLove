@@ -14,11 +14,7 @@ public class StageManager : MonoBehaviour
     [Header("Node")]
     public GameObject[] nodeObjects;
     public GameObject linePrefab;
-
-    [Header("Data Assets")]
-    public TextAsset worldCsv;          // WorldData.csv
-    public TextAsset stageCsv;          // StageData.csv
-    public TextAsset localizationCsv;   // 현재 언어에 맞는 csv
+    private List<GameObject> activeLines = new List<GameObject>(); // 노드 라인
 
     [Header("Panels")]
     public GameObject mainPanel;        // 메인 끄게
@@ -26,13 +22,24 @@ public class StageManager : MonoBehaviour
     public GameObject stageDetailPanel; // 스테이지 상세창
     public TMP_Text titleText;          // 패널의 제목
 
-    private List<Dictionary<string, string>> worldDataList;
-    private List<Dictionary<string, string>> stageDataList;
-    private Dictionary<string, string> localizationMap;
-
     private string currentWorldName; // 현재 속한 월드명
     private int currentWorldIndex;  // 현재 속한 월드 번호
     private int currentStageIndex; // 현재 선택한 스테이지 번호
+
+    [Header("StageDetailPopUp")]
+    public TMP_Text staminaText;         // 스테미나 표시용
+    public Transform enemyContent;       // 적 슬롯 부모
+    public GameObject enemySlotPrefab;   // 적 슬롯 프리팹
+    public Button enemyLeftButton, enemyRightButton;    // 적이 5마리가 넘어가면 표시
+    public ScrollRect enemySection;
+
+    [Header("Reward & Drop UI")]
+    public Transform rewardContent;      // '보상' 줄의 Content
+    public Transform dropContent;        // '획득' 줄의 Content
+    public GameObject itemSlotPrefab;    // 보석이나 재료가 들어갈 슬롯
+    public GameObject dropLeftBtn, dropRightBtn;        // 반복 클리어용
+    public GameObject rewardLeftBtn, rewardRightBtn;    // 첫 클리어용
+
 
     public static StageManager Instance = null;
 
@@ -47,14 +54,11 @@ public class StageManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        worldDataList = ParseCSV(worldCsv);
-        stageDataList = ParseCSV(stageCsv);
-        LoadLocalization();
     }
 
     void Start()
     {
-        LoadWorld(0);
+        LoadWorld(DataManager.Instance.currentWorldIndex);
     }
 
     // Load World
@@ -62,43 +66,66 @@ public class StageManager : MonoBehaviour
     {
         currentWorldIndex = worldIndex;
 
-        // 1.  해당 월드의 정보를 확인하기 위해서 worldInfo 선언
-        Dictionary<string, string> worldInfo = worldDataList[worldIndex];
+        // 1. 해당 월드의 정보를 확인하기 위해서 worldInfo 선언
+        DataManager.Instance.LoadGameDataByWorld(worldIndex);
+
+        // 2. 해당 월드 데이터 가지고 오기
+        WorldDataInfo info = DataManager.Instance.GetCurrentWorldInfo();
+        if (info == null) return;
+
+        Debug.Log(info.background);
+
+        // 3.  배경 이미지 교체
+        backgroundImage.sprite = Resources.Load<Sprite>($"Backgrounds/{info.background}");
+
+        // 4. 월드 이름 다국어 적용
+        currentWorldName = DataManager.Instance.GetLocalizedText(info.worldNameKey);
+
+        // UI에 월드 이름 표시 (GlobalUIManager 등 활용)
+        if (GlobalUIManager.Instance != null)
+            GlobalUIManager.Instance.SetWorldName(currentWorldName);
+
+        // 5. 월드 노드 업데이트
+        UpdateStageNodes();
+
+        
+    }
+
+    // 월드 바꾸면 노드 끼리 연결한 라인 변경
+    private void ClearActiveLines()
+    {
+        foreach (GameObject line in activeLines)
+        {
+            if (line != null) Destroy(line);
+        }
+        activeLines.Clear();
+    }
 
 
-        Debug.Log($"{worldInfo["Background"]}");
-        // 2. 해당 월드의 배경화면 교체
-        backgroundImage.sprite = Resources.Load<Sprite>($"Backgrounds/{worldInfo["Background"]}");
+    private void UpdateStageNodes()
+    {
+        //라인 초기화
+        ClearActiveLines();
 
-        // 3. 월드 이름 다국어 적용
-        string nameKey = worldInfo["WorldNameKey"];
-        currentWorldName = localizationMap.ContainsKey(nameKey) ? localizationMap[nameKey] : nameKey;
-        Debug.Log(currentWorldName);
-        GlobalUIManager.Instance.SetWorldName(currentWorldName);
-
-
-        // 4. StartRow ~ EndRow를 이용한 노드 업데이트
-        int startRow = int.Parse(worldInfo["StartRow"]);
-        int endRow = int.Parse(worldInfo["EndRow"]);
         int nodeIdx = 0;
+        var stageList = DataManager.Instance.stageList;
 
-
-        for (int i = startRow; i<= endRow; i++)
+        foreach (StageDetailData stage in stageList)
         {
             if (nodeIdx >= nodeObjects.Length) break;
 
-            Dictionary<string, string> stageInfo = stageDataList[i];
-            int id = int.Parse(stageInfo["StageID"]);
-            int preId = int.Parse(stageInfo["PrevStageID"]);
-            float posX = float.Parse(stageInfo["NodePosX"]);
-            float posY = float.Parse(stageInfo["NodePosY"]);
-            bool preCleared = true;
+            GameObject nodeObj = nodeObjects[nodeIdx];
+            nodeObj.SetActive(true);
+            StageNode node = nodeObj.GetComponent<StageNode>();
 
-            StageNode node = nodeObjects[nodeIdx].GetComponent<StageNode>();
-            node.Setup(worldIndex + 1, id, preId, posX, posY, preCleared); // 인덱스 0부터 시작해서 +1 함.
+            bool isUnlocked = DataManager.Instance.IsStageUnlocked(stage.stageID, stage.prevStageID);
 
-            if(preId != -1)
+            //노드에 정보 넣어주기
+            node.Setup(stage, isUnlocked);
+
+            if (stage.prevStageID != -1 && nodeIdx > 0)
             {
+                // 바로 직전 노드의 위치와 현재 노드의 위치를 연결
                 Vector2 startPos = nodeObjects[nodeIdx - 1].GetComponent<StageNode>().nodePosition;
                 Vector2 endPos = node.nodePosition;
 
@@ -133,17 +160,6 @@ public class StageManager : MonoBehaviour
         return list;
     }
 
-    private void LoadLocalization()
-    {
-        localizationMap = new Dictionary<string, string>();
-        string[] lines = localizationCsv.text.Split('\n');
-        foreach (string line in lines)
-        {
-            string[] split = line.Trim().Split(',');
-            if (split.Length >= 2) localizationMap[split[0]] = split[1];
-        }
-    }
-
     public void GotoMainAdventure()
     {
         mainPanel.SetActive(false);
@@ -155,6 +171,9 @@ public class StageManager : MonoBehaviour
     {
         GameObject line = Instantiate(linePrefab, stageSelectPanel.transform.GetChild(0).transform);
         line.transform.SetAsFirstSibling(); // 노드 뒤로 보내기
+
+        activeLines.Add(line);// 월드변경 시, 지우기 위해 저장
+
         RectTransform rt = line.GetComponent<RectTransform>();
         Vector2 dir = end - start;
         float distance = dir.magnitude;
@@ -166,16 +185,32 @@ public class StageManager : MonoBehaviour
 
     public void OpenStageDetail(int id)
     {
-        Dictionary<string, string> stageInfo = stageDataList.Find(x => int.Parse(x["StageID"]) == id);
+        // DataManager에서 해당 스테이지 정보 가지고 오기
+        StageDetailData detail = DataManager.Instance.GetStageDetail(id);
 
-        if (stageInfo != null)
+        if (detail != null)
         {
-            titleText.text = $"{currentWorldName} {currentWorldIndex + 1}-{stageInfo["StageID"]}";
-        }
-        currentStageIndex = id;
-        stageDetailPanel.SetActive(true);
-    }
+            currentStageIndex = id;
 
+            // 1. 제목 설정 (id를 직접 쓰는 대신 detail.stageID 사용)
+            titleText.text = $"{currentWorldName} {currentWorldIndex + 1}-{detail.stageID}";
+
+            // 2. 적 목록 갱신
+            RefreshEnemyUI(detail.enemies);
+
+            // 보상(첫클리어) 갱신
+            RefreshFirstRewardUI(detail.firstRewards);
+
+            // 획득(일반드롭) 갱신
+            RefreshDropItemUI(detail.dropItems);
+
+            // 5. 스테미나 정보
+            if (staminaText != null)
+                staminaText.text = detail.staminaCost.ToString();
+
+            stageDetailPanel.SetActive(true);
+        }
+    }
     public void OnCancelButtonOnStageDetail()
     {
         stageDetailPanel.SetActive(false);
@@ -188,5 +223,78 @@ public class StageManager : MonoBehaviour
         GlobalUIManager.Instance.SetBattleLayout(false);
 
         SceneManager.LoadScene("BattleScene");
+    }
+
+    public void RefreshEnemyUI(List<StageEnemyInfo> enemyList)
+    {
+        // 1. 기존에 생성된 슬롯들 제거
+        foreach (Transform child in enemyContent) Destroy(child.gameObject);
+
+        if (enemyList == null) return;
+
+        foreach (var info in enemyList)
+        {
+            UnitData scriptableObjectData = DataManager.Instance.GetUnitData(info.UnitID);
+            if (scriptableObjectData != null)
+            {
+                GameObject slotObj = Instantiate(enemySlotPrefab, enemyContent);
+                slotObj.GetComponent<EnemySlot>().SetSlot(scriptableObjectData, info.level);
+            }
+        }
+
+        // 버튼 활성화 처리
+        bool isScrollable = enemyList.Count > 5;
+        enemyLeftButton.gameObject.SetActive(isScrollable);
+        enemyRightButton.gameObject.SetActive(isScrollable);
+
+        // 스크롤 위치 초기화
+        Canvas.ForceUpdateCanvases();
+        enemySection.horizontalNormalizedPosition = 0f;
+    }
+
+    public void RefreshFirstRewardUI(List<StageRewardInfo> rewards)
+    {
+        foreach (Transform child in rewardContent) Destroy(child.gameObject);
+
+        // 유저 데이터에서 이 스테이지를 이미 깼는지 확인
+        bool isCleared = DataManager.Instance.IsStageCleared(currentStageIndex);
+
+        foreach (var res in rewards)
+        {
+            GameObject slot = Instantiate(itemSlotPrefab, rewardContent);
+            ItemSlot itemSlot = slot.GetComponent<ItemSlot>();
+
+            // 아이템 SO 로드 (DataManager에 GetItemData가 있다고 가정)
+            ItemData data = DataManager.Instance.GetItemData(res.itemID);
+            itemSlot.Setup(data, res.count);
+
+            // 이미 클리어했다면 '받음' 표시 (체크표시나 어둡게)
+            //if (isCleared) itemSlot.SetAlreadyObtained(true);
+        }
+
+        // 화살표 활성화 (예: 5개 넘으면)
+        rewardLeftBtn.SetActive(rewards.Count > 5);
+        rewardRightBtn.SetActive(rewards.Count > 5);
+    }
+
+    // 2. '획득' (반복 드롭 전용) 갱신
+    public void RefreshDropItemUI(List<StageRewardInfo> drops)
+    {
+        foreach (Transform child in dropContent) Destroy(child.gameObject);
+
+        foreach (var res in drops)
+        {
+            GameObject slot = Instantiate(itemSlotPrefab, dropContent);
+            ItemSlot itemSlot = slot.GetComponent<ItemSlot>();
+
+            ItemData data = DataManager.Instance.GetItemData(res.itemID);
+            itemSlot.Setup(data, res.count);
+
+            // 드롭템은 클리어 여부와 상관없이 항상 밝게 표시
+           // itemSlot.SetAlreadyObtained(false);
+        }
+
+        dropLeftBtn.SetActive(drops.Count > 5);
+        dropRightBtn.SetActive(drops.Count > 5);
     }
 }

@@ -17,40 +17,39 @@ public class StageNode : MonoBehaviour
     public Image nodeImage;
     
 
-    public void Setup(int worldIndex, int stageId, int preStageId, float posX, float posY, bool isPreStagecleared)
+    public void Setup(StageDetailData data, bool isUnlocked)
     {
-        stageID = stageId;
-        preStageID = preStageId;
-        nodePosition = new Vector2(posX, posY);
+        this.stageID = data.stageID;
+        this.nodePosition = data.nodePos;
         
         //노드 스테이지명 설정
-        nodeStageNameText.text = string.Format($"{worldIndex}-{stageID}");
+        nodeStageNameText.text = string.Format($"{data.worldIndex}-{data.stageID}");
 
         //노드 위치 설정
         GetComponent<RectTransform>().anchoredPosition = nodePosition;
 
-        // 전 스테이지 클리어 됬는지 확인
-        isUnlocked = isPreStagecleared || preStageID == -1;
+        //노드 시각적으로 상태 표시
+        UpdateVisualState(isUnlocked);
 
-        // 열렸으면
-        if (isUnlocked)
-        {
-            nodeImage.color = Color.white; // 락 풀린 것처럼 보이게
-            nodeButton.interactable = true;
-        }
-        else
-        {
-            nodeImage.color = Color.gray; // 락 안 풀린 것처럼 보이게
-            nodeButton.interactable = false;
-        }
         //셋업 시, 자기의 번호가 붙은 스테이지 상세페이지를 클릭할 수 있는 리스너를 추가
         nodeButton.onClick.RemoveAllListeners();
         nodeButton.onClick.AddListener(OnclickStageNode);
     }
 
-    public void OnclickStageNode()
+    private void UpdateVisualState(bool isUnlocked)
+    {
+        // 이미지 투명도나 색상으로 잠금 상태 표현
+        nodeImage.color = isUnlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 0.8f);
+        nodeButton.interactable = isUnlocked;
+
+        // 잠긴 노드라면 텍스트도 어둡게
+        if (nodeStageNameText != null)
+            nodeStageNameText.color = isUnlocked ? Color.white : Color.gray;
+    }
+
+        public void OnclickStageNode()
     {
         Debug.Log($"[StageNode] 스테이지 {stageID} 클릭됨. 매니저에게 상세창 요청 중...");
-        StageManager.Instance.OpenStageDetail(stageID);
+        StageManager.Instance.OpenStageDetail(this.stageID);
     }
 }
