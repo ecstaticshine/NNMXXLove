@@ -8,7 +8,6 @@ public class Character : Unit
 
     [Header("성장 데이터")]
     public int breakthroughCount = 0; // 0 ~ 7 유지
-    public int level = 1;
     private int currentSkillLevel = 1;
 
     [Header("커스텀 태그 (유저 설정)")]

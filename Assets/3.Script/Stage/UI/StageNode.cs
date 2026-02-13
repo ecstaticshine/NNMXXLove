@@ -7,8 +7,8 @@ using TMPro;
 
 public class StageNode : MonoBehaviour
 {
-    public int stageID; 
-    public int preStageID;
+    public string stageID; 
+    public string preStageID;
     public Vector2 nodePosition; // 노드 위치
     public bool isUnlocked;
 
@@ -19,11 +19,15 @@ public class StageNode : MonoBehaviour
 
     public void Setup(StageDetailData data, bool isUnlocked)
     {
-        this.stageID = data.stageID;
+        this.stageID = data.stageID;      // "W01S01"
+        this.preStageID = data.prevStageID; // "None" Or "W01S01"
         this.nodePosition = data.nodePos;
-        
+        this.isUnlocked = isUnlocked;
+
         //노드 스테이지명 설정
-        nodeStageNameText.text = string.Format($"{data.worldIndex}-{data.stageID}");
+        string worldNum = data.stageID.Substring(1, 2); // "01"
+        string stageNum = data.stageID.Substring(4, 2); // "01"
+        nodeStageNameText.text = $"{int.Parse(worldNum)}-{int.Parse(stageNum)}";
 
         //노드 위치 설정
         GetComponent<RectTransform>().anchoredPosition = nodePosition;

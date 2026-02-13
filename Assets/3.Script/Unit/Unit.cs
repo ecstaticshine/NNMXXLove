@@ -25,9 +25,12 @@ public class Unit : MonoBehaviour
     [SerializeField] protected GameObject healBubble;
     [SerializeField] protected TMP_Text healText;
 
+    [Header("Unit Stats")]
+    [SerializeField] protected int level;
     [SerializeField] protected int currentHp;
     [SerializeField] protected int currentAttack;
     [SerializeField] protected int currentSpeed;
+    [SerializeField] protected int multiplier;
     [SerializeField] protected int finalSkillMultiplier; // 최종 스킬 배율
 
     [SerializeField] protected int maxHp;   // 현재 유닛의 실제 최대 체력을 저장할 변수
@@ -54,9 +57,23 @@ public class Unit : MonoBehaviour
 
     public virtual void InitUnitStat()
     {
+        // 데이터가 없으면 리턴
+        if (data == null) return;
+
         currentHp = data.baseHp;
         currentAttack = data.baseAttack;
         currentSpeed = data.baseSpeed;
+
+        // 레벨에 따라서 몬스터도 성장하게 변경
+        // 적 캐릭터가 아닌 이상, 레어도가 없기에 일단 아군 캐릭터가 더 강하게 적용
+        float growthFactor = 1f + (level - 1) * 0.05f;
+        currentHp = Mathf.RoundToInt(currentHp * growthFactor);
+        currentAttack = Mathf.RoundToInt(currentAttack * growthFactor);
+
+        // CSV에서 가져온 Multiplier 적용
+        currentHp = Mathf.RoundToInt(currentHp * multiplier);
+
+        maxHp = currentHp;
 
         if (hpBar != null)
         {

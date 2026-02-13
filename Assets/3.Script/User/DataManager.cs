@@ -7,7 +7,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
     public UserData userData;
-    public int selectedStageID; //현재 진행중인 스테이지 (임시 저장)
+    public string selectedStageID; //현재 진행중인 스테이지 (임시 저장)
 
     // 현재 로드된 월드의 상세 정보를 담아둘 변수 (추가)
     private WorldDataInfo currentWorldInfo;
@@ -19,7 +19,7 @@ public class DataManager : MonoBehaviour
     public List<StageDetailData> stageList = new List<StageDetailData>();
 
     // 스테이지 ID로 스테이지 상세 정보 확인
-    private Dictionary<int, StageDetailData> stageDetailDict = new Dictionary<int,StageDetailData>();
+    private Dictionary<string, StageDetailData> stageDetailDict = new Dictionary<string, StageDetailData>();
     
     private Dictionary<int, UnitData> unitDataCache = new Dictionary<int, UnitData>();
     private Dictionary<int, ItemData> itemDataCache = new Dictionary<int, ItemData>();
@@ -39,6 +39,7 @@ public class DataManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
             LoadData();           // 유저 세이브 데이터 먼저
+            InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
             LoadGameDataByWorld(currentWorldIndex);   
         }
@@ -48,11 +49,11 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public bool IsStageUnlocked(int stageID, int prevStageID)
+    public bool IsStageUnlocked(string stageID, string prevStageID)
     {
-        if (prevStageID == -1) return true;
+        if (prevStageID.Equals("None")) return true;
         // 내 진행 기록에서 이전 스테이지가 클리어 되었는지 확인
-        return userData.stageHistory.Exists(x => x.stageID == prevStageID.ToString() && x.isCleared);
+        return userData.stageHistory.Exists(x => x.stageID == prevStageID && x.isCleared);
     }
 
     public void SaveData()
@@ -81,7 +82,7 @@ public class DataManager : MonoBehaviour
             ParseStageDataByWorld(worldIndex);
 
             // 적 정보 가지고 오기
-            // ParseEnemyDataByWorld(worldIndex);
+            ParseEnemyDataByWorld(worldIndex);
 
             // 스테이지 아이템 정보 가지고 오기
             // ParseItemDataByWorld(worldIndex);
@@ -148,10 +149,9 @@ public class DataManager : MonoBehaviour
             StageDetailData detail = new StageDetailData();
 
             // 2. CSV 컬럼 순서에 맞춰 데이터 주입 (StageData.csv 기준)
-            detail.stageID = int.Parse(row[0]);
-            detail.worldIndex = int.Parse(row[1]);
-            detail.nodePos = new Vector2(float.Parse(row[2]), float.Parse(row[3]));
-            detail.prevStageID = int.Parse(row[4]);
+            detail.stageID = row[0].Trim();
+            detail.nodePos = new Vector2(float.Parse(row[1]), float.Parse(row[2]));
+            detail.prevStageID = row[3].Trim();
 
             // 기본 스테미나 값 설정 (필요 시 CSV 추가 로드)
             detail.staminaCost = 10;
@@ -160,12 +160,58 @@ public class DataManager : MonoBehaviour
             stageList.Add(detail);
             stageDetailDict[detail.stageID] = detail;
         }
+    }
+    private void ParseEnemyDataByWorld(int worldIndex)
+    {
 
-      
+        string worldKey = $"W{worldIndex:D2}"; // W01 이런 식으로 만들고 csv 비교
+
+        TextAsset enemyCsv = Resources.Load<TextAsset>("Data/StageEnemyData");
+        if (enemyCsv == null)
+        {
+            Debug.LogError("스테이지에 출현하는 적 데이터가 없습니다.");
+            return;
+        }
+
+        string[] lines = enemyCsv.text.Trim().Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] row = lines[i].Split(',');
+            if (row.Length < 8) continue; // 컬럼 개수 안 맞으면 스킵
+
+            string stageID_str = row[0].Trim(); // "W01S01"
+
+            if (stageID_str.StartsWith(worldKey))
+            {
+                if (stageDetailDict.TryGetValue(stageID_str, out StageDetailData targetStage))
+                {
+                    // 현재 월드와 일치하는 데이터라면 저장
+                    StageEnemyInfo enemyInfo = new StageEnemyInfo
+                    {
+                        slotIndex = int.Parse(row[1]),
+                        unitID = int.Parse(row[2]),
+                        level = int.Parse(row[3]),
+                        rarity = row[4],
+                        type = row[5],
+                        tag = row[6],
+                        multiplier = float.Parse(row[7])
+                    };
+
+                    // 스테이지 상세 데이터에 적 추가
+                    targetStage.enemies.Add(enemyInfo);
+                }
+
+            }
+            else if(string.Compare(stageID_str, worldKey) > 0)
+        {
+                break;
+            }
+        }
     }
 
-    // 팝업에서 이거 하나만 부르면 모든 정보를 다 가져올 수 있어요!
-    public StageDetailData GetStageDetail(int stageID)
+    // 팝업에 부르는 모든 정보
+    public StageDetailData GetStageDetail(string stageID)
     {
         return stageDetailDict.ContainsKey(stageID) ? stageDetailDict[stageID] : null;
     }
@@ -183,10 +229,10 @@ public class DataManager : MonoBehaviour
 
 
     // 스테이지 클리어 체크용
-    public bool IsStageCleared(int stageID)
+    public bool IsStageCleared(string stageID)
     {
         // string으로 저장되어 있다면 ToString() 처리
-        return userData.stageHistory.Exists(x => x.stageID == stageID.ToString() && x.isCleared);
+        return userData.stageHistory.Exists(x => x.stageID == stageID && x.isCleared);
     }
 
     // 아이템 데이터 로드

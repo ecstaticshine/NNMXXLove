@@ -24,7 +24,7 @@ public class StageManager : MonoBehaviour
 
     private string currentWorldName; // 현재 속한 월드명
     private int currentWorldIndex;  // 현재 속한 월드 번호
-    private int currentStageIndex; // 현재 선택한 스테이지 번호
+    private string currentStageIndex; // 현재 선택한 스테이지 번호
 
     [Header("StageDetailPopUp")]
     public TMP_Text staminaText;         // 스테미나 표시용
@@ -123,7 +123,7 @@ public class StageManager : MonoBehaviour
             //노드에 정보 넣어주기
             node.Setup(stage, isUnlocked);
 
-            if (stage.prevStageID != -1 && nodeIdx > 0)
+            if (nodeIdx > 0 && !string.IsNullOrEmpty(stage.prevStageID) && stage.prevStageID.ToLower() != "none")
             {
                 // 바로 직전 노드의 위치와 현재 노드의 위치를 연결
                 Vector2 startPos = nodeObjects[nodeIdx - 1].GetComponent<StageNode>().nodePosition;
@@ -140,24 +140,6 @@ public class StageManager : MonoBehaviour
         {
             nodeObjects[i].SetActive(false);
         }
-    }
-
-    // 간단한 CSV 파서 (Dictionary 형태로 한 줄씩 담습니다)
-    private List<Dictionary<string, string>> ParseCSV(TextAsset csv)
-    {
-        List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
-        string[] lines = csv.text.Split('\n');
-        string[] headers = lines[0].Trim().Split(',');
-
-        for (int i = 1; i < lines.Length; i++)
-        {
-            if (string.IsNullOrWhiteSpace(lines[i])) continue;
-            string[] values = lines[i].Trim().Split(',');
-            var entry = new Dictionary<string, string>();
-            for (int j = 0; j < headers.Length; j++) entry[headers[j]] = values[j];
-            list.Add(entry);
-        }
-        return list;
     }
 
     public void GotoMainAdventure()
@@ -183,7 +165,7 @@ public class StageManager : MonoBehaviour
         rt.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
     }
 
-    public void OpenStageDetail(int id)
+    public void OpenStageDetail(string id)
     {
         // DataManager에서 해당 스테이지 정보 가지고 오기
         StageDetailData detail = DataManager.Instance.GetStageDetail(id);
@@ -191,9 +173,10 @@ public class StageManager : MonoBehaviour
         if (detail != null)
         {
             currentStageIndex = id;
+            string displayID = detail.stageID.Replace($"W{currentWorldIndex:D2}S", "");
 
             // 1. 제목 설정 (id를 직접 쓰는 대신 detail.stageID 사용)
-            titleText.text = $"{currentWorldName} {currentWorldIndex + 1}-{detail.stageID}";
+            titleText.text = $"{currentWorldName} {currentWorldIndex}-{int.Parse(displayID)}";
 
             // 2. 적 목록 갱신
             RefreshEnemyUI(detail.enemies);
@@ -234,7 +217,7 @@ public class StageManager : MonoBehaviour
 
         foreach (var info in enemyList)
         {
-            UnitData scriptableObjectData = DataManager.Instance.GetUnitData(info.UnitID);
+            UnitData scriptableObjectData = DataManager.Instance.GetUnitData(info.unitID);
             if (scriptableObjectData != null)
             {
                 GameObject slotObj = Instantiate(enemySlotPrefab, enemyContent);
