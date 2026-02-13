@@ -26,7 +26,7 @@ public class Unit : MonoBehaviour
     [SerializeField] protected TMP_Text healText;
 
     [Header("Unit Stats")]
-    [SerializeField] protected int level;
+    [SerializeField] public int level;
     [SerializeField] protected int currentHp;
     [SerializeField] protected int currentAttack;
     [SerializeField] protected int currentSpeed;
@@ -44,15 +44,21 @@ public class Unit : MonoBehaviour
     [Header("Bonus Stats")]
     [SerializeField] private int bonusAttackFromShield = 0;
 
+    private CanvasGroup canvasGroup;
+
+    // 죽었을 때
+    private bool isDead = false;
+
     protected virtual void Awake()
     {
         InitUnitStat();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     protected virtual void Start()
     {
 
-        Debug.Log($"{data.unitName} 등장! 공격 범위는 {data.skillArea}입니다.");
+        Debug.Log($"{data.unitNameKey} 등장! 공격 범위는 {data.skillArea}입니다.");
     }
 
     public virtual void InitUnitStat()
@@ -73,6 +79,8 @@ public class Unit : MonoBehaviour
         // CSV에서 가져온 Multiplier 적용
         currentHp = Mathf.RoundToInt(currentHp * multiplier);
 
+        Debug.Log($"{data.unitNameKey} 초기화 - 최종 HP: {currentHp}, Multiplier: {multiplier}");
+
         maxHp = currentHp;
 
         if (hpBar != null)
@@ -81,7 +89,7 @@ public class Unit : MonoBehaviour
             hpBar.value = currentHp;
         }
 
-        Debug.Log($"[Monster] {data.unitName} 세팅 완료! HP: {currentHp}");
+        Debug.Log($"[Monster] {data.unitNameKey} 세팅 완료! HP: {currentHp}");
 
     }
 
@@ -182,10 +190,22 @@ public class Unit : MonoBehaviour
     {
         UpdateHPUI();
 
-        if (currentHp <= 0)
+        if (currentHp <= 0 && !isDead)
         {
+            isDead = true;
             currentHp = 0;
             BattleManager.instance.RemoveUnit(this);
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.DOFade(0, 0.5f).OnComplete(() => {
+                    gameObject.SetActive(false);
+                });
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 
@@ -276,7 +296,7 @@ public class Unit : MonoBehaviour
 
         UpdateShieldUI();
 
-        Debug.Log($"{data.unitName}에게 {count}회(내구도 {amount}) 쉴드 생성!");
+        Debug.Log($"{data.unitNameKey}에게 {count}회(내구도 {amount}) 쉴드 생성!");
 
 
     }
@@ -294,7 +314,7 @@ public class Unit : MonoBehaviour
             // 쉴드가 깨지면 공격력 보너스도 증발
             if (bonusAttackFromShield > 0)
             {
-                Debug.Log($"{data.unitName}의 쉴드가 사라져 추가 공격력이 환원되었습니다.");
+                Debug.Log($"{data.unitNameKey}의 쉴드가 사라져 추가 공격력이 환원되었습니다.");
                 bonusAttackFromShield = 0;
             }
             return;

@@ -255,7 +255,7 @@ public class BattleManager : MonoBehaviour
             // 시너지 데이터 가지고 오기
             SynergyEffect eff = attacker.data.isEnemy ? enemySynergy.currentEffect : playerSynergy.currentEffect;
 
-            Debug.Log($"{attacker.data.unitName}이(가) {target.data.unitName}을(를) 조준!");
+            Debug.Log($"{attacker.data.unitNameKey}이(가) {target.data.unitNameKey}을(를) 조준!");
 
             // 행동
             switch (attacker.data.unitType)
@@ -471,7 +471,7 @@ public class BattleManager : MonoBehaviour
         else
             playerSlot[slotIndex] = unit;
 
-        Debug.Log($"{slotIndex}번 슬롯에 {unit.data.unitName} 님이 배치되었습니다!");
+        Debug.Log($"{slotIndex}번 슬롯에 {unit.data.unitNameKey} 님이 배치되었습니다!");
     }
 
     public void TestBattle()
@@ -482,7 +482,7 @@ public class BattleManager : MonoBehaviour
             Unit attacker = playerTurnOrder[0];
             Unit target = enemyTurnOrder[0];
 
-            Debug.Log($"{attacker.data.unitName}의 공격!");
+            Debug.Log($"{attacker.data.unitNameKey}의 공격!");
             target.TakeDamage(attacker.GetCurrentAttack());
         }
     }
@@ -593,7 +593,7 @@ public class BattleManager : MonoBehaviour
                 uiManager.RefreshTimeline(enemyTurnOrder);
             }
 
-            Debug.Log($"{unit.data.unitName} 적을 물리쳤습니다. 남은 적: {enemySlot.Count}명");
+            Debug.Log($"{unit.data.unitNameKey} 적을 물리쳤습니다. 남은 적: {enemySlot.Count}명");
 
             // 승리 조건 체크 (딕셔너리의 개수가 0인지 확인)
             if (enemySlot.Count <= 0)
@@ -614,7 +614,7 @@ public class BattleManager : MonoBehaviour
 
             uiManager.RefreshTimeline(playerTurnOrder);
 
-            Debug.Log($"{unit.data.unitName} 아군이 퇴각했습니다... 남은 아군: {playerSlot.Count}명");
+            Debug.Log($"{unit.data.unitNameKey} 아군이 퇴각했습니다... 남은 아군: {playerSlot.Count}명");
 
             if (playerSlot.Count <= 0)
             {
@@ -776,7 +776,7 @@ public class BattleManager : MonoBehaviour
             ApplyBuffToLine(0, attacker.data.isEnemy, (u) =>
             {
                 u.AddShield(1, shieldHP);
-                Debug.Log($"{u.data.unitName}: 전열 쉴드 부여 (내구도: {shieldHP})");
+                Debug.Log($"{u.data.unitNameKey}: 전열 쉴드 부여 (내구도: {shieldHP})");
             });
         }
         else if (mySlot < 6) // [중열] 다중 편광막
@@ -786,7 +786,7 @@ public class BattleManager : MonoBehaviour
             if (target != null)
             {
                 target.AddShield(3, shieldHP);
-                Debug.Log($"{target.data.unitName}: 중열 쉴드 부여 (내구도: {shieldHP} / 3회)");
+                Debug.Log($"{target.data.unitNameKey}: 중열 쉴드 부여 (내구도: {shieldHP} / 3회)");
             }
         }
         else // [후열] 안개 장막

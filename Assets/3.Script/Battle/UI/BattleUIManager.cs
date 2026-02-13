@@ -125,7 +125,7 @@ public class BattleUIManager : MonoBehaviour
 
             if (unitIcon != null)
             {
-                unitIcon.SetUnitData(unit);
+                unitIcon.SetUnitIcon(unit.data, unit.level);
             }
 
             _activeIcons.Add(iconObj);

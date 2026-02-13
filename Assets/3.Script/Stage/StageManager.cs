@@ -217,11 +217,21 @@ public class StageManager : MonoBehaviour
 
         foreach (var info in enemyList)
         {
-            UnitData scriptableObjectData = DataManager.Instance.GetUnitData(info.unitID);
-            if (scriptableObjectData != null)
+            UnitData unitData = DataManager.Instance.GetUnitData(info.unitID);
+
+            Debug.Log(info.unitID);
+            if (unitData != null)
             {
                 GameObject slotObj = Instantiate(enemySlotPrefab, enemyContent);
-                slotObj.GetComponent<EnemySlot>().SetSlot(scriptableObjectData, info.level);
+
+
+                UnitIcon slotScript = slotObj.GetComponent<UnitIcon>();
+
+                if (slotScript != null)
+                {
+                    // 여기서 유닛 정보, 레벨, 등급 등을 전달
+                    slotScript.SetUnitIcon(unitData, info.level);
+                }
             }
         }
 
