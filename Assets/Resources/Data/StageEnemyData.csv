@@ -1,4 +1,4 @@
 StageID,SlotIndex,UnitID,Level,Rarity,Type,Tag,Multiplier
-W01S01,0,10101,1,L,Monster,Direct,1
-W01S01,1,10102,1,L,Monster,Splash,1.2
-W01S01,4,50001,5,PL,Character,Dot,1
+W01S01,0,10101,1,L,Monster,Splash,1
+W01S01,1,10101,1,L,Monster,Splash,1
+W01S01,4,10101,1,L,Monster,Splash,1
