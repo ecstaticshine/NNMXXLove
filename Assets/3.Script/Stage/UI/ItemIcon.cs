@@ -5,12 +5,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ItemSlot : MonoBehaviour
+public class ItemIcon : MonoBehaviour
 {
     [Header("UI Components")]
     public Image iconImage;
     public Image frameImage;
     public TMP_Text countText;
+    public TMP_Text chanceText;
 
     [Header("Obtained States")]
     public GameObject obtainedOverlay; // 어두운 패널 + 체크표시 묶음
@@ -53,5 +54,22 @@ public class ItemSlot : MonoBehaviour
     {
         if (obtainedOverlay != null)
             obtainedOverlay.SetActive(isObtained);
+    }
+
+    public void SetChanceText(float chance)
+    {
+        if (chanceText == null) return;
+
+        // chance가 1.0(100%)보다 작을 때만 표시하면 더 깔끔하겠죠?
+        if (chance < 1.0f)
+        {
+            chanceText.gameObject.SetActive(true);
+            // 0.3 -> 30% 이런 식으로 변환해요.
+            chanceText.text = $"{(chance * 100f):0}%";
+        }
+        else
+        {
+            chanceText.gameObject.SetActive(false);
+        }
     }
 }

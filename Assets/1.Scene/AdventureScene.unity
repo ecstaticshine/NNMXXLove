@@ -3115,13 +3115,13 @@ MonoBehaviour:
   titleText: {fileID: 1926680899}
   staminaText: {fileID: 1823443528}
   enemyContent: {fileID: 1756038123}
-  enemySlotPrefab: {fileID: 3859849288622619261, guid: 34403719d33146e47a9472c8c92de140, type: 3}
+  enemyIconPrefab: {fileID: 3859849288622619261, guid: 34403719d33146e47a9472c8c92de140, type: 3}
   enemyLeftButton: {fileID: 1817862299}
   enemyRightButton: {fileID: 236995614}
   enemySection: {fileID: 724250014}
   rewardContent: {fileID: 402093180}
   dropContent: {fileID: 1049219688}
-  itemSlotPrefab: {fileID: 2868332210390915000, guid: 60946491a5c80774ba919447fd9501fd, type: 3}
+  itemIconPrefab: {fileID: 2868332210390915000, guid: 8fe98ef70de85464d8455e524416ebaf, type: 3}
   dropLeftBtn: {fileID: 1904524936}
   dropRightBtn: {fileID: 217032141}
   rewardLeftBtn: {fileID: 261681958}

@@ -29,14 +29,14 @@ public class StageManager : MonoBehaviour
     [Header("StageDetailPopUp")]
     public TMP_Text staminaText;         // 스테미나 표시용
     public Transform enemyContent;       // 적 슬롯 부모
-    public GameObject enemySlotPrefab;   // 적 슬롯 프리팹
+    public GameObject enemyIconPrefab;   // 적 슬롯 프리팹
     public Button enemyLeftButton, enemyRightButton;    // 적이 5마리가 넘어가면 표시
     public ScrollRect enemySection;
 
     [Header("Reward & Drop UI")]
     public Transform rewardContent;      // '보상' 줄의 Content
     public Transform dropContent;        // '획득' 줄의 Content
-    public GameObject itemSlotPrefab;    // 보석이나 재료가 들어갈 슬롯
+    public GameObject itemIconPrefab;    // 아이템 프리팹
     public GameObject dropLeftBtn, dropRightBtn;        // 반복 클리어용
     public GameObject rewardLeftBtn, rewardRightBtn;    // 첫 클리어용
 
@@ -222,7 +222,7 @@ public class StageManager : MonoBehaviour
             Debug.Log(info.unitID);
             if (unitData != null)
             {
-                GameObject slotObj = Instantiate(enemySlotPrefab, enemyContent);
+                GameObject slotObj = Instantiate(enemyIconPrefab, enemyContent);
 
 
                 UnitIcon slotScript = slotObj.GetComponent<UnitIcon>();
@@ -245,24 +245,29 @@ public class StageManager : MonoBehaviour
         enemySection.horizontalNormalizedPosition = 0f;
     }
 
-    public void RefreshFirstRewardUI(List<StageRewardInfo> rewards)
+    public void RefreshFirstRewardUI(List<ItemDropData> rewards)
     {
         foreach (Transform child in rewardContent) Destroy(child.gameObject);
 
         // 유저 데이터에서 이 스테이지를 이미 깼는지 확인
-        bool isCleared = DataManager.Instance.IsStageCleared(currentStageIndex);
+        StageHistory history = DataManager.Instance.userData.stageHistory.Find(x => x.stageID == currentStageIndex);
+        bool isAlreadyClaimed = (history != null && history.isFirstRewardClaimed);
 
         foreach (var res in rewards)
         {
-            GameObject slot = Instantiate(itemSlotPrefab, rewardContent);
-            ItemSlot itemSlot = slot.GetComponent<ItemSlot>();
+            GameObject slot = Instantiate(itemIconPrefab, rewardContent);
+            ItemIcon itemIcon = slot.GetComponent<ItemIcon>();
 
             // 아이템 SO 로드 (DataManager에 GetItemData가 있다고 가정)
             ItemData data = DataManager.Instance.GetItemData(res.itemID);
-            itemSlot.Setup(data, res.count);
+            itemIcon.Setup(data, res.count);
+            itemIcon.SetChanceText(res.chance);
 
-            // 이미 클리어했다면 '받음' 표시 (체크표시나 어둡게)
-            //if (isCleared) itemSlot.SetAlreadyObtained(true);
+            if (isAlreadyClaimed)
+            {
+                // 예: 아이콘의 색상을 어둡게 변경 (반투명하게)
+                itemIcon.SetObtained(true); 
+            }
         }
 
         // 화살표 활성화 (예: 5개 넘으면)
@@ -271,20 +276,23 @@ public class StageManager : MonoBehaviour
     }
 
     // 2. '획득' (반복 드롭 전용) 갱신
-    public void RefreshDropItemUI(List<StageRewardInfo> drops)
+    public void RefreshDropItemUI(List<ItemDropData> drops)
     {
         foreach (Transform child in dropContent) Destroy(child.gameObject);
 
+        if (drops == null || drops.Count == 0) return;
+
         foreach (var res in drops)
         {
-            GameObject slot = Instantiate(itemSlotPrefab, dropContent);
-            ItemSlot itemSlot = slot.GetComponent<ItemSlot>();
+            GameObject slot = Instantiate(itemIconPrefab, dropContent);
+            ItemIcon itemIcon = slot.GetComponent<ItemIcon>();
 
             ItemData data = DataManager.Instance.GetItemData(res.itemID);
-            itemSlot.Setup(data, res.count);
-
-            // 드롭템은 클리어 여부와 상관없이 항상 밝게 표시
-           // itemSlot.SetAlreadyObtained(false);
+            if (data != null)
+            {
+                itemIcon.Setup(data, res.count);
+                itemIcon.SetChanceText(res.chance);
+            }
         }
 
         dropLeftBtn.SetActive(drops.Count > 5);

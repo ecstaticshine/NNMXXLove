@@ -85,7 +85,7 @@ public class DataManager : MonoBehaviour
             ParseEnemyDataByWorld(worldIndex);
 
             // 스테이지 아이템 정보 가지고 오기
-            // ParseItemDataByWorld(worldIndex);
+            ParseRewardDataByWorld(worldIndex);
             Debug.Log($"{worldIndex} 월드 데이터 로드 완료!");
         }
 
@@ -123,6 +123,42 @@ public class DataManager : MonoBehaviour
     public WorldDataInfo GetCurrentWorldInfo()
     {
         return this.currentWorldInfo;
+    }
+
+    private void ParseRewardDataByWorld(int worldIndex)
+    {
+        string worldKey = $"W{worldIndex:D2}";
+        TextAsset rewardCsv = Resources.Load<TextAsset>("Data/StageRewardData"); // 파일명 확인!
+        if (rewardCsv == null) return;
+
+        string[] lines = rewardCsv.text.Trim().Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] row = lines[i].Split(',');
+            if (row.Length < 5) continue;
+
+            string stageID_str = row[0].Trim();
+
+            if (stageID_str.StartsWith(worldKey))
+            {
+                if (stageDetailDict.TryGetValue(stageID_str, out StageDetailData targetStage))
+                {
+                    ItemDropData rewardData = new ItemDropData
+                    {
+                        itemID = int.Parse(row[1]),
+                        count = int.Parse(row[2]),
+                        chance = float.Parse(row[3]),
+                        isFirstReward = bool.Parse(row[4].Trim().ToLower())
+                    };
+
+                    if (rewardData.isFirstReward)
+                        targetStage.firstRewards.Add(rewardData);
+                    else
+                        targetStage.dropItems.Add(rewardData);
+                }
+            }
+        }
     }
 
     private void ParseStageDataByWorld(int worldIndex)
