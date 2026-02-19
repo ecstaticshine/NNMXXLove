@@ -59,12 +59,17 @@ public class DataManager : MonoBehaviour
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
-            LoadGameDataByWorld(currentWorldIndex);   
+            LoadGameDataByWorld(currentWorldIndex);
+
+
         }
         else
         {
             Destroy(gameObject);
         }
+
+        //나중에 지울 것
+        PlayerPrefs.DeleteKey("SaveFile");
     }
 
     public CharacterInfo GetUserUnitInfo(int id)
@@ -176,7 +181,7 @@ public class DataManager : MonoBehaviour
         TextAsset rewardCsv = Resources.Load<TextAsset>("Data/StageRewardData"); // 파일명 확인!
         if (rewardCsv == null) return;
 
-        string[] lines = rewardCsv.text.Trim().Split('\n');
+        string[] lines = rewardCsv.text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -428,9 +433,10 @@ public class DataManager : MonoBehaviour
         Debug.Log($"{target.name}에게 {tagData.itemName} 장착 완료!");
     }
 
-    public void CompleteStage(string stageID)
+    public List<ItemInventoryData> CompleteStage(string stageID)
     {
-        _lastEarnedRewards.Clear(); // 이전 획득 기록 초기화
+        _lastEarnedRewards.Clear();
+        Debug.Log($"[보상체크] 시작! 대상 스테이지 ID: {stageID}");
 
         // 1. 기록 갱신
         StageHistory history = userData.stageHistory.Find(x => x.stageID == stageID);
@@ -444,22 +450,46 @@ public class DataManager : MonoBehaviour
         // 2. 보상 지급 로직
         StageDetailData details = DataManager.Instance.GetStageDetail(stageID);
 
+        if (details == null)
+        {
+            Debug.LogError($"[보상체크] 실패! {stageID}에 해당하는 상세 데이터를 찾을 수 없습니다.");
+            return null;
+        }
+
+        Debug.Log($"[보상체크] 데이터 찾음! 첫보상 개수: {details.firstRewards.Count}, 드롭템 개수: {details.dropItems.Count}");
+
         if (details != null)
         {
             // A. 첫 클리어 보상 (아직 클리어한 적이 없을 때만)
             if (!history.isFirstRewardClaimed)
             {
-                ProcessRewards(details.firstRewards);
+                foreach (var first in details.firstRewards)
+                {
+                    GiveItem(first.itemID, first.count);
+                    AddRewardToDisplayList(first.itemID, first.count);
+                }
                 history.isFirstRewardClaimed = true;
             }
 
             // B. 일반 드롭 보상
-            ProcessRewards(details.dropItems);
+            foreach (var drop in details.dropItems)
+            {
+                float roll = UnityEngine.Random.Range(0f, 100f);
+                Debug.Log($"[드롭체크] 아이템:{drop.itemID}, 확률:{drop.chance}%, 결과:{roll}"); // 이 로그가 중요!
+
+                if (roll <= drop.chance)
+                {
+                    GiveItem(drop.itemID, drop.count);
+                    AddRewardToDisplayList(drop.itemID, drop.count);
+                }
+            }
         }
 
         // 3. 저장
         history.isCleared = true;
         SaveData();
+
+        return _lastEarnedRewards;
     }
 
     private void GiveItem(int id, int count)
@@ -505,19 +535,12 @@ public class DataManager : MonoBehaviour
         return _lastEarnedRewards;
     }
 
-    private void ProcessRewards(List<ItemDropData> rewards)
+    private void AddRewardToDisplayList(int id, int count)
     {
-        foreach (var reward in rewards)
-        {
-            if (UnityEngine.Random.Range(0f, 100f) <= reward.chance)
-            {
-                GiveItem(reward.itemID, reward.count);
-
-                // UI 표시용 리스트에 합산 (이미 있으면 count만 더함)
-                ItemInventoryData existingItem = _lastEarnedRewards.Find(x => x.itemID == reward.itemID);
-                if (existingItem != null) existingItem.count += reward.count;
-                else _lastEarnedRewards.Add(new ItemInventoryData { itemID = reward.itemID, count = reward.count });
-            }
-        }
+        ItemInventoryData existingItem = _lastEarnedRewards.Find(x => x.itemID == id);
+        if (existingItem != null)
+            existingItem.count += count;
+        else
+            _lastEarnedRewards.Add(new ItemInventoryData { itemID = id, count = count });
     }
 }

@@ -45,7 +45,7 @@ public class BattleUIManager : MonoBehaviour
 
     public float fadeDuration = 0.5f;
 
-    public Transform rewardContainer;   // 아이템 아이콘들이 생성될 부모 (Grid Layout Group 권장)
+    public Transform rewardContainer;   // 아이템 아이콘들이 생성될 부모
     public GameObject rewardItemPrefab; 
 
 
@@ -192,8 +192,9 @@ public class BattleUIManager : MonoBehaviour
     }
 
 
-    public void ShowResult(bool isVictory)
+    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null)
     {
+
         // 패널 활성화 및 초기화
         resultPanel.gameObject.SetActive(true);
         resultPanel.alpha = 0f;
@@ -206,7 +207,11 @@ public class BattleUIManager : MonoBehaviour
             resultText.color = Color.yellow;
 
             // 1. 보상 아이템 UI 생성 로직
-            List<ItemInventoryData> rewards = DataManager.Instance.GetLastEarnedRewards();
+            if (rewards == null)
+            {
+                rewards = DataManager.Instance.GetLastEarnedRewards();
+            }
+
             DisplayRewards(rewards);
 
             // 2. 캐릭터 성장 정보 표시
@@ -242,7 +247,9 @@ public class BattleUIManager : MonoBehaviour
 
         for(int i = 0; i < rewards.Count; i++)
         {
+
             ItemInventoryData item = rewards[i];
+
             // 프리팹 생성
             GameObject itemObj = Instantiate(rewardItemPrefab, rewardContainer);
 
@@ -254,12 +261,16 @@ public class BattleUIManager : MonoBehaviour
                 // 데이터 로드
                 ItemData data = DataManager.Instance.GetItemData(item.itemID);
 
-                // 4. 스테이지 매니저에서 썼던 Setup 함수 그대로 활용
-                // (확률 텍스트는 결과창에서 필요 없으니 SetChanceText는 생략하거나 빈 값 처리)
-                itemIcon.Setup(data, item.count);
-
-                // 결과창이므로 획득 상태는 항상 true로 보이게 하거나 기본 상태 유지
-                // itemIcon.SetObtained(false); 
+                if (data != null)
+                {
+                    itemIcon.Setup(data, item.count);
+                    itemIcon.ShowChanceText(false);
+                    Debug.Log($"[UI] 보상 생성 성공: {item.itemID} (개수: {item.count})");
+                }
+                else
+                {
+                    Debug.LogError($"[UI] {item.itemID}의 ItemData를 찾을 수 없습니다!");
+                }
             }
 
             // [연출] 톡톡 튀어나오는 애니메이션

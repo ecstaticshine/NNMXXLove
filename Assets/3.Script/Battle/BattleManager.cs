@@ -592,14 +592,17 @@ public class BattleManager : MonoBehaviour
         {
             Debug.Log(" 전투 승리! 보상을 획득합니다.");
             // DataManager에 클리어 알림 (보상 지급 및 다음 스테이지 해금이 여기서 처리됨)
-            DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
+            List<ItemInventoryData> earnedRewards = DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
+
+            uiManager.ShowResult(victory, earnedRewards);
         }
         else
         {
             Debug.Log(" 전투 패배... 강해져서 돌아오세요.");
+            uiManager.ShowResult(victory);
         }
 
-        uiManager.ShowResult(victory);
+
     }
     public void OnPhaseChanged(BattlePhase battlePhase)
     {

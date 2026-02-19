@@ -26,7 +26,7 @@ public class ItemIcon : MonoBehaviour
     };
 
     /// <summary>
-    /// 슬롯에 데이터를 채웁니다.
+    /// 슬롯에 데이터를 채우기
     /// </summary>
     public void Setup(ItemData data, int count)
     {
@@ -48,7 +48,7 @@ public class ItemIcon : MonoBehaviour
     }
 
     /// <summary>
-    /// 첫 클리어 보상을 이미 받았을 때 호출합니다.
+    /// 첫 클리어 보상을 이미 받았을 때 호출
     /// </summary>
     public void SetObtained(bool isObtained)
     {
@@ -60,16 +60,22 @@ public class ItemIcon : MonoBehaviour
     {
         if (chanceText == null) return;
 
-        // chance가 1.0(100%)보다 작을 때만 표시하면 더 깔끔하겠죠?
         if (chance < 1.0f)
         {
             chanceText.gameObject.SetActive(true);
-            // 0.3 -> 30% 이런 식으로 변환해요.
             chanceText.text = $"{(chance * 100f):0}%";
         }
         else
         {
             chanceText.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowChanceText(bool isVisible)
+    {
+        if (chanceText != null)
+        {
+            chanceText.gameObject.SetActive(isVisible);
         }
     }
 }
