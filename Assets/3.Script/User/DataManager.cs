@@ -3,6 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class UserUnitInfo
+{
+    public int unitID;      // 어떤 캐릭터인지 (ID)
+    public int level;       // 현재 레벨
+    public int breakthrough; // 돌파 단계
+    public int exp;      // 필요하다면 경험치까지
+}
+
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
@@ -21,10 +30,17 @@ public class DataManager : MonoBehaviour
     // 스테이지 ID로 스테이지 상세 정보 확인
     private Dictionary<string, StageDetailData> stageDetailDict = new Dictionary<string, StageDetailData>();
     
-    private Dictionary<int, UnitData> unitDataCache = new Dictionary<int, UnitData>();
+    private Dictionary<int, UnitData> _playerDataCache = new Dictionary<int, UnitData>();
+    private Dictionary<int, UnitData> _enemyDataCache = new Dictionary<int, UnitData>();
     private Dictionary<int, ItemData> itemDataCache = new Dictionary<int, ItemData>();
 
     public List<WorldDataInfo> worldList = new List<WorldDataInfo>(); // WorldData.csv 내용 담는 곳
+
+    [Header("User Party Data")]
+    public List<PartyMember> currentParty = new List<PartyMember>();
+
+    // 유저가 보유한 유닛들의 성장 정보 (실제로는 JSON이나 DB에 저장됨)
+    public List<UserUnitInfo> userInventory = new List<UserUnitInfo>();
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
     public Language currentLanguage = Language.KO; // 기본값
@@ -47,6 +63,33 @@ public class DataManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public UserUnitInfo GetUserUnitInfo(int id)
+    {
+        // 리스트에서 ID가 일치하는 정보를 찾고, 없으면 기본값(1레벨) 반환
+        return userInventory.Find(info => info.unitID == id)
+               ?? new UserUnitInfo { unitID = id, level = 1, breakthrough = 0 };
+    }
+
+    public List<PartyMember> GetCurrentParty()
+    {
+        // 만약 파티가 비어있다면, 기본 유닛을 넣어주기
+        if (currentParty.Count == 0)
+        {
+            Debug.LogWarning("파티가 비어있습니다! 임시 데이터를 생성합니다.");
+            currentParty.Add(new PartyMember(0, 1)); // 0번 슬롯에 1번 유닛
+            currentParty.Add(new PartyMember(1, 2)); // 1번 슬롯에 2번 유닛
+        }
+
+        return currentParty;
+    }
+
+    // 파티를 저장하는 함수 (파티 편성 창에서 호출)
+    public void SaveParty(List<PartyMember> newParty)
+    {
+        currentParty = newParty;
+        // 필요하다면 여기서 로컬 저장(Json 등)을 수행합니다.
     }
 
     public bool IsStageUnlocked(string stageID, string prevStageID)
@@ -252,16 +295,39 @@ public class DataManager : MonoBehaviour
         return stageDetailDict.ContainsKey(stageID) ? stageDetailDict[stageID] : null;
     }
 
-    public UnitData GetUnitData(int unitID)
+    // 아군 데이터 가져오기
+    public UnitData GetPlayerData(int id)
     {
-        if (unitDataCache.ContainsKey(unitID)) return unitDataCache[unitID];
+        if (_playerDataCache.TryGetValue(id, out var data)) return data;
 
-        // Resources/UnitDatas/ 폴더 안에 UnitData_101 식으로 저장되어 있어야 함
-        UnitData data = Resources.Load<UnitData>($"UnitDatas/UnitData_{unitID}");
-        if (data != null) unitDataCache[unitID] = data;
+        string path = $"UnitDatas/Players/UnitData_{id}";
 
-        return data;
+        UnitData newData = Resources.Load<UnitData>(path);
+        if (newData == null)
+        {
+            // 이 로그가 콘솔에 찍힌다면 100% 경로 혹은 파일 이름 문제입니다.
+            Debug.LogError($"[DataManager] 파일을 찾을 수 없습니다! 경로: Resources/{path}");
+        }
+        Debug.Log(newData.name);
+
+        // Players 폴더에서 로드
+        if (newData != null) _playerDataCache.Add(id, newData);
+        return newData;
     }
+
+    // 적군 데이터 가져오기
+    public UnitData GetEnemyData(int id)
+    {
+        if (_enemyDataCache.TryGetValue(id, out var data)) return data;
+
+        // Enemies 폴더에서 로드
+        UnitData newData = Resources.Load<UnitData>($"UnitDatas/Enemies/UnitData_{id}");
+        if (newData != null) _enemyDataCache.Add(id, newData);
+        return newData;
+    }
+
+    // 전투 종료 시 적군 캐시 비우기
+    public void ClearEnemyCache() => _enemyDataCache.Clear();
 
 
     // 스테이지 클리어 체크용
@@ -336,5 +402,22 @@ public class DataManager : MonoBehaviour
         // 이벤트 등을 활용해 현재 열려있는 UI들의 텍스트를 갱신하도록 신호를 보낼 수 있음
     }
 
+    public void CompleteStage(string stageID)
+    {
+        // 1. 기록 갱신
+        StageHistory history = userData.stageHistory.Find(x => x.stageID == stageID);
+        if (history == null)
+        {
+            history = new StageHistory { stageID = stageID };
+            userData.stageHistory.Add(history);
+        }
+        history.isCleared = true;
 
+        // 2. 보상 지급 로직 (필요시 구현)
+        // ...
+
+        // 3. 저장
+        SaveData();
+        Debug.Log($"스테이지 {stageID} 클리어 데이터 저장 완료!");
+    }
 }

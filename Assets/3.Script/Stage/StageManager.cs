@@ -217,7 +217,7 @@ public class StageManager : MonoBehaviour
 
         foreach (var info in enemyList)
         {
-            UnitData unitData = DataManager.Instance.GetUnitData(info.unitID);
+            UnitData unitData = DataManager.Instance.GetEnemyData(info.unitID);
 
             Debug.Log(info.unitID);
             if (unitData != null)

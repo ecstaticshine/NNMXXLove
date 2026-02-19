@@ -29,11 +29,18 @@ public class BattleManager : MonoBehaviour
     [Header("Game speed")]
     public float currentSpeed = 1f; // 기본 1배속
 
+    // 순서
     public List<Unit> playerTurnOrder = new List<Unit>();
     public List<Unit> enemyTurnOrder = new List<Unit>();
 
+    // 슬롯
     public Dictionary<int, Unit> playerSlot = new Dictionary<int, Unit>();
     public Dictionary<int, Unit> enemySlot = new Dictionary<int, Unit>();
+
+    // 캐릭터 스폰 지역
+    [Header("Slot Assignments")]
+    public Transform[] playerSlotTransforms = new Transform[9];
+    public Transform[] enemySlotTransforms = new Transform[9];
 
     public static BattleManager instance = null;
 
@@ -74,6 +81,7 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+
         InitBattleUnits();
         RefreshSynergies();
 
@@ -102,6 +110,98 @@ public class BattleManager : MonoBehaviour
         enemySynergy.UpdateSynergy(enemySlot, false);
     }
 
+    private void SpawnEnemiesFromData()
+    {
+        //데이터 매니저에 저장한 내용 가지고 오기
+        string stageID = DataManager.Instance.selectedStageID;
+        StageDetailData detail = DataManager.Instance.GetStageDetail(stageID);
+
+        if (detail == null) return;
+
+        foreach (var enemyInfo in detail.enemies)
+        {
+            // 1. 유닛 데이터 로드
+            UnitData data = DataManager.Instance.GetEnemyData(enemyInfo.unitID);
+            GameObject commonMonsterPrefab = Resources.Load<GameObject>("Prefabs/Units/Monster");
+            GameObject commonCharacterPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+            GameObject prefabToUse = (data is CharacterData) ? commonCharacterPrefab : commonMonsterPrefab;
+
+            if (prefabToUse != null && enemyInfo.slotIndex < enemySlotTransforms.Length)
+            {
+                Transform targetSlot = enemySlotTransforms[enemyInfo.slotIndex];
+
+                GameObject instance = Instantiate(prefabToUse, targetSlot);
+                instance.transform.localPosition = Vector3.zero; // 위치 초기화
+                instance.transform.localRotation = Quaternion.Euler(0, 180, 0); // 적은 왼쪽 보기
+
+                Unit unit = instance.GetComponent<Unit>();
+
+                // [수정] 클래스 타입에 따른 초기화 분기
+                if (unit is Character character && data is CharacterData charData)
+                {
+                    // 적군 캐릭터라면 레벨과 돌파 정보 설정 (enemyInfo에 해당 데이터가 있다면 넣어주세요)
+                    character.SetCharacterData(charData, 10, 0);
+                }
+                else
+                {
+                    // 일반 몬스터 초기화
+                    unit.data = data;
+                    unit.InitUnitStat();
+                }
+
+                unit.SetSlotIndex(enemyInfo.slotIndex);
+                enemySlot[enemyInfo.slotIndex] = unit;
+                enemyTurnOrder.Add(unit);
+
+                // 발판 색상 업데이트 (배열에서 바로 꺼내기)
+                UpdateSlotColor(targetSlot, unit);
+            }
+        }
+    }
+
+    private void SpawnPlayersFromData()
+    {
+        // 1. 데이터 매니저에서 현재 편성된 파티 정보를 가지고 오기
+        var partyData = DataManager.Instance.GetCurrentParty();
+
+        if (partyData == null) return;
+
+        //아군 캐릭터는 캐릭터만 있음.
+        GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+        foreach (var member in partyData)
+        {
+            // 2. 유닛 데이터 및 프리팹 로드
+            UnitData data = DataManager.Instance.GetPlayerData(member.unitID);
+
+            // [중요] 유저의 실제 성장 데이터를 가져옴
+            UserUnitInfo userInfo = DataManager.Instance.GetUserUnitInfo(member.unitID);
+            if (playerPrefab != null && member.slotIndex < playerSlotTransforms.Length)
+            {
+                Transform targetSlot = playerSlotTransforms[member.slotIndex];
+
+                // 3. 실제 생성 및 배치
+                GameObject instance = Instantiate(playerPrefab, targetSlot);
+                instance.transform.localPosition = Vector3.zero;
+
+                Character character = instance.GetComponent<Character>();
+
+                if (character != null && data is CharacterData charData)
+                {
+                    character.SetCharacterData(charData, userInfo.level, userInfo.breakthrough);
+                }
+
+                character.SetSlotIndex(member.slotIndex);
+                playerSlot[member.slotIndex] = character;
+                playerTurnOrder.Add(character);
+
+                // 5. 발판 색상 업데이트
+                UpdateSlotColor(targetSlot, character);
+            }
+        }
+    }
+
     private void InitBattleUnits()
     {
         playerSlot.Clear();
@@ -109,41 +209,48 @@ public class BattleManager : MonoBehaviour
         playerTurnOrder.Clear();
         enemyTurnOrder.Clear();
 
-        Unit[] unitsInfield = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        SpawnPlayersFromData();
 
-        foreach (Unit unit in unitsInfield)
-        {
-            string parentName = unit.transform.parent.parent.name;
-            Image plateImage = unit.transform.parent.parent.GetChild(0).GetComponent<Image>();
+        SpawnEnemiesFromData();
+
+        //Unit[] unitsInfield = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+
+        //foreach (Unit unit in unitsInfield)
+        //{
+        //    string parentName = unit.transform.parent.parent.name;
+        //    Image plateImage = unit.transform.parent.parent.GetChild(0).GetComponent<Image>();
 
 
-            if (parentName.Contains("Slot_"))
-            {
-                string indexStr = parentName.Replace("Slot_", "");
-                if (int.TryParse(indexStr, out int index))
-                {
-                    unit.SetSlotIndex(index);
-                }
-            }
-            // 색깔 칠하기
-            ApplyPlateColorByTag(unit, plateImage);
+        //    if (parentName.Contains("Slot_"))
+        //    {
+        //        string indexStr = parentName.Replace("Slot_", "");
+        //        if (int.TryParse(indexStr, out int index))
+        //        {
+        //            unit.SetSlotIndex(index);
+        //        }
+        //    }
+        //    // 색깔 칠하기
+        //    ApplyPlateColorByTag(unit, plateImage);
 
-            // 이제 어느 팀인지에 따라 맵에 등록합니다.
-            if (unit.data.isEnemy)
-            {
-                enemySlot[unit.GetSlotIndex()] = unit;
-                enemyTurnOrder.Add(unit);
+        //    // 이제 어느 팀인지에 따라 맵에 등록합니다.
+        //    if (unit.data.isEnemy)
+        //    {
+        //        enemySlot[unit.GetSlotIndex()] = unit;
+        //        enemyTurnOrder.Add(unit);
 
-            }
-            else
-            {
-                playerSlot[unit.GetSlotIndex()] = unit;
-                playerTurnOrder.Add(unit);
+        //    }
+        //    else
+        //    {
+        //        playerSlot[unit.GetSlotIndex()] = unit;
+        //        playerTurnOrder.Add(unit);
 
-            }
-        }
+        //    }
+        //}
+
         // 스피드 빠른 순서로 재정렬
         SortTurnOrder();
+
+        RefreshSynergies();
     }
 
     private void ApplyPlateColorByTag(Unit unit, Image plate)
@@ -515,6 +622,18 @@ public class BattleManager : MonoBehaviour
     public void EndBattle(bool victory)
     {
         battleTimer.StopTimer();
+        OnPhaseChanged(BattlePhase.BattleEnd);
+
+        if (victory)
+        {
+            Debug.Log(" 전투 승리! 보상을 획득합니다.");
+            // DataManager에 클리어 알림 (보상 지급 및 다음 스테이지 해금이 여기서 처리됨)
+            DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
+        }
+        else
+        {
+            Debug.Log(" 전투 패배... 강해져서 돌아오세요.");
+        }
 
         uiManager.ShowResult(victory);
     }
