@@ -23,7 +23,7 @@ MonoBehaviour:
   unitFullIllust: {fileID: 0}
   rarity: 0
   isEnemy: 1
-  baseHp: 30000
+  baseHp: 3000
   baseAttack: 1000
   baseSpeed: 12
   skillArea: 0

@@ -32,3 +32,4 @@ public class StageDetailData
     public List<ItemDropData> firstRewards = new List<ItemDropData>(); // 첫 클리어 보상
     public List<ItemDropData> dropItems = new List<ItemDropData>();    // 일반 드롭 아이템
 }
+

@@ -961,7 +961,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5802045770561453734}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1008,9 +1008,11 @@ MonoBehaviour:
   leafPrefab: {fileID: 8375357013739004995}
   healBubble: {fileID: 8859154613094523830}
   healText: {fileID: 8128108345209622450}
+  level: 1
   currentHp: 0
   currentAttack: 0
   currentSpeed: 0
+  multiplier: 0
   finalSkillMultiplier: 0
   maxHp: 0
   slotIndex: 0
@@ -1018,7 +1020,6 @@ MonoBehaviour:
   shieldAmount: 0
   bonusAttackFromShield: 0
   breakthroughCount: 0
-  level: 1
   customTags:
   - 
   - 

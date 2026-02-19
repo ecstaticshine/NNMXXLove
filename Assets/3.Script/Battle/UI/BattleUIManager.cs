@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class BattleUIManager : MonoBehaviour
 {
@@ -43,7 +44,10 @@ public class BattleUIManager : MonoBehaviour
     private List<GameObject> _activeIcons = new List<GameObject>();
 
     public float fadeDuration = 0.5f;
- 
+
+    public Transform rewardContainer;   // 아이템 아이콘들이 생성될 부모 (Grid Layout Group 권장)
+    public GameObject rewardItemPrefab; 
+
 
     private void Awake()
     {
@@ -77,10 +81,10 @@ public class BattleUIManager : MonoBehaviour
     }
     public void ShowStartUI()
     {
-        StartCoroutine(StartUICo());
+        StartCoroutine(StartUI_Co());
     }
 
-    private IEnumerator StartUICo()
+    private IEnumerator StartUI_Co()
     {
         CanvasGroup cg = startUIPanel.GetComponent<CanvasGroup>();
         if (cg != null) cg.alpha = 0f;
@@ -190,18 +194,112 @@ public class BattleUIManager : MonoBehaviour
 
     public void ShowResult(bool isVictory)
     {
+        // 패널 활성화 및 초기화
+        resultPanel.gameObject.SetActive(true);
+        resultPanel.alpha = 0f;
+        resultPanel.blocksRaycasts = false;
+
 
         if (isVictory)
         {
             resultText.text = "Victory";
             resultText.color = Color.yellow;
+
+            // 1. 보상 아이템 UI 생성 로직
+            List<ItemInventoryData> rewards = DataManager.Instance.GetLastEarnedRewards();
+            DisplayRewards(rewards);
+
+            // 2. 캐릭터 성장 정보 표시
+            // 전투에 참여했던 아군(playerTurnOrder)의 경험치 바 연출
+            DisplayCharacterGrowth(BattleManager.instance.playerTurnOrder);
+
         }
         else
         {
             resultText.text = "Defeated";
             resultText.color = Color.red;
         }
+
+        // 페이드 인 완료 후 상호작용 허용
+        resultPanel.DOFade(1f, fadeDuration).OnComplete(() => {
+            resultPanel.blocksRaycasts = true;
+        });
+
+        // 텍스트 펀치 연출 (강조)
+        resultText.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f);
+    }
+
+    private void DisplayRewards(List<ItemInventoryData> rewards)
+    {
+        // 기존 아이콘들 청소
+        foreach (Transform child in rewardContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 보상이 하나도 없을 경우 처리 (선택사항)
+        if (rewards == null || rewards.Count == 0) return;
+
+        for(int i = 0; i < rewards.Count; i++)
+        {
+            ItemInventoryData item = rewards[i];
+            // 프리팹 생성
+            GameObject itemObj = Instantiate(rewardItemPrefab, rewardContainer);
+
+            // 3. ItemIcon 컴포넌트 가져오기
+            ItemIcon itemIcon = itemObj.GetComponent<ItemIcon>();
+
+            if (itemIcon != null)
+            {
+                // 데이터 로드
+                ItemData data = DataManager.Instance.GetItemData(item.itemID);
+
+                // 4. 스테이지 매니저에서 썼던 Setup 함수 그대로 활용
+                // (확률 텍스트는 결과창에서 필요 없으니 SetChanceText는 생략하거나 빈 값 처리)
+                itemIcon.Setup(data, item.count);
+
+                // 결과창이므로 획득 상태는 항상 true로 보이게 하거나 기본 상태 유지
+                // itemIcon.SetObtained(false); 
+            }
+
+            // [연출] 톡톡 튀어나오는 애니메이션
+            itemObj.transform.localScale = Vector3.zero;
+            itemObj.transform.DOScale(1f, 0.5f)
+                .SetDelay(i * 0.1f)
+                .SetEase(Ease.OutBack);
+        }
+    }
+
+    public void ShowBattleResult()
+    {
         FadeIn(resultPanel);
+
+        // 1. 데이터 매니저에서 방금 얻은 보상 리스트 가져오기
+        List<ItemInventoryData> rewards = DataManager.Instance.GetLastEarnedRewards();
+
+        // 2. 화면에 표시
+        DisplayRewards(rewards);
+    }
+
+    private void DisplayCharacterGrowth(List<Unit> party)
+    {
+        foreach (Unit unit in party)
+        {
+            if (unit is Character character)
+            {
+                // 캐릭터의 레벨업 게이지를 UI로 표현
+                Debug.Log($"{character.data.unitNameKey}: LV.{character.level} EXP 상승 중...");
+            }
+        }
+    }
+
+    public void OnClickExitResult()
+    {
+        // 결과창 페이드 아웃 후 씬 전환
+        resultPanel.DOFade(0f, 0.3f).OnComplete(() => {
+            resultPanel.gameObject.SetActive(false);
+            SceneManager.LoadScene("AdventureScene"); // 씬 전환 로직 호출
+        });
     }
 
     public void UpdateTurnUI(int turn)

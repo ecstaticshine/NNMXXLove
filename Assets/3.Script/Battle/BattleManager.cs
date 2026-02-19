@@ -133,8 +133,6 @@ public class BattleManager : MonoBehaviour
 
                 GameObject instance = Instantiate(prefabToUse, targetSlot);
                 instance.transform.localPosition = Vector3.zero; // 위치 초기화
-                instance.transform.localRotation = Quaternion.Euler(0, 180, 0); // 적은 왼쪽 보기
-
                 Unit unit = instance.GetComponent<Unit>();
 
                 // [수정] 클래스 타입에 따른 초기화 분기
@@ -176,7 +174,7 @@ public class BattleManager : MonoBehaviour
             UnitData data = DataManager.Instance.GetPlayerData(member.unitID);
 
             // [중요] 유저의 실제 성장 데이터를 가져옴
-            UserUnitInfo userInfo = DataManager.Instance.GetUserUnitInfo(member.unitID);
+            CharacterInfo userInfo = DataManager.Instance.GetUserUnitInfo(member.unitID);
             if (playerPrefab != null && member.slotIndex < playerSlotTransforms.Length)
             {
                 Transform targetSlot = playerSlotTransforms[member.slotIndex];
@@ -212,40 +210,6 @@ public class BattleManager : MonoBehaviour
         SpawnPlayersFromData();
 
         SpawnEnemiesFromData();
-
-        //Unit[] unitsInfield = FindObjectsByType<Unit>(FindObjectsSortMode.None);
-
-        //foreach (Unit unit in unitsInfield)
-        //{
-        //    string parentName = unit.transform.parent.parent.name;
-        //    Image plateImage = unit.transform.parent.parent.GetChild(0).GetComponent<Image>();
-
-
-        //    if (parentName.Contains("Slot_"))
-        //    {
-        //        string indexStr = parentName.Replace("Slot_", "");
-        //        if (int.TryParse(indexStr, out int index))
-        //        {
-        //            unit.SetSlotIndex(index);
-        //        }
-        //    }
-        //    // 색깔 칠하기
-        //    ApplyPlateColorByTag(unit, plateImage);
-
-        //    // 이제 어느 팀인지에 따라 맵에 등록합니다.
-        //    if (unit.data.isEnemy)
-        //    {
-        //        enemySlot[unit.GetSlotIndex()] = unit;
-        //        enemyTurnOrder.Add(unit);
-
-        //    }
-        //    else
-        //    {
-        //        playerSlot[unit.GetSlotIndex()] = unit;
-        //        playerTurnOrder.Add(unit);
-
-        //    }
-        //}
 
         // 스피드 빠른 순서로 재정렬
         SortTurnOrder();

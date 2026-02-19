@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class UserUnitInfo
+public class CharacterInfo
 {
     public int unitID;      // 어떤 캐릭터인지 (ID)
     public int level;       // 현재 레벨
@@ -39,8 +39,10 @@ public class DataManager : MonoBehaviour
     [Header("User Party Data")]
     public List<PartyMember> currentParty = new List<PartyMember>();
 
-    // 유저가 보유한 유닛들의 성장 정보 (실제로는 JSON이나 DB에 저장됨)
-    public List<UserUnitInfo> userInventory = new List<UserUnitInfo>();
+    // 유저가 보유한 유닛들의 성장 정보
+    public List<CharacterInfo> userInventory = new List<CharacterInfo>();
+
+    private List<ItemInventoryData> _lastEarnedRewards = new List<ItemInventoryData>();
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
     public Language currentLanguage = Language.KO; // 기본값
@@ -65,11 +67,11 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public UserUnitInfo GetUserUnitInfo(int id)
+    public CharacterInfo GetUserUnitInfo(int id)
     {
         // 리스트에서 ID가 일치하는 정보를 찾고, 없으면 기본값(1레벨) 반환
         return userInventory.Find(info => info.unitID == id)
-               ?? new UserUnitInfo { unitID = id, level = 1, breakthrough = 0 };
+               ?? new CharacterInfo { unitID = id, level = 1, breakthrough = 0 };
     }
 
     public List<PartyMember> GetCurrentParty()
@@ -402,22 +404,120 @@ public class DataManager : MonoBehaviour
         // 이벤트 등을 활용해 현재 열려있는 UI들의 텍스트를 갱신하도록 신호를 보낼 수 있음
     }
 
+    public void AttachTag(Character target, int tagItemID, int slotIndex)
+    {
+        var itemInInv = userData.inventory.Find(x => x.itemID == tagItemID);
+
+        if (itemInInv == null || itemInInv.count <= 0)
+        {
+            Debug.LogWarning("아이템이 부족합니다!");
+            return;
+        }
+
+        // 2. 아이템 데이터에서 태그 이름 가져오기
+        ItemData tagData = GetItemData(tagItemID);
+
+        // 3. 캐릭터의 해당 슬롯에 이름 저장 (덮어쓰기)
+        target.customTags[slotIndex] = tagData.itemName; //
+
+        // 4. 인벤토리 개수 차감 및 저장
+        itemInInv.count--;
+        if (itemInInv.count <= 0) userData.inventory.Remove(itemInInv);
+
+        SaveData(); //
+        Debug.Log($"{target.name}에게 {tagData.itemName} 장착 완료!");
+    }
+
     public void CompleteStage(string stageID)
     {
+        _lastEarnedRewards.Clear(); // 이전 획득 기록 초기화
+
         // 1. 기록 갱신
         StageHistory history = userData.stageHistory.Find(x => x.stageID == stageID);
         if (history == null)
         {
-            history = new StageHistory { stageID = stageID };
+            history = new StageHistory { stageID = stageID, isCleared = false, isFirstRewardClaimed = false  };
             userData.stageHistory.Add(history);
         }
         history.isCleared = true;
 
-        // 2. 보상 지급 로직 (필요시 구현)
-        // ...
+        // 2. 보상 지급 로직
+        StageDetailData details = DataManager.Instance.GetStageDetail(stageID);
+
+        if (details != null)
+        {
+            // A. 첫 클리어 보상 (아직 클리어한 적이 없을 때만)
+            if (!history.isFirstRewardClaimed)
+            {
+                ProcessRewards(details.firstRewards);
+                history.isFirstRewardClaimed = true;
+            }
+
+            // B. 일반 드롭 보상
+            ProcessRewards(details.dropItems);
+        }
 
         // 3. 저장
+        history.isCleared = true;
         SaveData();
-        Debug.Log($"스테이지 {stageID} 클리어 데이터 저장 완료!");
+    }
+
+    private void GiveItem(int id, int count)
+    {
+        // 1. 재화(Currency)인 경우 직접 변수 수정
+        if (id == 1001) // 1번이 골드
+        {
+            userData.gold += count;
+            Debug.Log($"골드 획득: {count}, 현재: {userData.gold}");
+        }
+        else if (id == 1002) // 2번이 다이아
+        {
+            userData.diamond += count;
+        }
+        // 2. 그 외의 모든 아이템은 인벤토리 리스트에서 관리
+        else
+        {
+            AddToInventory(id, count);
+        }
+    }
+
+    private void AddToInventory(int id, int count)
+    {
+        // 인벤토리에 이미 해당 아이템이 있는지 확인
+        ItemInventoryData existingItem = userData.inventory.Find(x => x.itemID == id);
+
+        if (existingItem != null)
+        {
+            // 이미 있다면 개수만 더함
+            existingItem.count += count;
+        }
+        else
+        {
+            // 없다면 새로 생성해서 리스트에 추가
+            userData.inventory.Add(new ItemInventoryData { itemID = id, count = count });
+        }
+
+        Debug.Log($"아이템 ID {id} 획득: {count}개");
+    }
+
+    public List<ItemInventoryData> GetLastEarnedRewards()
+    {
+        return _lastEarnedRewards;
+    }
+
+    private void ProcessRewards(List<ItemDropData> rewards)
+    {
+        foreach (var reward in rewards)
+        {
+            if (UnityEngine.Random.Range(0f, 100f) <= reward.chance)
+            {
+                GiveItem(reward.itemID, reward.count);
+
+                // UI 표시용 리스트에 합산 (이미 있으면 count만 더함)
+                ItemInventoryData existingItem = _lastEarnedRewards.Find(x => x.itemID == reward.itemID);
+                if (existingItem != null) existingItem.count += reward.count;
+                else _lastEarnedRewards.Add(new ItemInventoryData { itemID = reward.itemID, count = reward.count });
+            }
+        }
     }
 }

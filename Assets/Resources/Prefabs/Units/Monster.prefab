@@ -784,7 +784,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5802045770561453734}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -822,18 +822,26 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 82a6e605e4397a94aad35b3de670572c, type: 2}
   activeBuffs: []
   hpBar: {fileID: 7478183710358336268}
-  shield: {fileID: 5302183700200050113}
-  shieldText: {fileID: 4914563093243599436}
   damageBubble: {fileID: 4389149668785650950}
   damageText: {fileID: 7627845049032880648}
+  shieldIcon: {fileID: 0}
+  shieldText: {fileID: 4914563093243599436}
+  attackIcon: {fileID: 0}
+  AtkText: {fileID: 0}
+  leafPrefab: {fileID: 0}
+  healBubble: {fileID: 0}
+  healText: {fileID: 0}
+  level: 0
   currentHp: 0
   currentAttack: 0
   currentSpeed: 0
+  multiplier: 1
   finalSkillMultiplier: 0
   maxHp: 0
   slotIndex: 0
   shieldCount: 0
   shieldAmount: 0
+  bonusAttackFromShield: 0
 --- !u!1 &7271829047126803449
 GameObject:
   m_ObjectHideFlags: 0
