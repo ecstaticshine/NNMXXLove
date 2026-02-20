@@ -4,7 +4,7 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.EventSystems;
 
-public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private Image unitIcon;
     [SerializeField] private TMP_Text levelText;
@@ -23,6 +23,12 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject levelUpBadge; // 결과창에서만 사용
 
     private UnitData currentUnitData;
+
+    public UnitData GetUnitData()
+    {
+        // 이미 선언되어 있는 currentUnitData를 반환합니다.
+        return currentUnitData;
+    }
 
     public void SetUnitIcon(UnitData data, int level)
     {
@@ -134,4 +140,34 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             TooltipManager.Instance.HideTooltip();
         }
     }
+
+    private GameObject ghostIcon; // 드래그 시 마우스를 따라다닐 가짜 이미지
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        // 드래그 시작 시 마우스를 따라갈 가짜 이미지 생성
+        ghostIcon = new GameObject("GhostIcon");
+        ghostIcon.transform.SetParent(transform.root);
+        Image ghostImg = ghostIcon.AddComponent<Image>();
+        ghostImg.sprite = currentUnitData.unitPortrait; // SO의 초상화 사용
+        ghostImg.raycastTarget = false; // 드롭 감지 방해 방지
+
+        // 크기 조절
+        RectTransform rect = ghostIcon.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(150, 150);
+
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        // 가짜 이미지가 마우스 위치를 따라가게 함
+        ghostIcon.transform.position = eventData.position;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        // 드래그 종료 시 가짜 이미지 파괴
+        Destroy(ghostIcon);
+    }
+
 }

@@ -37,6 +37,8 @@ public class Unit : MonoBehaviour
 
     [SerializeField] private int slotIndex;     // 유닛이 위치한 슬롯
 
+    [SerializeField] private SpriteRenderer spriteRenderer; //캐릭터 이미지를 바꿀 컴포넌트
+
     [Header("Shield System")]
     public int shieldCount = 0; // 쉴드 횟수
     public int shieldAmount = 0; // 방어 가능한 데미지 상한선 (내구도)
@@ -131,6 +133,21 @@ public class Unit : MonoBehaviour
                 .SetEase(Ease.OutQuad)
                 .SetLink(hpBar.gameObject);
         }
+    }
+
+    public void SetUnit(UnitData newData)
+    {
+        if (newData == null) return;
+
+        this.data = newData;
+
+        // 배치용 SD 이미지로 외형 변경
+        if (spriteRenderer != null && data.unitBattleSD != null)
+        {
+            spriteRenderer.sprite = data.unitBattleSD;
+        }
+
+        // 추가로 이름이나 능력치 초기화 로직이 필요하다면 여기서 처리합니다.
     }
     public void Heal(int healAmount)
     {
