@@ -58,10 +58,6 @@ public class TooltipManager : MonoBehaviour
             return;
         }
 
-        Debug.Log(name);
-        Debug.Log(desc);
-
-
         nameText.text = name;
         descriptionText.text = desc;
         tooltipPopup.SetActive(true);

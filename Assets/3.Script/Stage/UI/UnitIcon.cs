@@ -122,9 +122,6 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             string translatedName = DataManager.Instance.GetLocalizedText(currentUnitData.unitNameKey);
             string translatedDesc = DataManager.Instance.GetLocalizedText(currentUnitData.descriptionKey);
 
-            Debug.Log(translatedName);
-            Debug.Log(translatedDesc);
-
             TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
         }
     }

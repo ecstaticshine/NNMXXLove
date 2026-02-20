@@ -104,9 +104,6 @@ public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             string translatedName = DataManager.Instance.GetLocalizedText(currentItemData.itemNameKey);
             string translatedDesc = DataManager.Instance.GetLocalizedText(currentItemData.descriptionKey);
 
-            Debug.Log(translatedName);
-            Debug.Log(translatedDesc);
-
             TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
         }
     }
