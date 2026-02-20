@@ -15,11 +15,13 @@ public enum ItemType
 [CreateAssetMenu(fileName = "ItemData", menuName = "Data/ItemData")]
 public class ItemData : ScriptableObject
 {
+    [Header("Localization Keys")]
+    public string itemNameKey;
+    public string descriptionKey;  //아이템 설명
+
     [Header("Basic Info")]
     public int itemID;
-    public string itemName;
     [TextArea(3, 5)]
-    public string description;  //아이템 설명
 
     [Header("Visual")]
     public Sprite itemIcon;

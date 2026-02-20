@@ -37,6 +37,9 @@ public class BattleManager : MonoBehaviour
     public Dictionary<int, Unit> playerSlot = new Dictionary<int, Unit>();
     public Dictionary<int, Unit> enemySlot = new Dictionary<int, Unit>();
 
+    // 경험치 먹인 모든 캐릭터 리스트
+    public List<Character> characterParties = new List<Character>();
+
     // 캐릭터 스폰 지역
     [Header("Slot Assignments")]
     public Transform[] playerSlotTransforms = new Transform[9];
@@ -188,6 +191,8 @@ public class BattleManager : MonoBehaviour
                 if (character != null && data is CharacterData charData)
                 {
                     character.SetCharacterData(charData, userInfo.level, userInfo.breakthrough);
+
+                    characterParties.Add(character);
                 }
 
                 character.SetSlotIndex(member.slotIndex);
@@ -206,6 +211,7 @@ public class BattleManager : MonoBehaviour
         enemySlot.Clear();
         playerTurnOrder.Clear();
         enemyTurnOrder.Clear();
+        characterParties.Clear();
 
         SpawnPlayersFromData();
 
@@ -594,7 +600,7 @@ public class BattleManager : MonoBehaviour
             // DataManager에 클리어 알림 (보상 지급 및 다음 스테이지 해금이 여기서 처리됨)
             List<ItemInventoryData> earnedRewards = DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
 
-            uiManager.ShowResult(victory, earnedRewards);
+            uiManager.ShowResult(victory, earnedRewards, characterParties);
         }
         else
         {

@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 5347942320475061908}
   - component: {fileID: 5760651665532275051}
   - component: {fileID: 5697620032692204008}
+  - component: {fileID: 8618374152937341580}
   m_Layer: 5
   m_Name: UnitIcon
   m_TagString: Untagged
@@ -390,6 +391,20 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7ebb78c8b3550354c84636a0987f9c1f, type: 3}
   - {fileID: 21300000, guid: 2e392798ee9c8ad419512d339eb6d012, type: 3}
   - {fileID: 21300000, guid: 831272ce6acacbc4e8cf33aa87fbec06, type: 3}
+  expSlider: {fileID: 0}
+  levelUpBadge: {fileID: 0}
+--- !u!225 &8618374152937341580
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3859849288622619261}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4298824767458046053
 GameObject:
   m_ObjectHideFlags: 0

@@ -2382,7 +2382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &694731918
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7050,7 +7050,7 @@ GameObject:
   - component: {fileID: 1706250388}
   - component: {fileID: 1706250389}
   m_Layer: 5
-  m_Name: RewardContainer
+  m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7073,7 +7073,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -11.5, y: 13}
-  m_SizeDelta: {x: -800, y: 410}
+  m_SizeDelta: {x: 0, y: 410}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1706250388
 MonoBehaviour:
@@ -8071,6 +8071,7 @@ MonoBehaviour:
   currentSpeed: 1
   playerTurnOrder: []
   enemyTurnOrder: []
+  characterParties: []
   playerSlotTransforms:
   - {fileID: 810627826}
   - {fileID: 1343617178}
@@ -8389,7 +8390,7 @@ MonoBehaviour:
   timelineContainer: {fileID: 806446307}
   unitIconPrefab: {fileID: 3859849288622619261, guid: 34403719d33146e47a9472c8c92de140, type: 3}
   fadeDuration: 0.5
-  rewardContainer: {fileID: 1706250387}
+  container: {fileID: 1706250387}
   rewardItemPrefab: {fileID: 2868332210390915000, guid: 8fe98ef70de85464d8455e524416ebaf, type: 3}
 --- !u!224 &2139813980 stripped
 RectTransform:

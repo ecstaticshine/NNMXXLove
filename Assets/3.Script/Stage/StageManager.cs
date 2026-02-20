@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class StageManager : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class StageManager : MonoBehaviour
     public GameObject stageSelectPanel; // 스테이지 선택창 키게
     public GameObject stageDetailPanel; // 스테이지 상세창
     public TMP_Text titleText;          // 패널의 제목
+    public CanvasGroup ClearCheckerGroup;          // 스테이지 클리어 체커
+    public Image ClearCheckerImage;
+    public Sprite clearedStampSprite;
+    public Sprite notClearedSprite;
 
     private string currentWorldName; // 현재 속한 월드명
     private int currentWorldIndex;  // 현재 속한 월드 번호
@@ -175,6 +180,8 @@ public class StageManager : MonoBehaviour
             currentStageIndex = id;
             string displayID = detail.stageID.Replace($"W{currentWorldIndex:D2}S", "");
 
+            bool isCleared = DataManager.Instance.IsStageCleared(id);
+
             // 1. 제목 설정 (id를 직접 쓰는 대신 detail.stageID 사용)
             titleText.text = $"{currentWorldName} {currentWorldIndex}-{int.Parse(displayID)}";
 
@@ -190,6 +197,31 @@ public class StageManager : MonoBehaviour
             // 5. 스테미나 정보
             if (staminaText != null)
                 staminaText.text = detail.staminaCost.ToString();
+
+            if (ClearCheckerGroup != null)
+            {
+                if (isCleared)
+                {
+                    // 1. 활성화 및 스프라이트 설정
+                    ClearCheckerGroup.gameObject.SetActive(true);
+                    if (clearedStampSprite != null)
+                        ClearCheckerImage.sprite = clearedStampSprite;
+
+                    // 2. 초기 상태 설정 (완전 투명 + 2배 크기)
+                    ClearCheckerGroup.DOKill();
+                    ClearCheckerGroup.alpha = 0f;
+                    ClearCheckerGroup.transform.localScale = Vector3.one * 2f;
+
+                    // 3. 연출 실행 (알파를 1로 만드는 DOFade 추가!)
+                    ClearCheckerGroup.DOFade(1f, 0.2f); // 0.2초 동안 선명해짐
+                    ClearCheckerGroup.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBounce);
+                }
+                else
+                {
+                    // 클리어하지 않았다면 숨기기 (혹은 미클리어용 기본 이미지)
+                    ClearCheckerImage.sprite = notClearedSprite;
+                }
+            }
 
             stageDetailPanel.SetActive(true);
         }
@@ -260,8 +292,7 @@ public class StageManager : MonoBehaviour
 
             // 아이템 SO 로드 (DataManager에 GetItemData가 있다고 가정)
             ItemData data = DataManager.Instance.GetItemData(res.itemID);
-            itemIcon.Setup(data, res.count);
-            itemIcon.SetChanceText(res.chance);
+            itemIcon.Setup(data, res.count, res.chance);
 
             if (isAlreadyClaimed)
             {
@@ -290,8 +321,7 @@ public class StageManager : MonoBehaviour
             ItemData data = DataManager.Instance.GetItemData(res.itemID);
             if (data != null)
             {
-                itemIcon.Setup(data, res.count);
-                itemIcon.SetChanceText(res.chance);
+                itemIcon.Setup(data, res.count, res.chance);
             }
         }
 

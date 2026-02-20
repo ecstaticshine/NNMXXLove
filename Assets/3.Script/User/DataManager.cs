@@ -9,7 +9,7 @@ public class CharacterInfo
     public int unitID;      // 어떤 캐릭터인지 (ID)
     public int level;       // 현재 레벨
     public int breakthrough; // 돌파 단계
-    public int exp;      // 필요하다면 경험치까지
+    public int currentExp;      // 필요하다면 경험치까지
 }
 
 public class DataManager : MonoBehaviour
@@ -368,7 +368,7 @@ public class DataManager : MonoBehaviour
         TextAsset csv = Resources.Load<TextAsset>("Data/Localization"); // 경로 확인!
         if (csv == null) return;
 
-        string[] lines = csv.text.Split('\n');
+        string[] lines = csv.text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
         // 데이터가 실제 몇 번째 컬럼에 있는지 확인 (enum 값 활용)
         int langCol = (int)currentLanguage;
@@ -382,8 +382,10 @@ public class DataManager : MonoBehaviour
 
             if (split.Length > langCol)
             {
-                string key = split[0];
+                string key = split[0].Trim();
                 string value = split[langCol];
+
+                value = value.Replace("\"", "").Replace("'", "");
 
                 // 줄바꿈 기호(\n)를 실제 줄바꿈으로 변환
                 localizationMap[key] = value.Replace("\\n", "\n");
@@ -395,7 +397,14 @@ public class DataManager : MonoBehaviour
     // 어디서든 쓸 수 있는 번역 함수
     public string GetLocalizedText(string key)
     {
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.Log("로컬라이징 키가 null이거나 비어있습니다!");
+            return "Unknown";
+        }
+
         if (localizationMap.ContainsKey(key)) return localizationMap[key];
+
         return key; // 키가 없으면 키 그대로 반환 (디버깅용)
     }
 
@@ -423,14 +432,14 @@ public class DataManager : MonoBehaviour
         ItemData tagData = GetItemData(tagItemID);
 
         // 3. 캐릭터의 해당 슬롯에 이름 저장 (덮어쓰기)
-        target.customTags[slotIndex] = tagData.itemName; //
+        target.customTags[slotIndex] = tagData.itemNameKey; //
 
         // 4. 인벤토리 개수 차감 및 저장
         itemInInv.count--;
         if (itemInInv.count <= 0) userData.inventory.Remove(itemInInv);
 
         SaveData(); //
-        Debug.Log($"{target.name}에게 {tagData.itemName} 장착 완료!");
+        Debug.Log($"{target.name}에게 {tagData.itemNameKey} 장착 완료!");
     }
 
     public List<ItemInventoryData> CompleteStage(string stageID)
@@ -543,4 +552,44 @@ public class DataManager : MonoBehaviour
         else
             _lastEarnedRewards.Add(new ItemInventoryData { itemID = id, count = count });
     }
+
+    public int GetRequiredExp(int level)
+    {
+        if (level >= 100) return int.MaxValue; // 만렙 100 설정
+        return Mathf.FloorToInt(100f * Mathf.Pow(level, 1.2f));
+    }
+
+    public void UseExpItem(int unitID, int itemID, int useCount)
+    {
+        CharacterInfo unit = GetUserUnitInfo(unitID);
+        if (unit == null || unit.level >= 100) return;
+
+        // 아이템 ID에 따른 경험치 양 설정 (나중에 switch-case로 쉽게 추가 가능)
+        int expPerItem = 0;
+        switch (itemID)
+        {
+            case 2001: expPerItem = 100; break; // 일반 강화석
+            case 2002: expPerItem = 500; break; // (예시) 중급 강화석
+            default: return;
+        }
+
+        int totalGain = expPerItem * useCount;
+        AddExpToUnit(unit, totalGain);
+    }
+
+    private void AddExpToUnit(CharacterInfo unit, int amount)
+    {
+        unit.currentExp += amount;
+
+        while (unit.level < 100 && unit.currentExp >= GetRequiredExp(unit.level))
+        {
+            unit.currentExp -= GetRequiredExp(unit.level);
+            unit.level++;
+
+            // 레벨업 시 스탯 갱신이 필요하다면 여기에 작성
+            // UpdateUnitStats(unit);
+            Debug.Log($"{unit.unitID} 레벨업! 현재 Lv.{unit.level}");
+        }
+    }
 }
+

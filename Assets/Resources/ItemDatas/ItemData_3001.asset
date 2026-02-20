@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 939c0fee496146b4f8f506e4fecc6461, type: 3}
   m_Name: ItemData_3001
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: 2001
-  itemName: EvolStone
-  description: 
+  itemNameKey: ITEM_NAME_3001
+  descriptionKey: ITEM_DESC_3001
+  itemID: 3001
   itemIcon: {fileID: -1794130983840861558, guid: 7975d279fb3f9cd45bd4f274cac5f93a, type: 3}
   grade: 1
   itemType: 1

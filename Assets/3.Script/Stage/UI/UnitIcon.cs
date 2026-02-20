@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
+using UnityEngine.EventSystems;
 
-public class UnitIcon : MonoBehaviour
+public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Image unitIcon;
     [SerializeField] private TMP_Text levelText;
@@ -16,9 +18,17 @@ public class UnitIcon : MonoBehaviour
     [Header("Enemy Frames (Level Series)")]
     public Sprite[] enemyFrames; // L, PL, TL, EL 순서대로
 
+    [Header("Growth UI (Optional)")]
+    public Slider expSlider;       // 결과창에서만 사용
+    public GameObject levelUpBadge; // 결과창에서만 사용
+
+    private UnitData currentUnitData;
+
     public void SetUnitIcon(UnitData data, int level)
     {
         if (data == null) return;
+
+        currentUnitData = data;
 
         // SO에서 초상화 가져오기
         unitIcon.sprite = data.unitPortrait;
@@ -85,5 +95,46 @@ public class UnitIcon : MonoBehaviour
 
         if (ColorUtility.TryParseHtmlString(hex, out Color color)) return color;
         return Color.gray; // 예외 시 기본 회색
+    }
+
+    public void SetExpUI(float currentExp, float maxExp, bool isLevelUp)
+    {
+        if (expSlider != null)
+        {
+            expSlider.gameObject.SetActive(true);
+            expSlider.maxValue = maxExp;
+            // DOTween으로 부드럽게 차오르는 연출
+            expSlider.DOValue(currentExp, 1f).SetEase(Ease.OutCubic);
+        }
+
+        if (levelUpBadge != null)
+        {
+            levelUpBadge.SetActive(isLevelUp);
+            if (isLevelUp) levelUpBadge.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f);
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (currentUnitData != null)
+        {
+            // 유닛 이름과 특이사항(예: 등급 설명 등) 표시
+            string translatedName = DataManager.Instance.GetLocalizedText(currentUnitData.unitNameKey);
+            string translatedDesc = DataManager.Instance.GetLocalizedText(currentUnitData.descriptionKey);
+
+            Debug.Log(translatedName);
+            Debug.Log(translatedDesc);
+
+            TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        // 인스턴스가 존재하고, 실제 게임 오브젝트가 파괴되지 않았을 때만 호출
+        if (TooltipManager.Instance != null)
+        {
+            TooltipManager.Instance.HideTooltip();
+        }
     }
 }

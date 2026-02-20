@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 939c0fee496146b4f8f506e4fecc6461, type: 3}
-  m_Name: ItemData_2001
+  m_Name: ItemData_1003
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemNameKey: ITEM_NAME_2001
-  descriptionKey: ITEM_DESC_2001
-  itemID: 2001
-  itemIcon: {fileID: 4147058742621901622, guid: 0963874b8e9da4e408df18ad9005c2fa, type: 3}
+  itemNameKey: ITEM_NAME_1003
+  descriptionKey: ITEM_DESC_1003
+  itemID: 1003
+  itemIcon: {fileID: -8122256234953540473, guid: 4cc1482538b60ac4d99fedec91753e21, type: 3}
   grade: 1
-  itemType: 1
+  itemType: 0
   maxStack: 999
   effectValue: 0
   effectStatType: 

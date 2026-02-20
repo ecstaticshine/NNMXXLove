@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 939c0fee496146b4f8f506e4fecc6461, type: 3}
   m_Name: ItemData_1001
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemNameKey: ITEM_NAME_1001
+  descriptionKey: ITEM_DESC_1001
   itemID: 1001
-  itemName: Gold
-  description: 
   itemIcon: {fileID: 21300000, guid: 98b953ff76157e54b944ee35eeba4714, type: 3}
   grade: 1
   itemType: 0

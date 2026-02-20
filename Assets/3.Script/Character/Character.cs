@@ -6,6 +6,10 @@ using UnityEngine.UI;
 public class Character : Unit
 {
 
+    [Header("경험치 데이터")]
+    public int currentExp;
+    public int maxExp; // 다음 레벨까지 필요한 경험치
+
     [Header("성장 데이터")]
     public int breakthroughCount = 0; // 0 ~ 7 유지
     private int currentSkillLevel = 1;

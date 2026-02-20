@@ -7,6 +7,7 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class BattleUIManager : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class BattleUIManager : MonoBehaviour
 
     public float fadeDuration = 0.5f;
 
-    public Transform rewardContainer;   // 아이템 아이콘들이 생성될 부모
+    public Transform container;   // 아이템 아이콘들이 생성될 부모
     public GameObject rewardItemPrefab; 
 
 
@@ -192,7 +193,7 @@ public class BattleUIManager : MonoBehaviour
     }
 
 
-    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null)
+    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null, List<Character> characterParties = null)
     {
 
         // 패널 활성화 및 초기화
@@ -212,11 +213,9 @@ public class BattleUIManager : MonoBehaviour
                 rewards = DataManager.Instance.GetLastEarnedRewards();
             }
 
-            DisplayRewards(rewards);
+            // 코루틴 시작
+            StartCoroutine(ResultSequence_Co(isVictory, rewards, characterParties));
 
-            // 2. 캐릭터 성장 정보 표시
-            // 전투에 참여했던 아군(playerTurnOrder)의 경험치 바 연출
-            DisplayCharacterGrowth(BattleManager.instance.playerTurnOrder);
 
         }
         else
@@ -237,7 +236,7 @@ public class BattleUIManager : MonoBehaviour
     private void DisplayRewards(List<ItemInventoryData> rewards)
     {
         // 기존 아이콘들 청소
-        foreach (Transform child in rewardContainer)
+        foreach (Transform child in container)
         {
             Destroy(child.gameObject);
         }
@@ -251,7 +250,7 @@ public class BattleUIManager : MonoBehaviour
             ItemInventoryData item = rewards[i];
 
             // 프리팹 생성
-            GameObject itemObj = Instantiate(rewardItemPrefab, rewardContainer);
+            GameObject itemObj = Instantiate(rewardItemPrefab, container);
 
             // 3. ItemIcon 컴포넌트 가져오기
             ItemIcon itemIcon = itemObj.GetComponent<ItemIcon>();
@@ -306,10 +305,23 @@ public class BattleUIManager : MonoBehaviour
 
     public void OnClickExitResult()
     {
-        // 결과창 페이드 아웃 후 씬 전환
+        // 1. 결과창 페이드 아웃
         resultPanel.DOFade(0f, 0.3f).OnComplete(() => {
             resultPanel.gameObject.SetActive(false);
-            SceneManager.LoadScene("AdventureScene"); // 씬 전환 로직 호출
+
+            // 2. 글로벌 UI 다시 켜기
+            if (GlobalUIManager.Instance != null)
+            {
+                GlobalUIManager.Instance.SetBattleLayout(true);
+                // 전투 종료 후 돌아갈 상태 설정 (예: Adventure)
+                // ChangeState를 통해 씬 전환까지 한꺼번에 처리하는 것이 안전합니다.
+                GlobalUIManager.Instance.ChangeState(SceneState.Adventure, true);
+            }
+            else
+            {
+                // 만약 GlobalUIManager가 없는 상황을 대비한 예외 처리
+                SceneManager.LoadScene("AdventureScene");
+            }
         });
     }
 
@@ -385,6 +397,74 @@ public class BattleUIManager : MonoBehaviour
             {
                 autoText.color = isActive ? Color.yellow : Color.white;
             }
+    }
+
+    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards,List<Character> characterParties = null)
+    {
+        // --- [1단계: 아이템 표시] ---
+        resultPanel.DOFade(1f, fadeDuration);
+        DisplayRewards(rewards); // 기존 아이템 생성 로직 호출
+
+        yield return new WaitForSeconds(fadeDuration);
+        resultPanel.blocksRaycasts = true;
+
+        // 유저 클릭 대기 (3초 자동 넘김을 원하시면 타이머를 섞어도 됩니다)
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                 (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        // --- [2단계: 컨테이너 비우고 캐릭터 경험치 표시] ---
+        // 기존 아이템 아이콘들 제거
+        foreach (Transform child in container)
+        {
+            Destroy(child.gameObject);
         }
-    
+
+        
+        int gainExp = 150; // 전투 승리 기본 획득 경험치량
+
+        if(characterParties != null)
+        {
+            foreach (Unit unit in characterParties)
+            {
+                if (unit is Character character)
+                {
+                    // 프리팹 생성 및 배치 (rewardContainer 재활용)
+                    GameObject iconObj = Instantiate(unitIconPrefab, container);
+                    UnitIcon unitIcon = iconObj.GetComponent<UnitIcon>();
+
+                    if (unitIcon != null)
+                    {
+                        // 기본 정보 세팅 (기존 함수 재사용)
+                        unitIcon.SetUnitIcon(character.data, character.level);
+
+                        // 경험치/레벨업 연출 (만렙 100 체크 포함)
+                        if (character.level < 100)
+                        {
+                            // TODO: 실제 DataManager의 경험치 테이블과 연동 필요
+                            float currentExp = 0; // 실제 데이터 연결 필요
+                            float nextExp = 1000f;
+                            bool isLevelUp = (currentExp + gainExp >= nextExp);
+                            unitIcon.SetExpUI(currentExp + gainExp, nextExp, isLevelUp);
+                        }
+
+                        // 죽은 애들은 살짝 어둡게 (선택 사항)
+                        if (unit.GetCurrentHP() <= 0)
+                        {
+                            iconObj.GetComponent<CanvasGroup>().alpha = 0.6f;
+                        }
+                    }
+                }
+            }
+        }
+
+       
+
+        // 결과창 최종 종료 대기 (한 번 더 클릭하면 나감)
+        yield return new WaitForSeconds(0.5f); // 연출 직후 바로 꺼짐 방지
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                         (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        OnClickExitResult();
+    }
+
 }
