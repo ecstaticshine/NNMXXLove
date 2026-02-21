@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31325d7f0dbba254f905b233b4619108, type: 3}
   m_Name: UnitData_1
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  unitName: "\uC774\uADF8\uB2C8"
+  unitID: 1
+  unitNameKey: UNIT_NAME_1
+  descriptionKey: UNIT_DESC_1
   unitType: 0
   defaultTag: Direct
   unitPortrait: {fileID: 21300000, guid: e9f386e64ab32fd4fba63fa1f0d2ff19, type: 3}

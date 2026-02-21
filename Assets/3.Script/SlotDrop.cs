@@ -8,6 +8,7 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 {
     public Transform characterAnchorSlot;
     public bool isPlayerSlot;
+    public int slotIndex;
 
     [SerializeField] private GameObject unitPrefab;
 
@@ -25,9 +26,11 @@ public class SlotDrop : MonoBehaviour, IDropHandler
         // 배틀 씬에서 드래그한 캐릭터 아이콘인가?
         CharacterDrag characterDrag = draggedObject.GetComponent<CharacterDrag>();
 
-        if (listIcon != null)
+        if (listIcon != null && !listIcon.IsPlaced())
         {
             HandleNewUnitDrop(listIcon);
+
+            listIcon.SetPlaced(true);   // 배치됨
         }
         else if(characterDrag != null)
         {
@@ -43,12 +46,28 @@ public class SlotDrop : MonoBehaviour, IDropHandler
         // 슬롯에 이미 유닛이 있다면 제거 (또는 교체)
         if (characterAnchorSlot.childCount > 0)
         {
-            Destroy(characterAnchorSlot.GetChild(0).gameObject);
+            Transform oldUnit = characterAnchorSlot.GetChild(0);
+            CharacterDrag oldDrag = oldUnit.GetComponent<CharacterDrag>();
+
+            // 기존 유닛의 리스트 아이콘을 다시 밝게(Placed = false)하기
+            if (oldDrag != null && oldDrag.originIcon != null)
+            {
+                oldDrag.originIcon.SetPlaced(false);
+            }
+
+            // 필드에서는 제거합니다.
+            Destroy(oldUnit.gameObject);
         }
 
         GameObject newUnitObj = Instantiate(unitPrefab, characterAnchorSlot);
         newUnitObj.transform.localPosition = Vector2.zero;
         newUnitObj.transform.localScale = Vector3.one;
+
+        CharacterDrag newDrag = newUnitObj.GetComponent<CharacterDrag>();
+        if (newDrag != null)
+        {
+            newDrag.originIcon = listIcon; // 유닛에게 아이콘 정보를 전달
+        }
 
         Character newChar = newUnitObj.GetComponent<Character>();
         if (newChar != null)
@@ -84,12 +103,12 @@ public class SlotDrop : MonoBehaviour, IDropHandler
             existCharacter.transform.localPosition = Vector2.zero;
             existCharacter.transform.localScale = Vector3.one;
 
-            BattleManager.instance.UpdateSlotColor(dragOriginalSlot.parent, existUnit);
+            BattleManager.instance?.UpdateSlotColor(dragOriginalSlot.parent, existUnit);
 
         }
         else
         {
-            BattleManager.instance.UpdateSlotColor(dragOriginalSlot.parent, null);
+            BattleManager.instance?.UpdateSlotColor(dragOriginalSlot.parent, null);
         }
 
         // 캐릭터의 부모를 이 슬롯의 앵커 바꾸기
@@ -97,13 +116,13 @@ public class SlotDrop : MonoBehaviour, IDropHandler
         draggedObject.transform.localPosition = Vector2.zero;
         draggedObject.transform.localScale = Vector3.one;
 
-        BattleManager.instance.UpdateSlotColor(characterAnchorSlot.parent, draggedUnit);
+        BattleManager.instance?.UpdateSlotColor(characterAnchorSlot.parent, draggedUnit);
 
         UpdateOverallSynergy();
     }
 
 
-    private void UpdateOverallSynergy()
+    public void UpdateOverallSynergy()
     {
         int direct = 0, splash = 0, dot = 0;
 
@@ -130,4 +149,5 @@ public class SlotDrop : MonoBehaviour, IDropHandler
             SynergyUI.instance.UpdateUI(direct, splash, dot);
         }
     }
+
 }

@@ -314,8 +314,8 @@ public class BattleUIManager : MonoBehaviour
             {
                 GlobalUIManager.Instance.SetBattleLayout(true);
                 // 전투 종료 후 돌아갈 상태 설정 (예: Adventure)
-                // ChangeState를 통해 씬 전환까지 한꺼번에 처리하는 것이 안전합니다.
-                GlobalUIManager.Instance.ChangeState(SceneState.Adventure, true);
+                // 글로벌UI은 전 상태로 돌아가기
+                GlobalUIManager.Instance.OnBackButtonClicked();
             }
             else
             {

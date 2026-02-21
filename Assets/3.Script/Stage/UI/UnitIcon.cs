@@ -23,6 +23,9 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject levelUpBadge; // 결과창에서만 사용
 
     private UnitData currentUnitData;
+    private CharacterInfo characterInfo;
+
+    private bool isPlaced = false; // 배치에 사용
 
     public UnitData GetUnitData()
     {
@@ -30,19 +33,51 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return currentUnitData;
     }
 
-    public void SetUnitIcon(UnitData data, int level)
+    public void SetUnitIcon(UnitData data, CharacterInfo info)
     {
         if (data == null) return;
 
-        currentUnitData = data;
+        this.currentUnitData = data;
+        this.characterInfo = info;
 
         // SO에서 초상화 가져오기
         unitIcon.sprite = data.unitPortrait;
 
         // 레벨 표시
-        levelText.text = $"{level}";
+        levelText.text = $"{info.level}";
 
         // 등급(Rarity)에 따른 연출 처리
+        UpdateRarityUI(data.isEnemy, data.rarity);
+    }
+
+    public bool IsPlaced()
+    {
+        return this.isPlaced;
+    }
+
+    public void SetPlaced(bool placed)
+    {
+        isPlaced = placed;
+
+        // 이미 배치된 아이콘은 반투명한 회색으로 만듦
+        if (backboard != null)
+        {
+            backboard.color = placed ? new Color(0.3f, 0.3f, 0.3f, 0.5f) : Color.white;
+        }
+        // 글자나 아이콘도 투명도 조절 가능
+        unitIcon.color = placed ? new Color(1f, 1f, 1f, 0.5f) : Color.white;
+    }
+
+    public void SetUnitIcon(UnitData data, int level)
+    {
+        if (data == null) return;
+
+        this.currentUnitData = data;
+        // 전투 중에는 DB의 CharacterInfo 대신 Unit이 가진 레벨 정보를 바로 사용
+        this.unitIcon.sprite = data.unitPortrait;
+        this.levelText.text = $"{level}";
+
+        // 등급 UI 업데이트 (isEnemy 정보 포함)
         UpdateRarityUI(data.isEnemy, data.rarity);
     }
 
@@ -122,14 +157,14 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (currentUnitData != null)
-        {
-            // 유닛 이름과 특이사항(예: 등급 설명 등) 표시
-            string translatedName = DataManager.Instance.GetLocalizedText(currentUnitData.unitNameKey);
-            string translatedDesc = DataManager.Instance.GetLocalizedText(currentUnitData.descriptionKey);
+        if (currentUnitData == null) return;
+        if (DataManager.Instance == null || TooltipManager.Instance == null) return;
 
-            TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
-        }
+        // 위 조건을 통과했을 때만 툴팁 로직 실행
+        string translatedName = DataManager.Instance.GetLocalizedText(currentUnitData.unitNameKey);
+        string translatedDesc = DataManager.Instance.GetLocalizedText(currentUnitData.descriptionKey);
+
+        TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -145,29 +180,60 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // 드래그 시작 시 마우스를 따라갈 가짜 이미지 생성
-        ghostIcon = new GameObject("GhostIcon");
-        ghostIcon.transform.SetParent(transform.root);
-        Image ghostImg = ghostIcon.AddComponent<Image>();
-        ghostImg.sprite = currentUnitData.unitPortrait; // SO의 초상화 사용
-        ghostImg.raycastTarget = false; // 드롭 감지 방해 방지
+        // 데이터가 없거나 배치된 유닛이면 드래그 불가
+        if (currentUnitData == null || isPlaced)
+        {
+            return;
+        }
 
-        // 크기 조절
+        // 1. 고스트 아이콘 생성 및 캔버스 설정
+        ghostIcon = new GameObject("GhostIcon");
+
+        // 2. 드래그할 때는 제일 상위 캔버스 앞으로 오게 해야지 드래그해서 드롭할 때까지 남음.
+        Canvas parentCanvas = GetComponentInParent<Canvas>();
+
+        if (parentCanvas != null)
+        {
+            // 좌표 안 튀게
+            ghostIcon.transform.SetParent(parentCanvas.transform, false);
+            // 해당 캔버스 안에서 가장 앞으로 오게 하고 드롭 끝나면 어차피 사라질 운명
+            ghostIcon.transform.SetAsLastSibling();
+        }
+
+        // 3. UI 렌더링을 위한 필수 컴포넌트 추가
+        ghostIcon.AddComponent<CanvasRenderer>(); // 이미지 렌더링 필수 컴포넌트
+        Image ghostImg = ghostIcon.AddComponent<Image>();
+
+        // 4. 이미지 할당 및 투명도 조절
+        ghostImg.sprite = currentUnitData.unitBattleSD;
+        ghostImg.color = new Color(1, 1, 1, 0.7f); // 70% 투명도
+        ghostImg.raycastTarget = false;
+
+        // 5. RectTransform 크기 및 위치 강제 초기화
         RectTransform rect = ghostIcon.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(150, 150);
+        rect.sizeDelta = new Vector2(120, 150); // 배틀 SD 비율에 맞춰 조정
+        rect.localPosition = Vector3.zero;
+
+        ghostIcon.transform.position = eventData.position;
 
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // 가짜 이미지가 마우스 위치를 따라가게 함
-        ghostIcon.transform.position = eventData.position;
+        if (ghostIcon != null)
+        {
+            // 가짜 이미지가 마우스 위치를 따라가게 함
+            ghostIcon.transform.position = eventData.position;
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // 드래그 종료 시 가짜 이미지 파괴
-        Destroy(ghostIcon);
+        if (ghostIcon != null)
+        {
+            // 드래그 종료 시 가짜 이미지 파괴
+            Destroy(ghostIcon);
+        }
     }
 
 }

@@ -8,6 +8,9 @@ public enum UnitType { Dealer, Healer, Buffer }
 [CreateAssetMenu(fileName = "NewUnitData", menuName = "ScriptableObjects/UnitData")]
 public class UnitData : ScriptableObject
 {
+    [Header("∞Ì¿Ø ID")]
+    public int unitID;
+
     [Header("Localization Keys")]
     public string unitNameKey;
     public string descriptionKey;

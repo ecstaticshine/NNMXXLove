@@ -4756,6 +4756,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 8995325151245563546}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!114 &531095903764407836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4770,6 +4772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 8977247547129893010}
   isPlayerSlot: 1
+  slotIndex: 3
+  unitPrefab: {fileID: 0}
 --- !u!114 &553495287136562119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5074,6 +5078,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 8504268905802821201}
   isPlayerSlot: 1
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!222 &995349432420457347
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5311,6 +5317,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 7553010167239500012}
   isPlayerSlot: 1
+  slotIndex: 7
+  unitPrefab: {fileID: 0}
 --- !u!222 &1389838476659244701
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6146,6 +6154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 6436227740028566022}
   isPlayerSlot: 1
+  slotIndex: 6
+  unitPrefab: {fileID: 0}
 --- !u!114 &2566293106177958454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6323,6 +6333,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 6778732301360510996}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!114 &2735669506646668054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6572,6 +6584,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 5814864450138049088}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!114 &3158879953633927367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6586,6 +6600,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 5773011543165081161}
   isPlayerSlot: 1
+  slotIndex: 8
+  unitPrefab: {fileID: 0}
 --- !u!224 &3178964631589048274
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6752,6 +6768,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 6095807565197635700}
   isPlayerSlot: 1
+  slotIndex: 2
+  unitPrefab: {fileID: 0}
 --- !u!1 &3468690685049283068
 GameObject:
   m_ObjectHideFlags: 0
@@ -6902,6 +6920,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 5262575489612529593}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!222 &3677476597696457993
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7890,6 +7910,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 3728623100667723687}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!1 &5237287222422572078
 GameObject:
   m_ObjectHideFlags: 0
@@ -8076,6 +8098,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 3923813007195873416}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!224 &5613493290144763944
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8602,6 +8626,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 2813241208439226892}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!1 &6750043266430617452
 GameObject:
   m_ObjectHideFlags: 0
@@ -8735,6 +8761,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 2663531508420440035}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!114 &6864007683257643784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9493,6 +9521,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 805709332214297409}
   isPlayerSlot: 0
+  slotIndex: 0
+  unitPrefab: {fileID: 0}
 --- !u!114 &8194074323068994864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9798,6 +9828,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 60196595168523656}
   isPlayerSlot: 1
+  slotIndex: 4
+  unitPrefab: {fileID: 0}
 --- !u!222 &8894653253305790573
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9915,6 +9947,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 477010932244921099}
   isPlayerSlot: 1
+  slotIndex: 1
+  unitPrefab: {fileID: 0}
 --- !u!114 &9092364823893429083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9929,6 +9963,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlotDrop
   characterAnchorSlot: {fileID: 424977049456393685}
   isPlayerSlot: 1
+  slotIndex: 5
+  unitPrefab: {fileID: 0}
 --- !u!222 &9097313191984101424
 CanvasRenderer:
   m_ObjectHideFlags: 0

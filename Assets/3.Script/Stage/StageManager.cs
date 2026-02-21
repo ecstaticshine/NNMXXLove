@@ -45,6 +45,10 @@ public class StageManager : MonoBehaviour
     public GameObject dropLeftBtn, dropRightBtn;        // 반복 클리어용
     public GameObject rewardLeftBtn, rewardRightBtn;    // 첫 클리어용
 
+    [Header("Placement UI")]
+    public GameObject placementPanel;
+    public GameObject unitPrefab; // 배치할 유닛 프리팹
+
 
     public static StageManager Instance = null;
 
@@ -231,12 +235,137 @@ public class StageManager : MonoBehaviour
         stageDetailPanel.SetActive(false);
     }
 
-    public void OnClickStartBattle()
+    // 편성 취소
+    public void OnClickCancelPlacement()
     {
+        placementPanel.SetActive(false);
+        stageDetailPanel.SetActive(true);
+
+        // 상태를 다시 StageSelect로 복귀
+        GlobalUIManager.Instance.ChangeState(SceneState.StageSelect);
+    }
+    // 편성 리셋
+    public void OnClickResetPlacement()
+    {
+        // 모든 SlotDrop을 찾아서 유닛이 있다면 파괴
+        SlotDrop[] allSlots = placementPanel.GetComponentsInChildren<SlotDrop>();
+
+        foreach (var slot in allSlots)
+        {
+            if (slot.characterAnchorSlot.childCount > 0)
+            {
+                Transform unitTransform = slot.characterAnchorSlot.GetChild(0);
+                CharacterDrag drag = unitTransform.GetComponent<CharacterDrag>();
+
+                // 리스트 아이콘 다시 활성화 (밝게 만들기)
+                if (drag != null && drag.originIcon != null)
+                {
+                    drag.originIcon.SetPlaced(false);
+                }
+
+                Destroy(unitTransform.gameObject);
+            }
+        }
+
+        // 시너지 UI 갱신 (SlotDrop 중 하나를 이용해 전체 갱신 호출)
+        if (allSlots.Length > 0)
+        {
+            allSlots[0].UpdateOverallSynergy();
+        }
+
+    }
+
+    public void OnClickGoToPlacement()
+    {
+        // 스테이지 상세창 끄고 편성창 키기
+        stageDetailPanel.SetActive(false);
+        placementPanel.SetActive(true);
+
+        // 상태 변경 (유닛 드래그가 가능하도록)
+        GlobalUIManager.Instance.ChangeState(SceneState.Placement);
+
+        LoadSavedParty();
+
+        // 현재 선택한 스테이지 정보를 저장
         DataManager.Instance.selectedStageID = currentStageIndex;
+    }
+
+    private void LoadSavedParty()
+    {
+        // 기존 배치된 오브젝트 완전 삭제 (리셋 함수 호출)
+        OnClickResetPlacement();
+
+        // DataManager에서 현재 파티 리스트 가져오기
+        List<PartyMember> savedParty = DataManager.Instance.GetCurrentParty();
+
+        // 슬롯들을 찾아서 인덱스에 맞게 배치
+        SlotDrop[] allSlots = placementPanel.GetComponentsInChildren<SlotDrop>();
+
+        foreach (PartyMember member in savedParty)
+        {
+            // member.slotIndex가 유효한 범위인지 확인
+            if (member.slotIndex >= 0 && member.slotIndex < allSlots.Length)
+            {
+                SlotDrop targetSlot = allSlots[member.slotIndex];
+                SpawnUnitFromData(targetSlot, member.unitID);
+            }
+        }
+    }
+
+    private void SpawnUnitFromData(SlotDrop slot, int unitID)
+    {
+        UnitData uData = DataManager.Instance.GetPlayerData(unitID);
+        if (uData == null) return;
+
+        // 프리팹 생성 및 부모 설정
+        GameObject newUnit = Instantiate(unitPrefab, slot.characterAnchorSlot);
+        newUnit.transform.localPosition = Vector2.zero;
+        newUnit.transform.localScale = Vector3.one;
+
+        // 컴포넌트 데이터 주입
+        Character charScript = newUnit.GetComponent<Character>();
+        CharacterDrag dragScript = newUnit.GetComponent<CharacterDrag>();
+
+        // 성장 데이터(레벨, 돌파 등) 가져오기
+        CharacterInfo growth = DataManager.Instance.GetUserUnitInfo(unitID);
+
+        if (charScript != null)
+            charScript.SetCharacterData(uData, growth.level, growth.breakthrough);
+
+        // 유닛 드래그 스크립트에 필요한 정보 세팅 (리스트에서 꺼낸 게 아니므로 null 처리 유의)
+        if (dragScript != null)
+            dragScript.originIcon = null; // 필요시 리스트 아이콘 찾아서 연결 가능
+
+        // UI 및 시너지 갱신
+        slot.UpdateOverallSynergy();
+    }
+
+    public void FinalStartBattle()
+    {
+        List<PartyMember> newParty = new List<PartyMember>();
+        SlotDrop[] allSlots = placementPanel.GetComponentsInChildren<SlotDrop>();
+
+        foreach (var slot in allSlots)
+        {
+            // 슬롯에 유닛이 있다면
+            if (slot.characterAnchorSlot.childCount > 0)
+            {
+                Character character = slot.characterAnchorSlot.GetChild(0).GetComponent<Character>();
+
+                if (character != null && character.data != null)
+                {
+                    // 중요: 루프 인덱스 i가 아니라, 슬롯에 설정된 slot.slotIndex를 사용!
+                    newParty.Add(new PartyMember(slot.slotIndex, character.data.unitID));
+                    Debug.Log($"슬롯 {slot.slotIndex}번에 유닛 {character.data.unitID} 저장 완료");
+                }
+            }
+        }
+
+        // 데이터 매니저에 갱신 및 세이브
+        DataManager.Instance.SaveParty(newParty);
+        DataManager.Instance.SaveData();
 
         GlobalUIManager.Instance.SetBattleLayout(false);
-
         SceneManager.LoadScene("BattleScene");
     }
 

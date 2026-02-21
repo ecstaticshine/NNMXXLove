@@ -17,8 +17,10 @@ public enum SceneState
     Character,              //  Home -> CharacterList -> Character
     CharacterCustomTag,     //  Home -> CharacterList -> Character -> CharacterCustomTag
     CharacterBreakThrough,  //  Home -> CharacterList -> Character -> CharacterBreakThrough
-    WorldSelect,            //  Home -> Adventure -> WorldSelect -> WorldSelect 
+    WorldSelect,            //  Home -> Adventure -> StageSelect -> WorldSelect 
     StageSelect,            //  Home -> Adventure -> StageSelect
+    Placement,              //  Home -> Adventure -> StageSelect -> Placement
+    Stage,                  //  Home -> Adventure -> StageSelect -> Placement -> Stage
     Multi,                  //  Home -> Adventure -> Multi
 
 }
@@ -37,6 +39,8 @@ public class GlobalUIManager : MonoBehaviour
     [Header("BackButton")]
     [SerializeField] private GameObject BackButton; // 뒤로가기 버튼 오브젝트
 
+    [Header("SceneState")]
+    [SerializeField]
     private SceneState currentState = SceneState.Adventure;
     private Stack<SceneState> stateStack = new Stack<SceneState>(); // 씬 되돌아가기 위한 스택
 
@@ -51,6 +55,12 @@ public class GlobalUIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    // 현상황 확인하기 
+    public SceneState GetCurrentState()
+    {
+        return currentState;
     }
 
     public void SetWorldName(string worldName)
@@ -83,14 +93,18 @@ public class GlobalUIManager : MonoBehaviour
         // 1. 뒤로가기 버튼 활성화
         BackButton.SetActive(!isMainTab && stateStack.Count > 0);
 
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
         // 2. 상태에 따른 실제 씬 전환 로직 추가
         switch (currentState)
         {
             case SceneState.Home:
-                SceneManager.LoadScene("HomeScene");
+                if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
                 break;
             case SceneState.Adventure:
-                SceneManager.LoadScene("AdventureScene"); // 월드맵 씬으로 이동
+            case SceneState.StageSelect: // 둘 다 어드벤처 씬을 사용함
+            case SceneState.Placement:
+                if (currentSceneName != "AdventureScene") SceneManager.LoadScene("AdventureScene");
                 break;
             case SceneState.Gacha:
                 SceneManager.LoadScene("GachaScene");

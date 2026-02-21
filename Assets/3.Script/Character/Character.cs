@@ -20,10 +20,10 @@ public class Character : Unit
     protected override void Awake()
     {
         base.Awake();
-        if (data != null)
-        {
-        SetCharacterData(data, 80, 3);
-        }
+        //if (data != null)
+        //{
+        //SetCharacterData(data, 80, 3);
+        //}
     }
 
     public override void InitUnitStat()
