@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
 {
@@ -25,6 +26,15 @@ public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         _originalSlot = transform.parent;    // 현재 부모를 기억
         _pointerDownPosition = eventData.position;         // 드래그 시작 지점 저장
         _isDraggingActual = false; // 초기화
+
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
+
+        if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
+
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 310;
+
 
         SceneState currentState = GlobalUIManager.Instance.GetCurrentState();
         if (currentState != SceneState.Placement && currentState != SceneState.Stage)
@@ -120,7 +130,11 @@ public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!_isDraggingActual) return; // 드래그가 시작조차 안 했다면 로직 스킵
+        if (!_isDraggingActual)
+        {
+            ResetSorting();
+            return; // 드래그가 시작조차 안 했다면 로직 스킵
+        }
 
         if (BattleManager.instance != null)
         {
@@ -136,10 +150,21 @@ public class CharacterDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
             ReturnToOriginalSlot();
         }
 
+        ResetSorting();
+
         if (BattleManager.instance != null && transform.parent != null && transform.parent.parent != null)
         {
             Unit myUnit = GetComponent<Unit>();
             BattleManager.instance.UpdateSlotColor(transform.parent.parent, myUnit);
+        }
+    }
+
+    private void ResetSorting()
+    {
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            canvas.sortingOrder = 301; // 평소 상태 (슬롯보다 아주 살짝 앞)
         }
     }
 
