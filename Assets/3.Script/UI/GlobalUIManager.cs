@@ -41,6 +41,9 @@ public class GlobalUIManager : MonoBehaviour
     [Header("BackButton")]
     [SerializeField] private GameObject BackButton; // 뒤로가기 버튼 오브젝트
 
+    [Header("PlayerInfo")]
+    [SerializeField] private GameObject PlayerInfo;
+
     [Header("SceneState")]
     [SerializeField]
     private SceneState currentState = SceneState.Adventure;
@@ -58,6 +61,23 @@ public class GlobalUIManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 씬이 바뀔 때마다 현재 상태에 맞춰 UI를 강제 동기화
+        RefreshCurrentUI();
+    }
+
 
     // 현상황 확인하기 
     public SceneState GetCurrentState()
@@ -103,12 +123,16 @@ public class GlobalUIManager : MonoBehaviour
         switch (currentState)
         {
             case SceneState.Home:
+                globalUI.SetActive(true);
+                PlayerInfo.SetActive(true);
                 if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
                 break;
             case SceneState.Adventure:
             case SceneState.StageSelect:
             case SceneState.StageDetailPopup: // 추가
             case SceneState.Placement:        // 추가
+                PlayerInfo.SetActive(false);
+                globalUI.SetActive(true);
                 if (currentSceneName != "AdventureScene") { 
                 SceneManager.LoadScene("AdventureScene");
                 }

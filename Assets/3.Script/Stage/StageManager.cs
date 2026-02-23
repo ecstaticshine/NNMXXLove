@@ -32,7 +32,10 @@ public class StageManager : MonoBehaviour
     private string currentStageIndex; // 현재 선택한 스테이지 번호
 
     [Header("StageDetailPopUp")]
-    public TMP_Text staminaText;         // 스테미나 표시용
+    public Button startButton;                  // 출발 버튼
+    public TMP_Text currentStaminaText;         // 스테미나 표시용
+    public TMP_Text staminaCostText;            // 스테미나 소비 표시용
+    public TMP_Text remainStaminaText;          // 남은 스테미나 표시용
     public Transform enemyContent;       // 적 슬롯 부모
     public GameObject enemyIconPrefab;   // 적 슬롯 프리팹
     public Button enemyLeftButton, enemyRightButton;    // 적이 5마리가 넘어가면 표시
@@ -72,6 +75,32 @@ public class StageManager : MonoBehaviour
         {
             // GlobalUIManager가 내부적으로 StageManager를 찾아 SyncPanelWithState를 호출하게 함
             GlobalUIManager.Instance.RefreshCurrentUI();
+        }
+    }
+
+    public void UpdateStaminaUI(int cost)
+    {
+        int current = DataManager.Instance.userData.stamina;
+        int remain = current - cost;
+
+        // 1. 현재 스테미나
+        currentStaminaText.text = current.ToString();
+
+        // 2. 소모값
+        staminaCostText.text = $"- { cost }";
+
+        remainStaminaText.text = remain.ToString();
+
+        // 3. 남은 스테미나 (부족하면 빨간색 표시)
+        if (remain < 0)
+        {
+            remainStaminaText.color = Color.red;
+            if (startButton != null) startButton.interactable = false; // 버튼 비활성화
+        }
+        else
+        {
+            remainStaminaText.color = new Color(0.2f, 0.6f, 1f); // 정상 (파랑)
+            if (startButton != null) startButton.interactable = true;  // 버튼 활성화
         }
     }
 
@@ -222,8 +251,8 @@ public class StageManager : MonoBehaviour
             RefreshDropItemUI(detail.dropItems);
 
             // 5. 스테미나 정보
-            if (staminaText != null)
-                staminaText.text = detail.staminaCost.ToString();
+            int cost = detail.staminaCost;
+            UpdateStaminaUI(cost);
 
             if (ClearCheckerGroup != null)
             {
@@ -399,6 +428,22 @@ public class StageManager : MonoBehaviour
 
     public void FinalStartBattle()
     {
+        // 1. 스테이지 상세 정보 가지고 오기
+        StageDetailData detail = DataManager.Instance.GetStageDetail(currentStageIndex);
+        if(detail == null) return;
+
+        // 2. 스테미나 충분한지 확인 및 차감
+        if(DataManager.Instance.userData.stamina < detail.staminaCost)
+        {
+            Debug.Log("스태미나가 부족하여 전투에 진입할 수 없습니다.");
+            // 여기에 '스태미나 부족 팝업'을 띄우는 코드를 넣을 예정
+            return;
+        }
+
+        // 3. 스태미나 실제 차감
+        DataManager.Instance.userData.stamina -= detail.staminaCost;
+
+        // 4. 파티 구성 정보
         List<PartyMember> newParty = new List<PartyMember>();
         SlotDrop[] allSlots = placementPanel.GetComponentsInChildren<SlotDrop>();
 
@@ -418,10 +463,11 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        // 데이터 매니저에 갱신 및 세이브
+        // 5. 데이터 매니저에 갱신 및 세이브
         DataManager.Instance.SaveParty(newParty);
         DataManager.Instance.SaveData();
 
+        // 6. 씬 전환 및 상태 변경
         GlobalUIManager.Instance.ChangeState(SceneState.Battle);
     }
 

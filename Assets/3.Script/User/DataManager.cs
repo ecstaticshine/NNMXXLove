@@ -15,7 +15,15 @@ public class CharacterInfo
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
+    // 데이터가 변경되었을 때 실행될 이벤트
+    public Action OnDataChanged;
+
     public UserData userData;
+
+    [Header("Stamina Settings")]
+    public int maxStamina = 120;
+    public int staminaRegenSeconds = 300;
+
     public string selectedStageID; //현재 진행중인 스테이지 (임시 저장)
 
     // 현재 로드된 월드의 상세 정보를 담아둘 변수 (추가)
@@ -44,6 +52,8 @@ public class DataManager : MonoBehaviour
 
     private List<ItemInventoryData> _lastEarnedRewards = new List<ItemInventoryData>();
 
+    public int CurrentStamina => userData != null ? userData.stamina : 0;
+
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
     public Language currentLanguage = Language.KO; // 기본값
     // 로컬라이제이션맵
@@ -56,11 +66,20 @@ public class DataManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            PlayerPrefs.DeleteKey("SaveFile");
+
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
             LoadGameDataByWorld(currentWorldIndex);
 
+            if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
+            {
+                userData.stamina = 100;
+                userData.lastStaminaUpdateTime = DateTime.Now.ToString();
+            }
+
+            StartCoroutine(StaminaRegenerateRoutine()); // 자동 충전 시작!
 
         }
         else
@@ -68,8 +87,7 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //나중에 지울 것
-        PlayerPrefs.DeleteKey("SaveFile");
+ 
     }
 
     public CharacterInfo GetUserUnitInfo(int id)
@@ -110,12 +128,30 @@ public class DataManager : MonoBehaviour
     {
         string json = JsonUtility.ToJson(userData);
         PlayerPrefs.SetString("SaveFile", json);
+
+        Debug.Log("로컬 데이터 저장 완료");
+
+        // [미래] 파이어베이스 연동 시 이곳에 추가
+        // FirebaseManager.Instance.UploadUserData(json);
     }
 
     public void LoadData()
     {
-        string json = PlayerPrefs.GetString("SaveFile", "{}");
-        userData = JsonUtility.FromJson<UserData>(json);
+        // 데이터가 없을 때 기본값 "{}" 대신 유효한 초기 데이터를 넣거나 체크
+        if (!PlayerPrefs.HasKey("SaveFile"))
+        {
+            userData = new UserData(); // 객체 생성
+
+            userData.InitDefaultData();
+
+            SaveData();
+            Debug.Log("신규 유저 초기 데이터 생성 완료");
+        }
+        else
+        {
+            string json = PlayerPrefs.GetString("SaveFile");
+            userData = JsonUtility.FromJson<UserData>(json);
+        }
     }
     public void LoadGameDataByWorld(int worldIndex)
     {
@@ -238,9 +274,7 @@ public class DataManager : MonoBehaviour
             detail.stageID = row[0].Trim();
             detail.nodePos = new Vector2(float.Parse(row[1]), float.Parse(row[2]));
             detail.prevStageID = row[3].Trim();
-
-            // 기본 스테미나 값 설정 (필요 시 CSV 추가 로드)
-            detail.staminaCost = 10;
+            detail.staminaCost = int.Parse(row[4]);
 
             // 3. 딕셔너리와 List에 저장
             stageList.Add(detail);
@@ -512,12 +546,16 @@ public class DataManager : MonoBehaviour
         else if (id == 1002) // 2번이 다이아
         {
             userData.diamond += count;
+            Debug.Log($"다이아 획득: {count}, 현재: {userData.diamond}");
         }
         // 2. 그 외의 모든 아이템은 인벤토리 리스트에서 관리
         else
         {
             AddToInventory(id, count);
         }
+
+        SaveData();
+        OnDataChanged?.Invoke();
     }
 
     private void AddToInventory(int id, int count)
@@ -589,6 +627,67 @@ public class DataManager : MonoBehaviour
             // 레벨업 시 스탯 갱신이 필요하다면 여기에 작성
             // UpdateUnitStats(unit);
             Debug.Log($"{unit.unitID} 레벨업! 현재 Lv.{unit.level}");
+        }
+    }
+
+    public bool TryConsumeStamina(string stageID)
+    {
+        StageDetailData stage = GetStageDetail(stageID);
+        if (stage == null) return false;
+
+        if (userData.stamina >= stage.staminaCost)
+        {
+            userData.stamina -= stage.staminaCost;
+            SaveData(); // 깎인 직후 바로 저장!
+            OnDataChanged?.Invoke(); // UI에게 알림 (아래 2번 참고)
+            return true;
+        }
+
+        Debug.LogWarning("스태미나가 부족하여 스테이지에 진입할 수 없습니다.");
+        return false;
+    }
+
+
+    private void RegenrateStamina()
+    {
+        // 최대치 이상이면 충전 중지
+        if (userData.stamina >= maxStamina)
+        {
+            userData.lastStaminaUpdateTime = DateTime.Now.ToString();
+            return;
+        }
+
+        DateTime lastTime;
+        if (!DateTime.TryParse(userData.lastStaminaUpdateTime, out lastTime))
+        {
+            lastTime = DateTime.Now;
+        }
+
+        TimeSpan span = DateTime.Now - lastTime;
+        int secondsPassed = (int)span.TotalSeconds;
+
+        if (secondsPassed >= staminaRegenSeconds)
+        {
+            int regenAmount = secondsPassed / staminaRegenSeconds;
+            int remainingSeconds = secondsPassed % staminaRegenSeconds;
+
+            userData.stamina = Mathf.Min(userData.stamina + regenAmount, maxStamina);
+
+            // 정산 완료 후, 남은 자투리 시간을 고려해 시간 업데이트
+            userData.lastStaminaUpdateTime = DateTime.Now.AddSeconds(-remainingSeconds).ToString();
+
+            OnDataChanged?.Invoke();
+            SaveData();
+            Debug.Log($"스테미나 자동 충전됨: 현재 {userData.stamina}");
+        }
+    }
+
+    private IEnumerator StaminaRegenerateRoutine()
+    {
+        while (true)
+        {
+            RegenrateStamina();
+            yield return new WaitForSeconds(1f); // 1초마다 체크
         }
     }
 }
