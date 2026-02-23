@@ -19,8 +19,10 @@ public enum SceneState
     CharacterBreakThrough,  //  Home -> CharacterList -> Character -> CharacterBreakThrough
     WorldSelect,            //  Home -> Adventure -> StageSelect -> WorldSelect 
     StageSelect,            //  Home -> Adventure -> StageSelect
-    Placement,              //  Home -> Adventure -> StageSelect -> Placement
-    Stage,                  //  Home -> Adventure -> StageSelect -> Placement -> Stage
+    StageDetailPopup,       //  Home -> Adventure -> StageSelect -> StageDetailPopup 
+    Placement,              //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement
+    Stage,                  //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage
+    Battle,                 //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage -> Battle
     Multi,                  //  Home -> Adventure -> Multi
 
 }
@@ -33,7 +35,7 @@ public class GlobalUIManager : MonoBehaviour
     [SerializeField] private GameObject globalUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
 
     [Header("World")]
-    [SerializeField] private GameObject worldButton;
+    [SerializeField] private GameObject worldArea;
     [SerializeField] private TMP_Text worldNameText;
 
     [Header("BackButton")]
@@ -67,11 +69,11 @@ public class GlobalUIManager : MonoBehaviour
     {
         if (currentState != SceneState.StageSelect)
         {
-            worldButton.SetActive(false);
+            worldArea.SetActive(false);
             return;
         }
 
-        worldButton.SetActive(true);
+        worldArea.SetActive(true);
         worldNameText.text = worldName;
     }
 
@@ -84,6 +86,8 @@ public class GlobalUIManager : MonoBehaviour
 
         currentState = newState;
 
+        SetBattleLayout(currentState != SceneState.Battle);
+
         bool isMainTab = (currentState == SceneState.Home ||
                       currentState == SceneState.CharacterList ||
                       currentState == SceneState.StorySelect ||
@@ -91,7 +95,7 @@ public class GlobalUIManager : MonoBehaviour
                       currentState == SceneState.Gacha);
 
         // 1. 뒤로가기 버튼 활성화
-        BackButton.SetActive(!isMainTab && stateStack.Count > 0);
+        BackButton.SetActive(!isMainTab && stateStack.Count > 0 && currentState != SceneState.Battle);
 
         string currentSceneName = SceneManager.GetActiveScene().name;
 
@@ -102,9 +106,23 @@ public class GlobalUIManager : MonoBehaviour
                 if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
                 break;
             case SceneState.Adventure:
-            case SceneState.StageSelect: // 둘 다 어드벤처 씬을 사용함
-            case SceneState.Placement:
-                if (currentSceneName != "AdventureScene") SceneManager.LoadScene("AdventureScene");
+            case SceneState.StageSelect:
+            case SceneState.StageDetailPopup: // 추가
+            case SceneState.Placement:        // 추가
+                if (currentSceneName != "AdventureScene") { 
+                SceneManager.LoadScene("AdventureScene");
+                }
+                else
+                {
+                    RefreshCurrentUI();
+                }
+                break;
+            case SceneState.Battle:
+                if (currentSceneName != "BattleScene")
+                {
+                    SceneManager.LoadScene("BattleScene");
+                }
+                break;
                 break;
             case SceneState.Gacha:
                 SceneManager.LoadScene("GachaScene");
@@ -120,6 +138,21 @@ public class GlobalUIManager : MonoBehaviour
 
         // 3. UI 업데이트 호출 (월드 버튼 노출 등)
         UpdateUIByState();
+    }
+
+    public void RefreshCurrentUI()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        if (currentSceneName == "AdventureScene")
+        {
+            StageManager stageManager = FindFirstObjectByType<StageManager>();
+            if (stageManager != null)
+            {
+                stageManager.SyncPanelWithState(currentState);
+            }
+        }
+        // 필요하다면 다른 씬(CharacterList 등)의 동기화 로직도 여기에 추가 가능
     }
 
     // 뒤로가기 버튼에 연결할 함수
@@ -142,7 +175,7 @@ public class GlobalUIManager : MonoBehaviour
     private void UpdateUIByState()
     {
         // 스테이지 상태일 때만 월드 버튼 보이게 설정
-        worldButton.SetActive(currentState == SceneState.StageSelect);
+        worldArea.SetActive(currentState == SceneState.StageSelect);
     }
 
     public void OnTabMenuButtonClicked(int targetState)
@@ -164,5 +197,10 @@ public class GlobalUIManager : MonoBehaviour
     public void SetBattleLayout(bool isActive)
     {
         globalUI.SetActive(isActive);
+    }
+
+    public void ClearStateStack()
+    {
+        stateStack.Clear();
     }
 }

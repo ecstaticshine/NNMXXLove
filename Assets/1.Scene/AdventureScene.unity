@@ -4915,6 +4915,7 @@ GameObject:
   - component: {fileID: 8635466144742682071}
   - component: {fileID: 2009682926100109747}
   - component: {fileID: 8530141074971992972}
+  - component: {fileID: 8635466144742682072}
   m_Layer: 5
   m_Name: Slot_1
   m_TagString: Slot
@@ -5025,9 +5026,33 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 689463124898869304, guid: 43baa270f74c4504c9140405525de652, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 691622231835547263, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 691622231835547263, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189104363392196576, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1948686385024157760, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1948686385024157760, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2831164078979163643, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2831164078979163643, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2910536563679975355, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchorMax.y
@@ -5042,6 +5067,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2910536563679975355, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3388001435862160459, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3388001435862160459, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3388001435862160459, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3388001435862160459, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -5074,6 +5115,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4373617756629451150, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610221011582202820, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610221011582202820, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610221011582202820, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610221011582202820, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -5157,6 +5214,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5187171949758776621, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187171949758776621, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187171949758776621, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5187171949758776621, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5403039057428946107, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5173,14 +5246,34 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5413575126536825694, guid: 43baa270f74c4504c9140405525de652, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -20
+    - target: {fileID: 5892827443971680851, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892827443971680851, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5938062578201822855, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_Name
       value: GlobalCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 6322466257541125755, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6322466257541125755, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6322466257541125755, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6322466257541125755, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8163661482233168338, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5195,6 +5288,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8163661482233168338, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623850511855182396, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5214,6 +5311,7 @@ GameObject:
   - component: {fileID: 8407140788976855817}
   - component: {fileID: 1772359197237206893}
   - component: {fileID: 8438156535427343698}
+  - component: {fileID: 8438156535427343699}
   m_Layer: 5
   m_Name: Slot_5
   m_TagString: Slot
@@ -5277,6 +5375,7 @@ GameObject:
   - component: {fileID: 8186457964632482644}
   - component: {fileID: 2137135493996336944}
   - component: {fileID: 8082365447656582415}
+  - component: {fileID: 8186457964632482645}
   m_Layer: 5
   m_Name: Slot_4
   m_TagString: Slot
@@ -7008,6 +7107,7 @@ GameObject:
   - component: {fileID: 2725048241922860712}
   - component: {fileID: 5324897144938468044}
   - component: {fileID: 2623100872132749555}
+  - component: {fileID: 8577511815702999138}
   m_Layer: 5
   m_Name: Slot_2
   m_TagString: Slot
@@ -7089,6 +7189,7 @@ GameObject:
   - component: {fileID: 2401583223440572565}
   - component: {fileID: 5575639382433953009}
   - component: {fileID: 2369548300498407118}
+  - component: {fileID: 8326032334052300381}
   m_Layer: 5
   m_Name: Slot_8
   m_TagString: Slot
@@ -8245,6 +8346,7 @@ GameObject:
   - component: {fileID: 2890162356338945242}
   - component: {fileID: 4913266751515924670}
   - component: {fileID: 3003227990112461441}
+  - component: {fileID: 8846136355108289044}
   m_Layer: 5
   m_Name: Slot_6
   m_TagString: Slot
@@ -8765,6 +8867,7 @@ GameObject:
   - component: {fileID: 1844319585098692144}
   - component: {fileID: 8479384923785626196}
   - component: {fileID: 1742372215056922731}
+  - component: {fileID: 8479384923785626197}
   m_Layer: 5
   m_Name: Slot_7
   m_TagString: Slot
@@ -8804,6 +8907,7 @@ GameObject:
   - component: {fileID: 526010614710401165}
   - component: {fileID: 7744017145699503337}
   - component: {fileID: 502911626568398550}
+  - component: {fileID: 8080243649189073372}
   m_Layer: 5
   m_Name: Slot_0
   m_TagString: Slot
@@ -8811,6 +8915,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8080243649189073372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080243649189073371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 9202585829535921179}
 --- !u!114 &8082365447656582415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8902,6 +9019,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 500512198745295362}
   m_CullTransparentMesh: 1
+--- !u!114 &8186457964632482645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500512198745295362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 677440953069072322}
 --- !u!222 &8202647648534909087
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8968,6 +9098,19 @@ RectTransform:
   m_AnchoredPosition: {x: 150, y: -200}
   m_SizeDelta: {x: 300, y: 550}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &8326032334052300381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6213324969864473027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 6462322313342438403}
 --- !u!114 &8362052303343159266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9032,6 +9175,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8438156535427343699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270817502488494687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 889125374213253023}
 --- !u!114 &8441588047226751704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9086,6 +9242,19 @@ MonoBehaviour:
   isPlayerSlot: 1
   slotIndex: 7
   unitPrefab: {fileID: 5802045770561453734, guid: 06198ddf31e5d7f47b9e94526cb9fdc2, type: 3}
+--- !u!114 &8479384923785626197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7995683674441572198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 7017367106332637862}
 --- !u!224 &8500192299936298008
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9185,6 +9354,19 @@ RectTransform:
   m_AnchoredPosition: {x: 750, y: -200}
   m_SizeDelta: {x: 300, y: 550}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &8577511815702999138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962583269110042622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 6713657719644006974}
 --- !u!224 &8607414188943416085
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9215,6 +9397,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 52178015755175041}
   m_CullTransparentMesh: 1
+--- !u!114 &8635466144742682072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52178015755175041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 1093726430277230913}
 --- !u!114 &8831998104678413081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9271,6 +9466,7 @@ GameObject:
   - component: {fileID: 998795583039702606}
   - component: {fileID: 7055146136228491818}
   - component: {fileID: 894562532326344725}
+  - component: {fileID: 8841241573454720793}
   m_Layer: 5
   m_Name: Slot_3
   m_TagString: Slot
@@ -9278,6 +9474,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8841241573454720793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8841241573454720792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 8441588047226751704}
 --- !u!224 &8846136355108289043
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9299,6 +9508,19 @@ RectTransform:
   m_AnchoredPosition: {x: 150, y: -200}
   m_SizeDelta: {x: 300, y: 550}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &8846136355108289044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6878652830340171148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c72c8094184ff47ac710a404c572d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotController
+  plateImage: {fileID: 5827956476926500940}
 --- !u!114 &8878338859363573330
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -68,6 +68,29 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         LoadWorld(DataManager.Instance.currentWorldIndex);
+        if (GlobalUIManager.Instance != null)
+        {
+            // GlobalUIManager가 내부적으로 StageManager를 찾아 SyncPanelWithState를 호출하게 함
+            GlobalUIManager.Instance.RefreshCurrentUI();
+        }
+    }
+
+    public void SyncPanelWithState(SceneState state)
+    {
+        mainPanel.SetActive(state == SceneState.Adventure);
+        stageSelectPanel.SetActive(state == SceneState.StageSelect ||
+                                   state == SceneState.StageDetailPopup ||
+                                   state == SceneState.Placement);
+
+        // 상세 팝업: StageDetailPopup일 때만 켬
+        stageDetailPanel.SetActive(state == SceneState.StageDetailPopup);
+
+        // 배치 패널: Placement일 때만 켬
+        placementPanel.SetActive(state == SceneState.Placement);
+
+        // 월드 이름 UI 처리
+        if (GlobalUIManager.Instance != null)
+            GlobalUIManager.Instance.SetWorldName(currentWorldName);
     }
 
     // Load World
@@ -228,11 +251,12 @@ public class StageManager : MonoBehaviour
             }
 
             stageDetailPanel.SetActive(true);
+            GlobalUIManager.Instance.ChangeState(SceneState.StageDetailPopup);
         }
     }
     public void OnCancelButtonOnStageDetail()
     {
-        stageDetailPanel.SetActive(false);
+        GlobalUIManager.Instance.OnBackButtonClicked();
     }
 
     // 편성 취소
@@ -252,6 +276,11 @@ public class StageManager : MonoBehaviour
 
         foreach (var slot in allSlots)
         {
+            if (slot.TryGetComponent(out SlotController slotCtrl))
+            {
+                slotCtrl.RefreshColor(null);
+            }
+
             if (slot.characterAnchorSlot.childCount > 0)
             {
                 Transform unitTransform = slot.characterAnchorSlot.GetChild(0);
@@ -284,10 +313,17 @@ public class StageManager : MonoBehaviour
         // 상태 변경 (유닛 드래그가 가능하도록)
         GlobalUIManager.Instance.ChangeState(SceneState.Placement);
 
-        LoadSavedParty();
+        StartCoroutine(WaitAndLoadParty());
 
         // 현재 선택한 스테이지 정보를 저장
         DataManager.Instance.selectedStageID = currentStageIndex;
+    }
+
+    private IEnumerator WaitAndLoadParty()
+    {
+        // 리스트 UI가 갱신될 시간을 아주 잠깐 줍니다 (한 프레임)
+        yield return null;
+        LoadSavedParty();
     }
 
     private void LoadSavedParty()
@@ -300,22 +336,40 @@ public class StageManager : MonoBehaviour
 
         // 슬롯들을 찾아서 인덱스에 맞게 배치
         SlotDrop[] allSlots = placementPanel.GetComponentsInChildren<SlotDrop>();
+        UnitIcon[] listIcons = FindObjectsOfType<UnitIcon>();
 
         foreach (PartyMember member in savedParty)
         {
+            SlotDrop targetSlot = System.Array.Find(allSlots, s => s.slotIndex == member.slotIndex);
+
             // member.slotIndex가 유효한 범위인지 확인
             if (member.slotIndex >= 0 && member.slotIndex < allSlots.Length)
             {
-                SlotDrop targetSlot = allSlots[member.slotIndex];
-                SpawnUnitFromData(targetSlot, member.unitID);
+                GameObject newUnit = SpawnUnitFromData(targetSlot, member.unitID);
+
+                if (newUnit != null)
+                {
+                    CharacterDrag dragScript = newUnit.GetComponent<CharacterDrag>();
+                    foreach (var icon in listIcons)
+                    {
+                        // 아이콘이 가진 데이터의 ID와 배치된 유닛의 ID가 같다면
+                        if (icon.GetUnitData() != null && icon.GetUnitData().unitID == member.unitID)
+                        {
+                            icon.SetPlaced(true); // 아이콘 어둡게 처리
+                            if (dragScript != null) dragScript.originIcon = icon; // 서로 연결
+                            break;
+                        }
+                    }
+                }
             }
+
         }
     }
 
-    private void SpawnUnitFromData(SlotDrop slot, int unitID)
+    private GameObject SpawnUnitFromData(SlotDrop slot, int unitID)
     {
         UnitData uData = DataManager.Instance.GetPlayerData(unitID);
-        if (uData == null) return;
+        if (uData == null) return null;
 
         // 프리팹 생성 및 부모 설정
         GameObject newUnit = Instantiate(unitPrefab, slot.characterAnchorSlot);
@@ -332,12 +386,15 @@ public class StageManager : MonoBehaviour
         if (charScript != null)
             charScript.SetCharacterData(uData, growth.level, growth.breakthrough);
 
-        // 유닛 드래그 스크립트에 필요한 정보 세팅 (리스트에서 꺼낸 게 아니므로 null 처리 유의)
-        if (dragScript != null)
-            dragScript.originIcon = null; // 필요시 리스트 아이콘 찾아서 연결 가능
+        if (slot.TryGetComponent(out SlotController slotCtrl))
+        {
+            slotCtrl.RefreshColor(uData.defaultTag);
+        }
 
         // UI 및 시너지 갱신
         slot.UpdateOverallSynergy();
+
+        return newUnit;
     }
 
     public void FinalStartBattle()
@@ -365,8 +422,7 @@ public class StageManager : MonoBehaviour
         DataManager.Instance.SaveParty(newParty);
         DataManager.Instance.SaveData();
 
-        GlobalUIManager.Instance.SetBattleLayout(false);
-        SceneManager.LoadScene("BattleScene");
+        GlobalUIManager.Instance.ChangeState(SceneState.Battle);
     }
 
     public void RefreshEnemyUI(List<StageEnemyInfo> enemyList)

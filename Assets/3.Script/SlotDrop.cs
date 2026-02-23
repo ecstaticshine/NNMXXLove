@@ -75,8 +75,12 @@ public class SlotDrop : MonoBehaviour, IDropHandler
             // listIcon에서 UnitData를 가져와 주입
             newChar.SetCharacterData(listIcon.GetUnitData(),1,0);
         }
+        UnitData unitData = listIcon.GetUnitData();
+        if (TryGetComponent(out SlotController slotCtrl))
+        {
+            slotCtrl.RefreshColor(unitData.defaultTag);
+        }
 
-       
         UpdateOverallSynergy();
 
         if (BattleManager.instance != null)
@@ -103,12 +107,18 @@ public class SlotDrop : MonoBehaviour, IDropHandler
             existCharacter.transform.localPosition = Vector2.zero;
             existCharacter.transform.localScale = Vector3.one;
 
-            BattleManager.instance?.UpdateSlotColor(dragOriginalSlot.parent, existUnit);
+            if (dragOriginalSlot.parent.TryGetComponent(out SlotController originCtrl))
+            {
+                originCtrl.RefreshColor(existUnit.data.defaultTag);
+            }
 
         }
         else
         {
-            BattleManager.instance?.UpdateSlotColor(dragOriginalSlot.parent, null);
+            if (dragOriginalSlot.parent.TryGetComponent(out SlotController originCtrl))
+            {
+                originCtrl.RefreshColor(null);
+            }
         }
 
         // 캐릭터의 부모를 이 슬롯의 앵커 바꾸기
@@ -116,7 +126,10 @@ public class SlotDrop : MonoBehaviour, IDropHandler
         draggedObject.transform.localPosition = Vector2.zero;
         draggedObject.transform.localScale = Vector3.one;
 
-        BattleManager.instance?.UpdateSlotColor(characterAnchorSlot.parent, draggedUnit);
+        if (TryGetComponent(out SlotController targetCtrl))
+        {
+            targetCtrl.RefreshColor(draggedUnit.data.defaultTag);
+        }
 
         UpdateOverallSynergy();
     }

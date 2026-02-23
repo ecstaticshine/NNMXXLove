@@ -134,7 +134,9 @@ public class BattleManager : MonoBehaviour
             {
                 Transform targetSlot = enemySlotTransforms[enemyInfo.slotIndex];
 
-                GameObject instance = Instantiate(prefabToUse, targetSlot);
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
+                GameObject instance = Instantiate(prefabToUse, anchor);
                 instance.transform.localPosition = Vector3.zero; // 위치 초기화
                 Unit unit = instance.GetComponent<Unit>();
 
@@ -155,8 +157,11 @@ public class BattleManager : MonoBehaviour
                 enemySlot[enemyInfo.slotIndex] = unit;
                 enemyTurnOrder.Add(unit);
 
-                // 발판 색상 업데이트 (배열에서 바로 꺼내기)
-                UpdateSlotColor(targetSlot, unit);
+                SlotController sc = targetSlot.GetComponent<SlotController>();
+                if (sc != null)
+                {
+                    sc.RefreshColor(unit.data.defaultTag);
+                }
             }
         }
     }
@@ -182,8 +187,10 @@ public class BattleManager : MonoBehaviour
             {
                 Transform targetSlot = playerSlotTransforms[member.slotIndex];
 
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
                 // 3. 실제 생성 및 배치
-                GameObject instance = Instantiate(playerPrefab, targetSlot);
+                GameObject instance = Instantiate(playerPrefab, anchor);
                 instance.transform.localPosition = Vector3.zero;
 
                 Character character = instance.GetComponent<Character>();
@@ -193,14 +200,17 @@ public class BattleManager : MonoBehaviour
                     character.SetCharacterData(charData, userInfo.level, userInfo.breakthrough);
 
                     characterParties.Add(character);
+
+                    character.SetSlotIndex(member.slotIndex);
+                    playerSlot[member.slotIndex] = character;
+                    playerTurnOrder.Add(character);
+
+                    SlotController sc = targetSlot.GetComponent<SlotController>();
+                    if (sc != null)
+                    {
+                        sc.RefreshColor(character.data.defaultTag);
+                    }
                 }
-
-                character.SetSlotIndex(member.slotIndex);
-                playerSlot[member.slotIndex] = character;
-                playerTurnOrder.Add(character);
-
-                // 5. 발판 색상 업데이트
-                UpdateSlotColor(targetSlot, character);
             }
         }
     }
@@ -221,49 +231,38 @@ public class BattleManager : MonoBehaviour
         SortTurnOrder();
 
         RefreshSynergies();
+
+        ForceUpdateAllSlotColors();
     }
 
-    private void ApplyPlateColorByTag(Unit unit, Image plate)
+    private void ForceUpdateAllSlotColors()
     {
-        if (plate == null) return;
-
-        // 2. 유닛이 없거나 유닛의 데이터가 없다면 '기본 색상'을 칠하고 리턴 (Null 에러 방지)
-        if (unit == null || unit.data == null)
+        // 플레이어 슬롯 갱신
+        for (int i = 0; i < playerSlotTransforms.Length; i++)
         {
-            plate.color = new Color(1f, 1f, 1f, 0.4f); // 기본 반투명 흰색
-            return;
-        }
-        Color targetColor = Color.white; // 기본값
-
-        // 태그에 따른 색상 설정
-        switch (unit.data.defaultTag)
-        {
-            case "Direct":
-                targetColor = new Color(1f, 0.3f, 0.3f, 0.6f); // 연한 빨강
-                break;
-            case "Splash":
-                targetColor = new Color(0.3f, 0.5f, 1f, 0.6f); // 연한 파랑
-                break;
-            case "Dot":
-                targetColor = new Color(0.3f, 1f, 0.3f, 0.6f); // 연한 초록
-                break;
-            default:
-                targetColor = new Color(1f, 1f, 1f, 0.4f); // 태그 없을 시 반투명 흰색
-                break;
+            playerSlot.TryGetValue(i, out Unit unit);
+            UpdateSlotColor(playerSlotTransforms[i], unit);
         }
 
-        plate.color = targetColor;
+        // 적 슬롯 갱신
+        for (int i = 0; i < enemySlotTransforms.Length; i++)
+        {
+            enemySlot.TryGetValue(i, out Unit unit);
+            UpdateSlotColor(enemySlotTransforms[i], unit);
+        }
     }
 
     public void UpdateSlotColor(Transform slotTransform, Unit unit = null)
     {
         if (slotTransform == null) return;
 
-        // 구조: Slot_X -> Plate_UI (첫 번째 자식)
-        Image plateImage = slotTransform.GetChild(0).GetComponent<Image>();
-        if (plateImage != null)
+        // slotTransform은 Slot_0, Slot_1 같은 최상위 슬롯
+        SlotController slotCtrl = slotTransform.GetComponent<SlotController>();
+
+        if (slotCtrl != null)
         {
-            ApplyPlateColorByTag(unit, plateImage);
+            // 유닛이 있으면 해당 태그 색상으로, 없으면 투명하게(null)
+            slotCtrl.RefreshColor(unit?.data?.defaultTag);
         }
     }
 
@@ -373,7 +372,7 @@ public class BattleManager : MonoBehaviour
             EnterEnemyPhase();
         else // 적군 공격이 끝났다면? 다시 아군 선택으로!
             EnterTurnStart();
-        
+
 
     }
 
@@ -415,7 +414,7 @@ public class BattleManager : MonoBehaviour
                     return GetHighestAttackTarget(allySlots);
                 }
                 else
-                {   
+                {
                     return GetLowestHPTarget(allySlots);
                 }
             default:    // 딜러
@@ -570,7 +569,7 @@ public class BattleManager : MonoBehaviour
         turnCount++;
 
         uiManager.UpdateTurnUI(turnCount);
-        
+
         if (!isPaused && !isAutoBattle)
         {
             Time.timeScale = 1f;
@@ -833,7 +832,7 @@ public class BattleManager : MonoBehaviour
         return areaTargets;
     }
 
-    private List<int>GetNeighborIndices(int center)
+    private List<int> GetNeighborIndices(int center)
     {
         List<int> neighborIndices = new List<int>();
         int centerRow = center / 3; // 현재 행 (0, 1, 2)

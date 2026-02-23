@@ -47,7 +47,7 @@ public class BattleUIManager : MonoBehaviour
     public float fadeDuration = 0.5f;
 
     public Transform container;   // 아이템 아이콘들이 생성될 부모
-    public GameObject rewardItemPrefab; 
+    public GameObject rewardItemPrefab;
 
 
     private void Awake()
@@ -112,16 +112,16 @@ public class BattleUIManager : MonoBehaviour
     }
 
     public void RefreshTimeline(List<Unit> turnOrder)
-{
-    // 아이콘 풀로 보내기
-    foreach (var icon in _activeIcons)
     {
-        _timelinePool.Release(icon);
-    }
-    _activeIcons.Clear();
+        // 아이콘 풀로 보내기
+        foreach (var icon in _activeIcons)
+        {
+            _timelinePool.Release(icon);
+        }
+        _activeIcons.Clear();
 
         //재배치
-    foreach (Unit unit in turnOrder)
+        foreach (Unit unit in turnOrder)
         {
             // 풀에서 하나 빌려오기!
             GameObject iconObj = _timelinePool.Get();
@@ -225,7 +225,8 @@ public class BattleUIManager : MonoBehaviour
         }
 
         // 페이드 인 완료 후 상호작용 허용
-        resultPanel.DOFade(1f, fadeDuration).OnComplete(() => {
+        resultPanel.DOFade(1f, fadeDuration).OnComplete(() =>
+        {
             resultPanel.blocksRaycasts = true;
         });
 
@@ -244,7 +245,7 @@ public class BattleUIManager : MonoBehaviour
         // 보상이 하나도 없을 경우 처리 (선택사항)
         if (rewards == null || rewards.Count == 0) return;
 
-        for(int i = 0; i < rewards.Count; i++)
+        for (int i = 0; i < rewards.Count; i++)
         {
 
             ItemInventoryData item = rewards[i];
@@ -306,20 +307,22 @@ public class BattleUIManager : MonoBehaviour
     public void OnClickExitResult()
     {
         // 1. 결과창 페이드 아웃
-        resultPanel.DOFade(0f, 0.3f).OnComplete(() => {
+        resultPanel.DOFade(0f, 0.3f).OnComplete(() =>
+        {
             resultPanel.gameObject.SetActive(false);
 
             // 2. 글로벌 UI 다시 켜기
             if (GlobalUIManager.Instance != null)
             {
-                GlobalUIManager.Instance.SetBattleLayout(true);
+                // 스텍 지우기
+                GlobalUIManager.Instance.ClearStateStack();
+
                 // 전투 종료 후 돌아갈 상태 설정 (예: Adventure)
                 // 글로벌UI은 전 상태로 돌아가기
-                GlobalUIManager.Instance.OnBackButtonClicked();
+                GlobalUIManager.Instance.ChangeState(SceneState.StageSelect, true);
             }
             else
             {
-                // 만약 GlobalUIManager가 없는 상황을 대비한 예외 처리
                 SceneManager.LoadScene("AdventureScene");
             }
         });
@@ -389,17 +392,17 @@ public class BattleUIManager : MonoBehaviour
 
     public void UpdateAutoBattleUI(bool isActive)
     {
-            SetButtonState(autoButtonImage, isActive, autoEffectObject);
+        SetButtonState(autoButtonImage, isActive, autoEffectObject);
 
-            // AUTO 텍스트가 있다면 텍스트 색상도 강조
-            TMP_Text autoText = autoButtonImage.GetComponentInChildren<TMP_Text>();
-            if (autoText != null)
-            {
-                autoText.color = isActive ? Color.yellow : Color.white;
-            }
+        // AUTO 텍스트가 있다면 텍스트 색상도 강조
+        TMP_Text autoText = autoButtonImage.GetComponentInChildren<TMP_Text>();
+        if (autoText != null)
+        {
+            autoText.color = isActive ? Color.yellow : Color.white;
+        }
     }
 
-    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards,List<Character> characterParties = null)
+    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards, List<Character> characterParties = null)
     {
         // --- [1단계: 아이템 표시] ---
         resultPanel.DOFade(1f, fadeDuration);
@@ -419,10 +422,10 @@ public class BattleUIManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        
+
         int gainExp = 150; // 전투 승리 기본 획득 경험치량
 
-        if(characterParties != null)
+        if (characterParties != null)
         {
             foreach (Unit unit in characterParties)
             {
@@ -457,7 +460,7 @@ public class BattleUIManager : MonoBehaviour
             }
         }
 
-       
+
 
         // 결과창 최종 종료 대기 (한 번 더 클릭하면 나감)
         yield return new WaitForSeconds(0.5f); // 연출 직후 바로 꺼짐 방지
