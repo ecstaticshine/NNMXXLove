@@ -3159,7 +3159,8 @@ MonoBehaviour:
   userData:
     userId: 
     playerName: 
-    playerLevel: 1
+    currentLevel: 1
+    currentExp: 0
     gold: 0
     diamond: 0
     stamina: 0
@@ -4632,6 +4633,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2079485949 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5340645977733675218, guid: 43baa270f74c4504c9140405525de652, type: 3}
+  m_PrefabInstance: {fileID: 228581094220820927}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &2093081845
 GameObject:
   m_ObjectHideFlags: 0
@@ -5297,6 +5309,10 @@ PrefabInstance:
       propertyPath: PlayerInfo
       value: 
       objectReference: {fileID: 1326002798}
+    - target: {fileID: 6411588009771740522, guid: 43baa270f74c4504c9140405525de652, type: 3}
+      propertyPath: playerNameText
+      value: 
+      objectReference: {fileID: 2079485949}
     - target: {fileID: 6774131385230042417, guid: 43baa270f74c4504c9140405525de652, type: 3}
       propertyPath: m_SizeDelta.x
       value: -90

@@ -42,13 +42,25 @@ public class TopBarUI : MonoBehaviour
             DataManager.Instance.OnDataChanged -= RefreshUI;
     }
 
+    private void Start()
+    {
+        RefreshUI();
+    }
+
     public void RefreshUI()
     {
+
+        if (DataManager.Instance == null || DataManager.Instance.userData == null)
+        {
+            Debug.LogWarning("DataManager 또는 UserData가 아직 준비되지 않았습니다.");
+            return;
+        }
+
         UserData data = DataManager.Instance.userData;
 
         // 1. 레벨 & 경험치 (현재 UserData에 레벨/경험치가 있다면 연결)
-        // levelText.text = data.currentLevel.ToString();
-        // expSlider.value = (float)data.currentExp / DataManager.Instance.GetRequiredExp(data.currentLevel);
+         levelText.text = data.currentLevel.ToString();
+         expSlider.value = (float)data.currentExp / DataManager.Instance.GetRequiredExp(data.currentLevel);
 
         // 2. 스태미나 (현재/최대값)
         staminaText.text = $"{data.stamina} / 120"; // 120은 최대치 예시

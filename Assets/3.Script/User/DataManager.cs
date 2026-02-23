@@ -528,7 +528,11 @@ public class DataManager : MonoBehaviour
             }
         }
 
-        // 3. 저장
+        // 3. 플레이어는 스테미나의 10배 만큼 경험치 지급
+        int earnedAccountExp = details.staminaCost * 10;
+        AddAccountExp(earnedAccountExp);
+
+        // 4. 저장
         history.isCleared = true;
         SaveData();
 
@@ -689,6 +693,26 @@ public class DataManager : MonoBehaviour
             RegenrateStamina();
             yield return new WaitForSeconds(1f); // 1초마다 체크
         }
+    }
+
+    public void AddAccountExp(int amount)
+    {
+        userData.currentExp += amount;
+
+        // 계정 레벨업 체크 루프
+        while (userData.currentExp >= GetRequiredExp(userData.currentLevel))
+        {
+            userData.currentExp -= GetRequiredExp(userData.currentLevel);
+            userData.currentLevel++;
+
+            Debug.Log($"[계정 레벨업] 축하합니다! Lv.{userData.currentLevel}이 되었습니다.");
+
+            // 레벨업 보상 (예: 스태미나 전회복 등)
+            userData.stamina = maxStamina;
+        }
+
+        OnDataChanged?.Invoke(); // UI(TopBarUI) 갱신 신호
+        SaveData();
     }
 }
 

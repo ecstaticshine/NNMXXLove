@@ -8,7 +8,8 @@ public class UserData
 {
     public string userId;       // 시스템용 고유 키 (수정 불가)
     public string playerName;   // 화면 표시용 이름 (수정 가능)
-    public int playerLevel = 1; 
+    public int currentLevel = 1;
+    public int currentExp = 0;
     public int gold = 0;            // 재화
     public int diamond = 0;         // 다이아몬드
     public int stamina = 120;         // 스태미너
@@ -31,7 +32,8 @@ public class UserData
     {
         this.userId = Guid.NewGuid().ToString(); // 고유 ID 생성
         this.playerName = "New Commander";
-        this.playerLevel = 1;
+        this.currentLevel = 1;
+        this.currentExp = 0;
         this.gold = 5000;      // 초기 자금
         this.diamond = 1000;    // 초기 유료 재화
         this.stamina = 120;    // 최대치로 시작
