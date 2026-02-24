@@ -4,11 +4,11 @@ WORLD_02_NAME,깊은 숲,深い森
 STAGE_STAMINA,스테미나,スタミナ
 BTN_START,전투 시작,戦闘開始
 UNIT_NAME_SLIME,슬라임,スライム
-UNIT_DESC_SLIME,"최약체의 몬스터. 핵을 부시면 죽는다.",最弱のモンスター、核を壊すと死ぬ。
-ITEM_NAME_1001,골드,ゴールド
-ITEM_DESC_1001,캐릭터 강화 시 소모되는 기본 화폐,キャラクター強化時に使用される基本貨幣
+UNIT_DESC_SLIME,최약체의 몬스터. 핵을 부시면 죽는다.,最弱のモンスター、核を壊すと死ぬ。
+ITEM_NAME_1001,코인,コイン
+ITEM_DESC_1001,하트 무늬의 세잎 클로버가 그려져 있는\n 코인.\n캐릭터 강화 시 소모되는 기본 화폐,ハート型の三つ葉が描かれているコイン。\nキャラクター強化時に使用される基本貨幣
 ITEM_NAME_1002,다이아,ダイア
-ITEM_DESC_1002,뽑기 시스템에서 사용되는 재화,ガチャシステムに使用される財貨
+ITEM_DESC_1002,반짝이는 작은 다이아.\n뽑기 시스템에서 사용되는 재화,輝く小さなダイア。\nガチャシステムに使用される財貨
 ITEM_NAME_1003,경험치,経験値
 ITEM_DESC_1003,스테이지 클리어 시 캐릭터에게 주어지는 경험치,ステージクリア時にキャラクターに与えられる経験値
 ITEM_NAME_2001,일반 강화석,一般強化石
@@ -17,3 +17,23 @@ ITEM_NAME_3001,하급 진화석,下級進化石
 ITEM_DESC_3001,캐릭터 레벨 한계치를 60에서 70으로 올려주는 돌,キャラクターレベルを60から70まで上げられる石
 ITEM_NAME_4001,귀여운,かわいい
 ITEM_DESC_4001,캐릭터 태그,キャラクターカスタムタグ
+STAMINA_NAME,스테미나,スタミナ
+STAMINA_DESC,5분마다 1씩 회복됩니다.\n최대 회복까지 남은 시간: {0},5分毎に1回復します。\n最大回復まで残り時間 : {0}
+STAMINA_FULL,이미 가득 찼습니다.,スタミナが満タンです。
+STAMINA_TIME_FORMAT,{0}분 {1}초,{0}分 {1}秒
+Menu_Character,캐릭터,キャラ
+Menu_Story,스토리,ストーリー
+Menu_Adventure,모험,冒険
+Menu_Home,홈,ホーム
+Menu_Gacha,가챠,ガチャ
+Menu_Setting,설정,設定
+Adventure_Travel,여정의 기록,旅路の記録
+Adventure_Raid,레이드,レイド
+Adventure_Detachment,파견,派遣
+Adventure_Placement,편성,編成
+Adventure_Cancel,취소,キャンセル
+Adventure_Start,출발,出発
+Adventure_Enemy,적,エネミー
+Adventure_Item,획득,アイテム
+Adventure_Rewards,보상,報酬
+Adventure_Stamina,스테미나,スタミナ

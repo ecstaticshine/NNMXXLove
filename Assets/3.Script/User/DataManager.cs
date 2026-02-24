@@ -55,7 +55,7 @@ public class DataManager : MonoBehaviour
     public int CurrentStamina => userData != null ? userData.stamina : 0;
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
-    public Language currentLanguage = Language.KO; // 기본값
+    public Language currentLanguage = Language.JP; // 기본값
     // 로컬라이제이션맵
     private Dictionary<string, string> localizationMap = new Dictionary<string, string>();
 
