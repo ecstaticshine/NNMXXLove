@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CharacterListUI : MonoBehaviour
 {
+    public static CharacterListUI Instance { get; private set; }
+
     public GameObject unitIconPrefab; // 아까 만든 UnitIcon 프리팹
     public Transform content;         // ScrollView의 Content 오브젝트
 
@@ -13,6 +15,7 @@ public class CharacterListUI : MonoBehaviour
 
     public void RefreshList()
     {
+
         // 1. 초기화
         foreach (Transform child in content)
         {

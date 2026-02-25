@@ -4,7 +4,8 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.EventSystems;
 
-public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     [SerializeField] private Image unitIcon;
     [SerializeField] private TMP_Text levelText;
@@ -234,6 +235,16 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             // 드래그 종료 시 가짜 이미지 파괴
             Destroy(ghostIcon);
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 데이터가 없으면 무시
+        if (currentUnitData == null) return;
+
+        DataManager.Instance.SetSelectedCharacter(currentUnitData, characterInfo);
+
+        transform.DOPunchScale(Vector3.one * 0.1f, 0.2f);
     }
 
 }

@@ -56,6 +56,9 @@ public class DataManager : MonoBehaviour
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
     public Language currentLanguage = Language.JP; // 기본값
+
+    public static event Action<UnitData, CharacterInfo> OnCharacterSelected;
+
     // 로컬라이제이션맵
     private Dictionary<string, string> localizationMap = new Dictionary<string, string>();
 
@@ -71,7 +74,7 @@ public class DataManager : MonoBehaviour
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
-            LoadGameDataByWorld(currentWorldIndex);
+            //LoadGameDataByWorld(currentWorldIndex);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {
@@ -713,6 +716,12 @@ public class DataManager : MonoBehaviour
 
         OnDataChanged?.Invoke(); // UI(TopBarUI) 갱신 신호
         SaveData();
+    }
+
+    public void SetSelectedCharacter(UnitData data, CharacterInfo info)
+    {
+        // 씬 매니저나 다른 UI들이 이 소리를 듣고 각자 할 일을 합니다.
+        OnCharacterSelected?.Invoke(data, info);
     }
 }
 
