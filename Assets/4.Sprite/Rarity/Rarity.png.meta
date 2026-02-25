@@ -1,22 +1,19 @@
 fileFormatVersion: 2
-guid: 2fe7acb03c4b45242bb0565b78f3712e
+guid: 786b8534dbbf5704f8327d39ae7c3b2f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1158976868986884342
-    second: RarityIcon_0
+      213: 8768126948814135764
+    second: Rarity_0
   - first:
-      213: -6202345170092860355
-    second: RarityIcon_1
+      213: -4178710674053065991
+    second: Rarity_1
   - first:
-      213: -2686432884720717942
-    second: RarityIcon_2
+      213: -1316186502677188125
+    second: Rarity_2
   - first:
-      213: -5746581316109438475
-    second: RarityIcon_3
-  - first:
-      213: -7931023285516195419
-    second: RarityIcon_4
+      213: 174194728817978637
+    second: Rarity_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -151,35 +148,35 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RarityIcon_0
+      name: Rarity_0
       rect:
         serializedVersion: 2
-        x: 62
-        y: 116
+        x: 41
+        y: 159
+        width: 76
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d1a8912105aea970800000000000000
+      internalID: 8768126948814135764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rarity_1
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 159
         width: 142
-        height: 143
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a0f642d9dac7aefe0800000000000000
-      internalID: -1158976868986884342
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RarityIcon_1
-      rect:
-        serializedVersion: 2
-        x: 266
-        y: 115
-        width: 148
-        height: 145
+        height: 106
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,20 +185,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d3c5142ede7dce9a0800000000000000
-      internalID: -6202345170092860355
+      spriteID: 9f21fed18cc3206c0800000000000000
+      internalID: -4178710674053065991
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RarityIcon_2
+      name: Rarity_2
       rect:
         serializedVersion: 2
-        x: 473
-        y: 112
-        width: 147
-        height: 147
+        x: 298
+        y: 159
+        width: 134
+        height: 106
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -210,20 +207,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a8f2b41568fd7bad0800000000000000
-      internalID: -2686432884720717942
+      spriteID: 3e133c96957fbbde0800000000000000
+      internalID: -1316186502677188125
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RarityIcon_3
+      name: Rarity_3
       rect:
         serializedVersion: 2
-        x: 678
-        y: 111
-        width: 156
-        height: 152
+        x: 440
+        y: 159
+        width: 140
+        height: 106
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -232,30 +229,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5f1766c5dba0040b0800000000000000
-      internalID: -5746581316109438475
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RarityIcon_4
-      rect:
-        serializedVersion: 2
-        x: 826
-        y: 15
-        width: 24
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b9c03d8975e404b4788dc36e982f62c9
-      internalID: -7931023285516195419
+      spriteID: d0de0f4de2dda6200800000000000000
+      internalID: 174194728817978637
       vertices: []
       indices: 
       edges: []
@@ -264,7 +239,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c0eb8c07b0d136346a9cc6d8624dfe54
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -272,15 +247,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      RarityIcon_0: -1158976868986884342
-      RarityIcon_1: -6202345170092860355
-      RarityIcon_2: -2686432884720717942
-      RarityIcon_3: -5746581316109438475
-      RarityIcon_4: -7931023285516195419
+      Rarity_0: 8768126948814135764
+      Rarity_1: -4178710674053065991
+      Rarity_2: -1316186502677188125
+      Rarity_3: 174194728817978637
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

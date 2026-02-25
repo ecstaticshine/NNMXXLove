@@ -127,10 +127,10 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             hex = rarity switch
             {
-                Rarity.L => "#7A6B6B", 
-                Rarity.PL => "#6B5471",
-                Rarity.TL => "#854552",
-                Rarity.EL => "#4A363E",
+                Rarity.L => "#93A9BD", 
+                Rarity.PL => "#B399D4",
+                Rarity.TL => "#D4AF37",
+                Rarity.EL => "#F5F5F5",
                 _ => "#5F6267"
             };
         }

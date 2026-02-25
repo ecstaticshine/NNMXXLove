@@ -18,11 +18,14 @@ public class CharacterSceneManager : MonoBehaviour
     [Header("Rarity")]
     [SerializeField] private Image background;   // 레어리티 들어갈 뒷배경
     [SerializeField] private Image rarityIcon;   // 레어리티 아이콘
+    [SerializeField] private Image frameImage;  // 레어리티 프레임
 
     [Header("Icon Sprites")]
     public Sprite[] typeIcons;
     public Sprite[] tagIcons;
-    public Sprite[] rarityIcons;
+    public Sprite[] rarityBackGroundImages;
+    public Sprite[] rarityFrameImages;
+    public Sprite[] rarityIconImages;
 
     private void OnEnable()
     {
@@ -65,15 +68,32 @@ public class CharacterSceneManager : MonoBehaviour
             _ => null
         };
 
-        background.sprite = data.rarity switch
+        rarityIcon.sprite = data.rarity switch
         {
-            Rarity.L => rarityIcons[0],
-            Rarity.PL => rarityIcons[1],
-            Rarity.TL => rarityIcons[2],
-            Rarity.EL => rarityIcons[3],
+            Rarity.L => rarityIconImages[0],
+            Rarity.PL => rarityIconImages[1],
+            Rarity.TL => rarityIconImages[2],
+            Rarity.EL => rarityIconImages[3],
             _ => null
         };
 
+        background.sprite = data.rarity switch
+        {
+            Rarity.L => rarityBackGroundImages[0],
+            Rarity.PL => rarityBackGroundImages[1],
+            Rarity.TL => rarityBackGroundImages[2],
+            Rarity.EL => rarityBackGroundImages[3],
+            _ => null
+        };
+
+        frameImage.sprite = data.rarity switch
+        {
+            Rarity.L => rarityFrameImages[0],
+            Rarity.PL => rarityFrameImages[1],
+            Rarity.TL => rarityFrameImages[2],
+            Rarity.EL => rarityFrameImages[3],
+            _ => null
+        };
 
         // 3. 레어리티에 따른 배경색 변경
         background.color = GetRarityColor(data.rarity);
