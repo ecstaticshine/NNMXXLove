@@ -8,6 +8,7 @@ public class CharacterInfo
 {
     public int unitID;      // 어떤 캐릭터인지 (ID)
     public int level;       // 현재 레벨
+    public Rarity currentRarity;    // 레어리티
     public int breakthrough; // 돌파 단계
     public int currentExp;      // 필요하다면 경험치까지
 }
@@ -74,7 +75,7 @@ public class DataManager : MonoBehaviour
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
-            //LoadGameDataByWorld(currentWorldIndex);
+            LoadGameDataByWorld(currentWorldIndex);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {

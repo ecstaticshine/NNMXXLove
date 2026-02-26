@@ -949,8 +949,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7445a160118804fbe960ae95c821d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UITooltipTrigger
-  nameKey: Diamond_Name
-  descriptionKey: Diamond_Desc
+  nameKey: ITEM_NAME_1002
+  descriptionKey: ITEM_DESC_1002
 --- !u!222 &4406820596154464942
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2901,8 +2901,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7445a160118804fbe960ae95c821d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UITooltipTrigger
-  nameKey: Coin_Name
-  descriptionKey: Coin_Desc
+  nameKey: ITEM_NAME_1001
+  descriptionKey: ITEM_DESC_1001
 --- !u!222 &4851481775069132385
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3601,7 +3601,7 @@ MonoBehaviour:
   worldArea: {fileID: 5920730031013317513}
   worldNameText: {fileID: 5740353826949994619}
   BackButton: {fileID: 5964327689586158863}
-  PlayerInfo: {fileID: 0}
+  PlayerInfo: {fileID: 337878415939544560}
   currentState: 2
 --- !u!1 &5964327689586158863
 GameObject:
@@ -5492,9 +5492,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -640, y: 0}
-  m_SizeDelta: {x: 1260, y: 100}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -10, y: 0}
+  m_SizeDelta: {x: 940, y: 100}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &603784760331149740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5647,8 +5647,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da17a46fc913c4041b059c007d73b307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaminaTooltipTrigger
-  nameKey: Stamina_Name
-  descriptionKey: Stamina_Desc
+  nameKey: STAMINA_NAME
+  descriptionKey: STAMINA_DESC
 --- !u!1 &8050083428468481393
 GameObject:
   m_ObjectHideFlags: 0

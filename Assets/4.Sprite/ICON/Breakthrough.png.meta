@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 2fe7acb03c4b45242bb0565b78f3712e
+guid: 8b2d05122a6214c438a0ee6807ecd983
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1158976868986884342
-    second: RarityIcon_0
-  - first:
-      213: -6202345170092860355
-    second: RarityIcon_1
-  - first:
-      213: -2686432884720717942
-    second: RarityIcon_2
-  - first:
-      213: -5746581316109438475
-    second: RarityIcon_3
-  - first:
-      213: -7931023285516195419
-    second: RarityIcon_4
+      213: -5835720123734458804
+    second: Breakthrough_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -64,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 0, y: 109, z: 0, w: 125}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -151,89 +139,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RarityBackGroundImage_0
+      name: Breakthrough_0
       rect:
         serializedVersion: 2
-        x: 54
-        y: 106
-        width: 160
-        height: 160
+        x: 0
+        y: 113
+        width: 408
+        height: 372
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 1bd969bcb976a084db1a26d96c9c5944
-      internalID: -1464228943
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RarityBackGroundImage_1
-      rect:
-        serializedVersion: 2
-        x: 263
-        y: 105
-        width: 160
-        height: 160
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4d14b398d55d5794ea19e7aeefd15241
-      internalID: 498558353
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RarityBackGroundImage_2
-      rect:
-        serializedVersion: 2
-        x: 471
-        y: 105
-        width: 160
-        height: 160
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: aa8bde159c96928408075693bdcd8ca6
-      internalID: 1812594680
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RarityBackGroundImage_3
-      rect:
-        serializedVersion: 2
-        x: 683
-        y: 105
-        width: 160
-        height: 160
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 492262d0836c5594fa0db8db183530bf
-      internalID: 1721343430
+      spriteID: c4e7538677b530fa0800000000000000
+      internalID: -5835720123734458804
       vertices: []
       indices: 
       edges: []
@@ -242,28 +164,17 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c0eb8c07b0d136346a9cc6d8624dfe54
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      RarityBackGroundImage_0: -1464228943
-      RarityBackGroundImage_1: 498558353
-      RarityBackGroundImage_2: 1812594680
-      RarityBackGroundImage_3: 1721343430
-      RarityBackGroundImage_4: 1826148340
-      RarityIcon_0: -1158976868986884342
-      RarityIcon_1: -6202345170092860355
-      RarityIcon_2: -2686432884720717942
-      RarityIcon_3: -5746581316109438475
-      RarityIcon_4: -7931023285516195419
+      Breakthrough_0: -5835720123734458804
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

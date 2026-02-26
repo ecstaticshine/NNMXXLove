@@ -9,6 +9,13 @@ public class CharacterSceneManager : MonoBehaviour
     private UnitData currentSelectedData;
     private CharacterInfo currentSelectedInfo;
 
+    [Header("Right Panels")]
+    public GameObject defaultPanel;
+    public GameObject upgradePanel;
+    public GameObject tagPanel;
+    public GameObject breakthroughPanel;
+
+    [Header("Character Info")]
     [SerializeField] private TMP_Text nameText;  // 캐릭터 이름
     [SerializeField] private TMP_Text levelText; // 레벨
     [SerializeField] private Image detailImage;  // 왼쪽 큰 이미지
@@ -26,6 +33,11 @@ public class CharacterSceneManager : MonoBehaviour
     public Sprite[] rarityBackGroundImages;
     public Sprite[] rarityFrameImages;
     public Sprite[] rarityIconImages;
+    public GameObject[] breakThrough;   // 돌파에 따라 하트 표시
+
+    public enum CharacterPanelState { Default, Upgrade, Tag, Breakthrough }
+
+    private CharacterPanelState currentPanel = CharacterPanelState.Default;
 
     private void OnEnable()
     {
@@ -98,6 +110,23 @@ public class CharacterSceneManager : MonoBehaviour
         // 3. 레어리티에 따른 배경색 변경
         background.color = GetRarityColor(data.rarity);
 
+        //4. 돌파 UI 설정 (오른쪽 하트 표시)
+        bool isMaxRarity = (data.rarity == Rarity.EL);
+
+        for (int i = 0; i< breakThrough.Length; i++)
+        {
+            if (isMaxRarity)
+            {
+                // EL 등급일 때는 하트를 모두 비활성화 (혹은 필요에 따라 변경)
+                breakThrough[i].SetActive(false);
+            }
+            else
+            {
+                // 현재 돌파 수(info.breakthroughCount)보다 작은 인덱스의 하트만 활성화
+                breakThrough[i].SetActive(i < info.breakthrough);
+            }
+        }
+
         // (선택) 배경이 바뀔 때 살짝 페이드 연출을 주면 더 고급스럽습니다.
         detailImage.transform.DOKill();
         detailImage.transform.localPosition = new Vector3(-50f, 0, 0); // 살짝 왼쪽에서
@@ -121,5 +150,44 @@ public class CharacterSceneManager : MonoBehaviour
 
         ColorUtility.TryParseHtmlString(hex, out Color color);
         return color;
+    }
+
+
+
+    
+
+    // 버튼들에 연결할 함수
+    public void OnClickUpgrade() => SwitchPanel(CharacterPanelState.Upgrade);
+    public void OnClickTag() => SwitchPanel(CharacterPanelState.Tag);
+    public void OnClickBreakthrough() => SwitchPanel(CharacterPanelState.Breakthrough);
+
+    private void SwitchPanel(CharacterPanelState target)
+    {
+        // 이미 열려있는 걸 다시 누르면 닫거나 유지 (취향껏!)
+        if (currentPanel == target) return;
+
+        // 1. 모든 패널 끄기
+        upgradePanel.SetActive(false);
+        tagPanel.SetActive(false);
+        breakthroughPanel.SetActive(false);
+
+        // 2. 선택한 패널만 켜기
+        switch (target)
+        {
+            case CharacterPanelState.Upgrade: upgradePanel.SetActive(true); break;
+            case CharacterPanelState.Tag: tagPanel.SetActive(true); break;
+            case CharacterPanelState.Breakthrough: breakthroughPanel.SetActive(true); break;
+        }
+
+        currentPanel = target;
+
+        // 3. 패널 내용 갱신 (현재 선택된 캐릭터 정보 전달)
+        RefreshCurrentPanel();
+    }
+
+    private void RefreshCurrentPanel()
+    {
+        // 여기서 현재 보고 있는 캐릭터(이그니 등)의 데이터를 
+        // 켜진 패널의 스크립트에게 전달합니다.
     }
 }
