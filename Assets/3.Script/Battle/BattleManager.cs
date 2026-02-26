@@ -197,7 +197,7 @@ public class BattleManager : MonoBehaviour
 
                 if (character != null && data is CharacterData charData)
                 {
-                    character.SetCharacterData(charData, userInfo.level, userInfo.breakthrough);
+                    character.SetCharacterData(charData, userInfo.currentLevel, userInfo.currentBreakthrough);
 
                     characterParties.Add(character);
 

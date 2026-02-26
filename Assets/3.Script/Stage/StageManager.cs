@@ -413,7 +413,7 @@ public class StageManager : MonoBehaviour
         CharacterInfo growth = DataManager.Instance.GetUserUnitInfo(unitID);
 
         if (charScript != null)
-            charScript.SetCharacterData(uData, growth.level, growth.breakthrough);
+            charScript.SetCharacterData(uData, growth.currentLevel, growth.currentBreakthrough);
 
         if (slot.TryGetComponent(out SlotController slotCtrl))
         {

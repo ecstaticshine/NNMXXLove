@@ -28,8 +28,8 @@ public class CharacterListUI : MonoBehaviour
         // 만약 인벤토리가 비어있다면 테스트를 위해 기본 캐릭터 2개를 넣어줌
         if (characterInventory.Count == 0)
         {
-            characterInventory.Add(new CharacterInfo { unitID = 1, level = 1 ,currentRarity = Rarity.PL, breakthrough = 4  });
-            characterInventory.Add(new CharacterInfo { unitID = 2, level = 1, currentRarity = Rarity.EL, breakthrough = 0 });
+            characterInventory.Add(new CharacterInfo { unitID = 1, currentLevel = 1 ,currentRarity = Rarity.PL, currentBreakthrough = 4  });
+            characterInventory.Add(new CharacterInfo { unitID = 2, currentLevel = 1, currentRarity = Rarity.EL, currentBreakthrough = 0 });
         }
 
         foreach (CharacterInfo info in characterInventory)

@@ -45,7 +45,7 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         unitIcon.sprite = data.unitPortrait;
 
         // 레벨 표시
-        levelText.text = $"{info.level}";
+        levelText.text = $"{info.currentLevel}";
 
         // 등급(Rarity)에 따른 연출 처리
         UpdateRarityUI(data.isEnemy, data.rarity);

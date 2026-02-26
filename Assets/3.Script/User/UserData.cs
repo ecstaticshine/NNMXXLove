@@ -40,6 +40,7 @@ public class UserData
 
         // 초기 캐릭터 지급 (예: 1번 캐릭터)
         this.ownedCharacters.Add(new CharacterSaveData(1));
+        this.ownedCharacters.Add(new CharacterSaveData(2));
     }
 }
 

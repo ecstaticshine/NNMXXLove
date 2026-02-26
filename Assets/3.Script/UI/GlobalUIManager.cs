@@ -32,8 +32,8 @@ public class GlobalUIManager : MonoBehaviour
     public static GlobalUIManager Instance;
 
     [Header("Global UI")]
-    [SerializeField] private GameObject globalUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
-
+    [SerializeField] private GameObject topUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
+    [SerializeField] private GameObject bottomUI;// 배틀 씬 등에서 필요없을 경우 끄기.
     [Header("World")]
     [SerializeField] private GameObject worldArea;
     [SerializeField] private TMP_Text worldNameText;
@@ -123,7 +123,7 @@ public class GlobalUIManager : MonoBehaviour
         switch (currentState)
         {
             case SceneState.Home:
-                globalUI.SetActive(true);
+                topUI.SetActive(true);
                 PlayerInfo.SetActive(true);
                 if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
                 break;
@@ -132,7 +132,7 @@ public class GlobalUIManager : MonoBehaviour
             case SceneState.StageDetailPopup: // 추가
             case SceneState.Placement:        // 추가
                 PlayerInfo.SetActive(false);
-                globalUI.SetActive(true);
+                topUI.SetActive(true);
                 if (currentSceneName != "AdventureScene") { 
                 SceneManager.LoadScene("AdventureScene");
                 }
@@ -156,6 +156,8 @@ public class GlobalUIManager : MonoBehaviour
                 break;
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
                 break;
 
         }
@@ -220,7 +222,7 @@ public class GlobalUIManager : MonoBehaviour
 
     public void SetBattleLayout(bool isActive)
     {
-        globalUI.SetActive(isActive);
+        topUI.SetActive(isActive);
     }
 
     public void ClearStateStack()

@@ -7,9 +7,9 @@ using UnityEngine;
 public class CharacterInfo
 {
     public int unitID;      // 어떤 캐릭터인지 (ID)
-    public int level;       // 현재 레벨
+    public int currentLevel;       // 현재 레벨
     public Rarity currentRarity;    // 레어리티
-    public int breakthrough; // 돌파 단계
+    public int currentBreakthrough; // 돌파 단계
     public int currentExp;      // 필요하다면 경험치까지
 }
 
@@ -56,9 +56,11 @@ public class DataManager : MonoBehaviour
     public int CurrentStamina => userData != null ? userData.stamina : 0;
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
-    public Language currentLanguage = Language.JP; // 기본값
+    public Language currentLanguage = Language.KO; // 기본값
 
-    public static event Action<UnitData, CharacterInfo> OnCharacterSelected;
+    public static event Action<UnitData, CharacterInfo> OnCharacterSelected;    //캐릭터 선택
+
+    public static Action OnUserDataChanged; //유저 정보 변경
 
     // 로컬라이제이션맵
     private Dictionary<string, string> localizationMap = new Dictionary<string, string>();
@@ -75,7 +77,9 @@ public class DataManager : MonoBehaviour
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
-            LoadGameDataByWorld(currentWorldIndex);
+            //LoadGameDataByWorld(currentWorldIndex);
+
+            GiveItem(2001, 50);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {
@@ -98,7 +102,7 @@ public class DataManager : MonoBehaviour
     {
         // 리스트에서 ID가 일치하는 정보를 찾고, 없으면 기본값(1레벨) 반환
         return userInventory.Find(info => info.unitID == id)
-               ?? new CharacterInfo { unitID = id, level = 1, breakthrough = 0 };
+               ?? new CharacterInfo { unitID = id, currentLevel = 1, currentBreakthrough = 0 };
     }
 
     public List<PartyMember> GetCurrentParty()
@@ -155,6 +159,20 @@ public class DataManager : MonoBehaviour
         {
             string json = PlayerPrefs.GetString("SaveFile");
             userData = JsonUtility.FromJson<UserData>(json);
+        }
+
+        userInventory.Clear();
+        foreach (CharacterSaveData charData in userData.ownedCharacters)
+        {
+            Debug.Log(charData.unitID);
+            userInventory.Add(new CharacterInfo
+            {
+                unitID = charData.unitID,
+                currentLevel = charData.currentLevel,
+                currentExp = charData.currentExp,
+                currentBreakthrough = charData.currentBreakthrough
+                // currentRarity도 필요하다면 여기서 넣어주세요!
+            });
         }
     }
     public void LoadGameDataByWorld(int worldIndex)
@@ -608,34 +626,79 @@ public class DataManager : MonoBehaviour
     public void UseExpItem(int unitID, int itemID, int useCount)
     {
         CharacterInfo unit = GetUserUnitInfo(unitID);
-        if (unit == null || unit.level >= 100) return;
+        if (unit == null || unit.currentLevel >= 100) return;
 
         // 아이템 ID에 따른 경험치 양 설정 (나중에 switch-case로 쉽게 추가 가능)
-        int expPerItem = 0;
-        switch (itemID)
+        ItemData data = GetItemData(itemID);
+        if (data == null) return;
+
+        // 2. 해당 아이템이 정말 경험치 관련 아이템인지 체크 (방어 코드)
+        if (data.effectStatType != "EXP")
         {
-            case 2001: expPerItem = 100; break; // 일반 강화석
-            case 2002: expPerItem = 500; break; // (예시) 중급 강화석
-            default: return;
+            Debug.LogWarning($"{data.itemNameKey}은 경험치 아이템이 아닙니다!");
+            return;
         }
 
+        // 3. 데이터에 설정된 수치(effectValue)로 총 획득량 계산
+        int expPerItem = Mathf.FloorToInt(data.effectValue);
         int totalGain = expPerItem * useCount;
+
+        Debug.Log($"[강화 테스트] 아이템:{data.itemNameKey} | 개수:{useCount} | 획득EXP:{totalGain}");
+
+        // 4. 경험치 적용 및 아이템 개수 차감 로직 실행
         AddExpToUnit(unit, totalGain);
+
+        // 5. (중요) 실제 인벤토리에서 아이템 개수 줄이기
+        RemoveInventoryItem(itemID, useCount);
+
+    }
+
+    public void RemoveInventoryItem(int id, int count)
+    {
+        // 1. 인벤토리에서 해당 아이템 찾기
+        ItemInventoryData existingItem = userData.inventory.Find(x => x.itemID == id);
+
+        if (existingItem != null)
+        {
+            existingItem.count -= count;
+
+            // 2. 개수가 0 이하라면 리스트에서 제거
+            if (existingItem.count <= 0)
+            {
+                userData.inventory.Remove(existingItem);
+                Debug.Log($"[아이템 제거] ID {id}가 모두 소모되어 인벤토리에서 삭제되었습니다.");
+            }
+            else
+            {
+                Debug.Log($"[아이템 차감] ID {id} 사용. 남은 개수: {existingItem.count}");
+            }
+
+            // 3. 데이터 변경 저장 및 알림
+            SaveData();
+            OnDataChanged?.Invoke();
+        }
+        else
+        {
+            Debug.LogWarning($"[아이템 제거 실패] 인벤토리에 ID {id}가 없습니다.");
+        }
     }
 
     private void AddExpToUnit(CharacterInfo unit, int amount)
     {
         unit.currentExp += amount;
 
-        while (unit.level < 100 && unit.currentExp >= GetRequiredExp(unit.level))
+        while (unit.currentLevel < 100 && unit.currentExp >= GetRequiredExp(unit.currentLevel))
         {
-            unit.currentExp -= GetRequiredExp(unit.level);
-            unit.level++;
+            unit.currentExp -= GetRequiredExp(unit.currentLevel);
+            unit.currentLevel++;
 
             // 레벨업 시 스탯 갱신이 필요하다면 여기에 작성
             // UpdateUnitStats(unit);
-            Debug.Log($"{unit.unitID} 레벨업! 현재 Lv.{unit.level}");
+            Debug.Log($"{unit.unitID} 레벨업! 현재 Lv.{unit.currentLevel}");
         }
+
+        SaveData();
+        OnUserDataChanged?.Invoke();
     }
 
     public bool TryConsumeStamina(string stageID)

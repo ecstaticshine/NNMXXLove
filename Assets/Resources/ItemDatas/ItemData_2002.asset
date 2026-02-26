@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 939c0fee496146b4f8f506e4fecc6461, type: 3}
-  m_Name: ItemData_2001
+  m_Name: ItemData_2002
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemNameKey: ITEM_NAME_2001
-  descriptionKey: ITEM_DESC_2001
-  itemID: 2001
+  itemNameKey: ITEM_NAME_2002
+  descriptionKey: ITEM_DESC_2002
+  itemID: 2002
   itemIcon: {fileID: 4147058742621901622, guid: 0963874b8e9da4e408df18ad9005c2fa, type: 3}
   grade: 1
   itemType: 1
   maxStack: 999
-  effectValue: 100
+  effectValue: 500
   effectStatType: EXP
   tagAbilityName: 

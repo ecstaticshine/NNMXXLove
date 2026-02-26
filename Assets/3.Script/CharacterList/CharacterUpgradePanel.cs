@@ -8,13 +8,14 @@ public class CharacterUpgradePanel : MonoBehaviour
     [Header("UI References")]
     public Transform content;     // 아이템 항목들이 생성될 부모 (ScrollRect의 Content)
     public GameObject itemIcon;   // 아이템 하나하나의 프리팹
+    public CharacterUpgradePanel upgradePanel;
 
-    private CharacterSaveData currentCharacter;
+    private CharacterInfo currentSelectedInfo;
 
     // 패널이 켜질 때 호출될 함수
-    public void Init(CharacterSaveData character)
+    public void Init(CharacterInfo character)
     {
-        currentCharacter = character;
+        currentSelectedInfo = character;
         RefreshList();
     }
 
@@ -27,11 +28,12 @@ public class CharacterUpgradePanel : MonoBehaviour
         // 예: 아이템 ID 2000~2999 사이가 경험치 아이템이라고 가정
         foreach (var item in DataManager.Instance.userData.inventory)
         {
+            Debug.Log(item.itemID);
             if (item.itemID >= 2000 && item.itemID < 3000)
             {
                 GameObject itemObject = Instantiate(itemIcon, content);
                 // 슬롯 스크립트에 데이터 전달
-                itemObject.GetComponent<UpgradeItemSlot>().Setup(item, currentCharacter, this);
+                itemObject.GetComponent<UpgradeItemSlot>().Setup(item, currentSelectedInfo, this);
             }
         }
     }
