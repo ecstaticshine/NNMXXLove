@@ -14,7 +14,7 @@ public enum SceneState
     Home,
     Gacha,                  //  Home -> Gacha
     Settings,               //  Home -> Settings
-    Character,              //  Home -> CharacterList -> Character
+    CharacterUpgrade,              //  Home -> CharacterList -> Upgrade
     CharacterCustomTag,     //  Home -> CharacterList -> Character -> CharacterCustomTag
     CharacterBreakThrough,  //  Home -> CharacterList -> Character -> CharacterBreakThrough
     WorldSelect,            //  Home -> Adventure -> StageSelect -> WorldSelect 
@@ -46,7 +46,7 @@ public class GlobalUIManager : MonoBehaviour
 
     [Header("SceneState")]
     [SerializeField]
-    private SceneState currentState = SceneState.CharacterList;
+    public SceneState currentState = SceneState.CharacterList;
     private Stack<SceneState> stateStack = new Stack<SceneState>(); // 씬 되돌아가기 위한 스택
 
     private void Awake()
@@ -106,7 +106,7 @@ public class GlobalUIManager : MonoBehaviour
 
         currentState = newState;
 
-        SetBattleLayout(currentState != SceneState.Battle);
+
 
         bool isMainTab = (currentState == SceneState.Home ||
                       currentState == SceneState.CharacterList ||
@@ -147,7 +147,7 @@ public class GlobalUIManager : MonoBehaviour
                 {
                     SceneManager.LoadScene("BattleScene");
                 }
-                break;
+                SetBattleLayout(false);
                 break;
             case SceneState.Gacha:
                 SceneManager.LoadScene("GachaScene");
@@ -157,6 +157,12 @@ public class GlobalUIManager : MonoBehaviour
                 break;
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                break;
+            case SceneState.CharacterUpgrade:
+            case SceneState.CharacterCustomTag:
+            case SceneState.CharacterBreakThrough:
                 topUI.SetActive(false);
                 PlayerInfo.SetActive(false);
                 break;
@@ -224,6 +230,7 @@ public class GlobalUIManager : MonoBehaviour
     public void SetBattleLayout(bool isActive)
     {
         topUI.SetActive(isActive);
+        bottomUI.SetActive(isActive);
     }
 
     public void ClearStateStack()

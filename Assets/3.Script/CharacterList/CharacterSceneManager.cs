@@ -269,6 +269,7 @@ public class CharacterSceneManager : MonoBehaviour
         {
             case CharacterPanelState.Default:
                 if (defaultPanel != null) defaultPanel.SetActive(true);
+                GlobalUIManager.Instance.ChangeState(SceneState.CharacterList, true);
                 backButton.SetActive(false);
                 break;
             case CharacterPanelState.Upgrade:
@@ -276,12 +277,14 @@ public class CharacterSceneManager : MonoBehaviour
                 upgradeBtnText.color = activeTextColor;
                 upgradeBtnImg.sprite = activeTabSprite;
                 if (currentSelectedInfo != null) upgradePanel.Init(currentSelectedInfo);
+                GlobalUIManager.Instance.ChangeState(SceneState.CharacterUpgrade, true);
                 backButton.SetActive(true);
                 break;
             case CharacterPanelState.Tag:
                 tagPanel.gameObject.SetActive(true);
                 tagBtnText.color = activeTextColor;
                 tagBtnImg.sprite = activeTabSprite;
+                GlobalUIManager.Instance.ChangeState(SceneState.CharacterCustomTag, true);
                 backButton.SetActive(true);
                 break;
 
@@ -289,6 +292,7 @@ public class CharacterSceneManager : MonoBehaviour
                 breakthroughPanel.gameObject.SetActive(true);
                 breakthroughBtnText.color = activeTextColor;
                 breakthroughBtnImg.sprite = activeTabSprite;
+                GlobalUIManager.Instance.ChangeState(SceneState.CharacterBreakThrough, true);
                 backButton.SetActive(true);
                 break;
         }

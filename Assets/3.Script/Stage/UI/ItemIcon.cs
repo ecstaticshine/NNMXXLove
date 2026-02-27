@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class ItemIcon : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI Components")]
     public Image iconImage;
@@ -51,7 +51,8 @@ public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             showDisplay = true;
             countText.gameObject.SetActive(true);
             countText.text = $"+{count}";
-        }else if (chance < 100f)
+        }
+        else if (chance < 100f)
         {
             showDisplay = true;
             chanceText.gameObject.SetActive(true);
@@ -96,35 +97,59 @@ public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (currentItemData != null)
-        {
-            // DataManager를 통해 키값으로 실제 텍스트 추출
-            string translatedName = DataManager.Instance.GetLocalizedText(currentItemData.itemNameKey);
-            string translatedDesc = DataManager.Instance.GetLocalizedText(currentItemData.descriptionKey);
 
-            TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
-        }
-    }
+    //IPointerEnterHandler 
+//    public void OnPointerEnter(PointerEventData eventData)
+//    {
+//#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
+//    return; // 모바일 기기에서는 호버 툴팁을 아예 실행하지 않음
+//#endif
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        // 인스턴스가 존재하고, 실제 게임 오브젝트가 파괴되지 않았을 때만 호출
-        if (TooltipManager.Instance != null)
-        {
-            TooltipManager.Instance.HideTooltip();
-        }
-    }
+//        if (currentItemData != null)
+//        {
+//            // DataManager를 통해 키값으로 실제 텍스트 추출
+//            string translatedName = DataManager.Instance.GetLocalizedText(currentItemData.itemNameKey);
+//            string translatedDesc = DataManager.Instance.GetLocalizedText(currentItemData.descriptionKey);
+
+//            TooltipManager.Instance.ShowTooltip(translatedName, translatedDesc);
+//        }
+//    }
+
+
+    // IPointerExitHandler
+//    public void OnPointerExit(PointerEventData eventData)
+//    {
+//#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
+//    return; // 모바일 기기에서는 호버 툴팁을 아예 실행하지 않음
+//#endif
+//        // 인스턴스가 존재하고, 실제 게임 오브젝트가 파괴되지 않았을 때만 호출
+//        if (TooltipManager.Instance != null)
+//        {
+//            TooltipManager.Instance.HideTooltip();
+//        }
+//    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (currentItemData != null)
+        if (currentItemData == null) return;
+
+        if (GlobalUIManager.Instance.currentState == SceneState.CharacterCustomTag)
         {
             if (CharacterTagPanel.Instance != null && currentItemData.itemID >= 4000)
             {
                 CharacterTagPanel.Instance.OnClickEquipRequest(currentItemData.itemID);
             }
         }
+        // 2. 그 외의 모든 상황: 아이템 상세 설명(툴팁 팝업) 표시
+        else
+        {
+            ShowItemDetailPopup(currentItemData);
+        }
+
+    }
+
+    private void ShowItemDetailPopup(ItemData itemData)
+    {
+        DetailInfoPopup.Instance.Setup(itemData);
     }
 }
