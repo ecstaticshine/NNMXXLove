@@ -34,10 +34,12 @@ public class Unit : MonoBehaviour
     [SerializeField] protected int finalSkillMultiplier; // 최종 스킬 배율
 
     [SerializeField] protected int maxHp;   // 현재 유닛의 실제 최대 체력을 저장할 변수
-
+    protected (int hp, int atk, int spd) tagBonus;
     [SerializeField] private int slotIndex;     // 유닛이 위치한 슬롯
 
     [SerializeField] private SpriteRenderer spriteRenderer; //캐릭터 이미지를 바꿀 컴포넌트
+
+
 
     [Header("Shield System")]
     public int shieldCount = 0; // 쉴드 횟수

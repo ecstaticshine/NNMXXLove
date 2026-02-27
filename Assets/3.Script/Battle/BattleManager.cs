@@ -144,7 +144,7 @@ public class BattleManager : MonoBehaviour
                 if (unit is Character character && data is CharacterData charData)
                 {
                     // 적군 캐릭터라면 레벨과 돌파 정보 설정 (enemyInfo에 해당 데이터가 있다면 넣어주세요)
-                    character.SetCharacterData(charData, 10, 0);
+                    character.SetCharacterData(charData, 10, 0, (0, 0, 0));
                 }
                 else
                 {
@@ -197,7 +197,9 @@ public class BattleManager : MonoBehaviour
 
                 if (character != null && data is CharacterData charData)
                 {
-                    character.SetCharacterData(charData, userInfo.currentLevel, userInfo.currentBreakthrough);
+                    var tagStats = DataManager.Instance.GetTotalTagStats(userInfo.unitID);
+
+                    character.SetCharacterData(charData, userInfo.currentLevel, userInfo.currentBreakthrough, tagStats);
 
                     characterParties.Add(character);
 

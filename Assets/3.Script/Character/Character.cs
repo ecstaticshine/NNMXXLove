@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class Character : Unit
 {
+    public int DisplayHp => maxHp;
+    public int DisplayAtk => currentAttack;
+    public int DisplaySpd => currentSpeed;
 
     [Header("경험치 데이터")]
     public int currentExp;
@@ -41,15 +44,16 @@ public class Character : Unit
         float totalHpGrowth = 1f + (hpGainPerLevel * (level - 1));
         float totalAtkGrowth = 1f + (atkGainPerLevel * (level - 1));
 
-        currentHp = Mathf.RoundToInt(characterdata.baseHp * totalHpGrowth);
+        currentHp = Mathf.RoundToInt(characterdata.baseHp * totalHpGrowth) + tagBonus.hp;
         maxHp = currentHp;  //최대 체력으로
-        currentAttack = Mathf.RoundToInt(characterdata.baseAttack * totalAtkGrowth);
-        currentSpeed = characterdata.baseSpeed;
+        currentAttack = Mathf.RoundToInt(characterdata.baseAttack * totalAtkGrowth) + tagBonus.spd;
+        currentSpeed = characterdata.baseSpeed + tagBonus.spd;
 
         if (hpBar != null)
         {
             hpBar.maxValue = maxHp;
             hpBar.value = currentHp;
+
         }
 
         float loveFactor = (characterdata.rarity == Rarity.EL)
@@ -61,29 +65,13 @@ public class Character : Unit
         }
     }
 
-    public void SetCharacterData(UnitData newData, int targetLevel, int targetBT)
+    public void SetCharacterData(UnitData newData, int targetLevel, int targetBT, (int hp, int atk, int spd) tagBonusData)
     {
         data = newData;
         level = targetLevel;
         breakthroughCount = targetBT;
+        tagBonus = tagBonusData;
         InitUnitStat(); // 데이터 설정 후 즉시 스탯 갱신
-    }
-
-    // 태그 다 가지고 오기
-    public List<string> GetAllTags()
-    {
-        List<string> tags = new List<string>();
-
-        // 1. UnitData에 기본 태그가 있다면 추가 (예: characterdata.defaultTag)
-        if (data is CharacterData cd && !string.IsNullOrEmpty(cd.defaultTag))
-            tags.Add(cd.defaultTag);
-
-        // 2. 유저가 설정한 커스텀 태그들 추가
-        foreach (var tag in customTags)
-        {
-            if (!string.IsNullOrEmpty(tag)) tags.Add(tag);
-        }
-        return tags;
     }
 
     private float Cal_Rarity(CharacterData characterData)

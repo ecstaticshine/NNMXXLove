@@ -73,7 +73,7 @@ public class SlotDrop : MonoBehaviour, IDropHandler
         if (newChar != null)
         {
             // listIcon에서 UnitData를 가져와 주입
-            newChar.SetCharacterData(listIcon.GetUnitData(),1,0);
+            newChar.SetCharacterData(listIcon.GetUnitData(),1,0, (0, 0, 0));
         }
         UnitData unitData = listIcon.GetUnitData();
         if (TryGetComponent(out SlotController slotCtrl))

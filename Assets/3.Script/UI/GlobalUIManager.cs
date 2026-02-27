@@ -46,7 +46,7 @@ public class GlobalUIManager : MonoBehaviour
 
     [Header("SceneState")]
     [SerializeField]
-    private SceneState currentState = SceneState.Adventure;
+    private SceneState currentState = SceneState.CharacterList;
     private Stack<SceneState> stateStack = new Stack<SceneState>(); // 씬 되돌아가기 위한 스택
 
     private void Awake()
@@ -124,6 +124,7 @@ public class GlobalUIManager : MonoBehaviour
         {
             case SceneState.Home:
                 topUI.SetActive(true);
+                bottomUI.SetActive(true);
                 PlayerInfo.SetActive(true);
                 if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
                 break;

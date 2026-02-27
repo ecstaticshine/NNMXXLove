@@ -13,12 +13,16 @@ public class CharacterSceneManager : MonoBehaviour
     [Header("Right Panels")]
     public GameObject defaultPanel;
     public CharacterUpgradePanel upgradePanel;
-    public GameObject tagPanel;
-    public GameObject breakthroughPanel;
+    public CharacterTagPanel tagPanel;
+    public CharacterBTPanel breakthroughPanel;
 
     [Header("Character Info")]
     [SerializeField] private TMP_Text nameText;  // 캐릭터 이름
     [SerializeField] private TMP_Text levelText; // 레벨
+    [SerializeField] private TMP_Text hpText; // HP
+    [SerializeField] private TMP_Text atkText; // ATK
+    [SerializeField] private TMP_Text spdText; // SPD
+
     [SerializeField] private Image detailImage;  // 왼쪽 큰 이미지
     [SerializeField] private Image typeIcon;     // Dealer, Healer, Buffer 아이콘
     [SerializeField] private Image tagIcon;      // Dot, Splash, Direct 아이콘
@@ -27,6 +31,28 @@ public class CharacterSceneManager : MonoBehaviour
     [SerializeField] private Image background;   // 레어리티 들어갈 뒷배경
     [SerializeField] private Image rarityIcon;   // 레어리티 아이콘
     [SerializeField] private Image frameImage;  // 레어리티 프레임
+
+    [Header("BackButton")]
+    public GameObject backButton;
+
+    [Header("Tab Button Sprites")]
+    // 각 버튼의 Image 컴포넌트
+    public Image upgradeBtnImg;
+    public Image tagBtnImg;
+    public Image breakthroughBtnImg;
+
+    [Header("Tab Text Components")]
+    public TMP_Text upgradeBtnText;
+    public TMP_Text tagBtnText;
+    public TMP_Text breakthroughBtnText;
+
+    [Header("Tab Button Colors")]
+    public Sprite activeTabSprite;    // 선택된 탭 배경 (밝거나 무늬가 있음)
+    public Sprite inactiveTabSprite;  // 선택 안 된 탭 배경 (어둡거나 평범함)
+
+    [Header("Tab Text Colors")]
+    public Color activeTextColor = new Color(0.41f, 0.31f, 0.24f); // #6A4F3E (짙은 갈색)
+    public Color inactiveTextColor= new Color(0.898f, 0.871f, 0.682f);
 
     [Header("Icon Sprites")]
     public Sprite[] typeIcons;
@@ -78,21 +104,50 @@ public class CharacterSceneManager : MonoBehaviour
         }
     }
 
+    private void UpdateStatTexts(UnitData data, CharacterInfo info)
+    {
+        if (data is CharacterData charData)
+        {
+            // 1. 레벨에 따른 기본 성장치 계산 (캐릭터 로직과 동일하게)
+            float rarityWeight = GetRarityWeight(charData.rarity);
+            float hpGain = (0.05f + charData.hpGrowth) * rarityWeight;
+            float atkGain = (0.05f + charData.attackGrowth) * rarityWeight;
+
+            int baseHp = Mathf.RoundToInt(charData.baseHp * (1f + (hpGain * (info.currentLevel - 1))));
+            int baseAtk = Mathf.RoundToInt(charData.baseAttack * (1f + (atkGain * (info.currentLevel - 1))));
+            int baseSpd = charData.baseSpeed;
+
+            // 2. 태그 보너스 가져오기 (DataManager 경유)
+            var tagBonus = DataManager.Instance.GetTotalTagStats(info.unitID);
+
+            // 3. 텍스트 업데이트 (확밀아 스타일)
+            // 만약 보너스가 있다면 초록색으로 표시하거나 합산해서 표시
+            hpText.text = $"{baseHp + tagBonus.hp}";
+            atkText.text = $"{baseAtk + tagBonus.atk}";
+            spdText.text = $"{baseSpd + tagBonus.spd}";
+
+            // (팁) 보너스 수치만 따로 강조하고 싶다면 RichText 사용 가능
+            // atkText.text = $"{baseAtk} <color=#00FF00>(+{tagBonus.atk})</color>";
+        }
+    }
 
     private void UpdateDetailUI(UnitData data, CharacterInfo info)
     {
         if (data == null) return;
 
-        // 중요: 나중에 패널을 열 때 쓰기 위해 현재 선택된 정보를 담아둡니다.
+        // 중요: 나중에 패널을 열 때 쓰기 위해 현재 선택된 정보를 담아두기
         currentSelectedData = data;
         currentSelectedInfo = info;
+
+        //스텟 계산 및 표시
+        UpdateStatTexts(data, info);
 
         // 1. 기본 정보 및 로컬라이징
         detailImage.sprite = data.unitFullIllust;
         detailImage.SetNativeSize();
 
         nameText.text = DataManager.Instance.GetLocalizedText(data.unitNameKey);
-        levelText.text = $"Lv. {info.currentLevel}";
+        levelText.text = $"{info.currentLevel}";
 
         // 2. 유닛 타입 아이콘 설정
         typeIcon.sprite = data.unitType switch
@@ -188,6 +243,7 @@ public class CharacterSceneManager : MonoBehaviour
 
 
     // 버튼들에 연결할 함수
+    public void OnClickBack() => SwitchPanel(CharacterPanelState.Default);
     public void OnClickUpgrade() => SwitchPanel(CharacterPanelState.Upgrade);
     public void OnClickTag() => SwitchPanel(CharacterPanelState.Tag);
     public void OnClickBreakthrough() => SwitchPanel(CharacterPanelState.Breakthrough);
@@ -199,22 +255,39 @@ public class CharacterSceneManager : MonoBehaviour
 
         // 1. 모든 패널 끄기
         upgradePanel.gameObject.SetActive(false);
-        tagPanel.SetActive(false);
-        breakthroughPanel.SetActive(false);
+        tagPanel.gameObject.SetActive(false);
+        breakthroughPanel.gameObject.SetActive(false);
+
+
+        ResetButtonColor();
+
 
         // 2. 선택한 패널만 켜기
         switch (target)
         {
+            case CharacterPanelState.Default:
+                if (defaultPanel != null) defaultPanel.SetActive(true);
+                backButton.SetActive(false);
+                break;
             case CharacterPanelState.Upgrade:
                 upgradePanel.gameObject.SetActive(true);
+                upgradeBtnText.color = activeTextColor;
+                upgradeBtnImg.sprite = activeTabSprite;
                 if (currentSelectedInfo != null) upgradePanel.Init(currentSelectedInfo);
+                backButton.SetActive(true);
                 break;
             case CharacterPanelState.Tag:
-                tagPanel.SetActive(true);
+                tagPanel.gameObject.SetActive(true);
+                tagBtnText.color = activeTextColor;
+                tagBtnImg.sprite = activeTabSprite;
+                backButton.SetActive(true);
                 break;
 
             case CharacterPanelState.Breakthrough:
-                breakthroughPanel.SetActive(true);
+                breakthroughPanel.gameObject.SetActive(true);
+                breakthroughBtnText.color = activeTextColor;
+                breakthroughBtnImg.sprite = activeTabSprite;
+                backButton.SetActive(true);
                 break;
         }
 
@@ -226,18 +299,20 @@ public class CharacterSceneManager : MonoBehaviour
 
     private void RefreshCurrentPanel()
     {
-        // 여기서 현재 보고 있는 캐릭터(이그니 등)의 데이터를 
-        // 켜진 패널의 스크립트에게 전달합니다.
-    }
+        if (currentSelectedInfo == null) return;
 
-    public void OnClickUpgradeButton()
-    {
-        // 1. 패널을 먼저 활성화
-        upgradePanel.gameObject.SetActive(true);
-
-        // 2. 패널의 Init을 호출하면서 현재 선택된 캐릭터 데이터를 전달!
-        // selectedCharacter는 현재 재우 님이 보고 있는 그 캐릭터 데이터여야 합니다.
-        upgradePanel.Init(currentSelectedInfo);
+        switch (currentPanel)
+        {
+            case CharacterPanelState.Upgrade:
+                upgradePanel.Init(currentSelectedInfo);
+                break;
+            case CharacterPanelState.Tag:
+                tagPanel.Init(currentSelectedInfo); // TagPanel에도 Init이 있다고 가정
+                break;
+            case CharacterPanelState.Breakthrough:
+                breakthroughPanel.Init(currentSelectedInfo); // BTPanel에도 Init이 있다고 가정
+                break;
+        }
     }
 
     private void RefreshUI()
@@ -253,21 +328,36 @@ public class CharacterSceneManager : MonoBehaviour
         {
             levelText.transform.DOScale(1f, 0.1f);
         });
+
+        // 강화나 태그 교체 후 변화된 스탯을 왼쪽 UI에 다시 반영
+        UpdateStatTexts(currentSelectedData, currentSelectedInfo);
+
+        // 리프레쉬
+        RefreshCurrentPanel();
     }
 
-    public void ReturnToList()
+    private void ResetButtonColor()
     {
-        // 1. 현재 어떤 패널이 열려있든 모두 비활성화
-        upgradePanel.gameObject.SetActive(false);
-        tagPanel.SetActive(false);
-        breakthroughPanel.SetActive(false);
+        // 탭 버튼 이미지 비활성화
+        upgradeBtnImg.sprite = inactiveTabSprite;
+        tagBtnImg.sprite = inactiveTabSprite;
+        breakthroughBtnImg.sprite = inactiveTabSprite;
 
-        // 2. 기본 상태(보통 캐릭터 리스트만 보이거나 안내 문구가 있는 패널) 활성화
-        if (defaultPanel != null) defaultPanel.SetActive(true);
+        // 탭 버튼 텍스트 비활성화
+        upgradeBtnText.color = inactiveTextColor;
+        tagBtnText.color = inactiveTextColor;
+        breakthroughBtnText.color = inactiveTextColor;
+    }
 
-        // 3. 현재 상태를 Default로 변경
-        currentPanel = CharacterPanelState.Default;
-
-        Debug.Log("리스트 화면으로 돌아갑니다.");
+    private float GetRarityWeight(Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.L => 1.0f,
+            Rarity.PL => 1.2f,
+            Rarity.TL => 1.4f,
+            Rarity.EL => 1.6f,
+            _ => 1.0f
+        };
     }
 }

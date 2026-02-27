@@ -8,9 +8,11 @@ public class CharacterInfo
 {
     public int unitID;      // 어떤 캐릭터인지 (ID)
     public int currentLevel;       // 현재 레벨
+    public int currentAttack;      //
     public Rarity currentRarity;    // 레어리티
     public int currentBreakthrough; // 돌파 단계
     public int currentExp;      // 필요하다면 경험치까지
+    public string[] equippedTags = new string[4]; // 4개의 슬롯
 }
 
 public class DataManager : MonoBehaviour
@@ -56,7 +58,7 @@ public class DataManager : MonoBehaviour
     public int CurrentStamina => userData != null ? userData.stamina : 0;
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
-    public Language currentLanguage = Language.KO; // 기본값
+    public Language currentLanguage = Language.KO; // 기본값 - 인스펙터 창 확인
 
     public static event Action<UnitData, CharacterInfo> OnCharacterSelected;    //캐릭터 선택
 
@@ -786,6 +788,81 @@ public class DataManager : MonoBehaviour
     {
         // 씬 매니저나 다른 UI들이 이 소리를 듣고 각자 할 일을 합니다.
         OnCharacterSelected?.Invoke(data, info);
+    }
+
+
+    public List<ItemInventoryData> GetOwnedExpItems()
+    {
+        // inventory 리스트에서 ID가 2000 이상 3000 미만인 것만 추출
+        return userData.inventory.FindAll(inv => inv.itemID >= 2000 && inv.itemID < 3000);
+    }
+
+    public List<ItemInventoryData> GetOwnedTagItems()
+    {
+        return userData.inventory.FindAll(inv => inv.itemID >= 4000 && inv.itemID < 5000);
+    }
+
+    public void EquipTag(CharacterInfo character, int itemID, int slotIndex)
+    {
+        // 소모 및 저장
+        RemoveInventoryItem(itemID, 1);
+        character.equippedTags[slotIndex] = itemID.ToString();
+
+        SaveData();
+        OnUserDataChanged?.Invoke();
+    }
+
+    public void RemoveTag(CharacterInfo character, int slotIndex)
+    {
+        character.equippedTags[slotIndex] = null;
+
+        SaveData();
+        OnUserDataChanged?.Invoke();
+    }
+
+    public (int hp, int atk, int spd) GetTotalTagStats(int unitID)
+    {
+        int totalHp = 0;
+        int totalAtk = 0;
+        int totalSpd = 0;
+
+        CharacterInfo characterinfo = GetUserUnitInfo(unitID);
+
+        if (characterinfo == null || characterinfo.equippedTags == null)
+            return (0, 0, 0);
+
+        for (int i = 0; i < characterinfo.equippedTags.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(characterinfo.equippedTags[i]))
+            {
+                int itemID = int.Parse(characterinfo.equippedTags[i]);
+                ItemData data = GetItemData(itemID);
+
+                int value = Mathf.RoundToInt(data.effectValue);
+
+                switch (data.effectStatType.ToUpper())
+                {
+                    case "HP":
+                        totalHp += value;
+                        break;
+                    case "ATK":
+                    case "ATTACK": // 혹시 모를 오타 대비
+                        totalAtk += value;
+                        break;
+                    case "SPD":
+                    case "SPEED":
+                        totalSpd += value;
+                        break;
+                    case "ALL": // 모든 능력치 상승 태그일 경우
+                        totalHp += value;
+                        totalAtk += value;
+                        totalSpd += value;
+                        break;
+                }
+            }
+        }
+
+        return (totalHp, totalAtk, totalSpd);
     }
 }
 
