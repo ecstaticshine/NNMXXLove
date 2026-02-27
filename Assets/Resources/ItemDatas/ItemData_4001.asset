@@ -19,6 +19,6 @@ MonoBehaviour:
   grade: 1
   itemType: 2
   maxStack: 999
-  effectValue: 0
-  effectStatType: 
-  tagAbilityName: 
+  effectValue: 500
+  effectStatType: ATK
+  tagAbilityName: ATK + 500

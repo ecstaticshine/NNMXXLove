@@ -22,7 +22,7 @@ public class CharacterBTPanel : MonoBehaviour
     public void RefreshList()
     {
         // 1. 기존 리스트 삭제 (풀링을 쓰면 더 좋지만 일단 삭제로!)
-        foreach (Transform child in content) Destroy(child.gameObject);
+        //foreach (Transform child in content) Destroy(child.gameObject);
 
     }
 }

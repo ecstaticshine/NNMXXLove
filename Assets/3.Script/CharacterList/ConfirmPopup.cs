@@ -1,33 +1,36 @@
 
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ConfirmPopup : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private Image tagIcon;        // 장착할 태그 이미지
-    [SerializeField] private TMP_Text tagNameText; // 태그 이름
-    [SerializeField] private TMP_Text tagEffectText; // 태그 효과 (예: ATK +500)
+    [SerializeField] private Transform iconParent; // 아이콘이 생성될 부모 위치
+    [SerializeField] private GameObject itemIconPrefab; // 인벤토리에서 쓰는 그 프리팹
+
+    private GameObject currentIcon;
 
     public Button confirmBtn;
     public Button cancelBtn;
 
     // 팝업을 열 때 호출할 함수
-    public void Setup(ItemData data)
+    public void Setup(ItemData data, UnityAction confirmAction)
     {
-        if (data == null) return;
+        if (currentIcon != null) Destroy(currentIcon);
 
-        // 아이콘 설정
-        tagIcon.sprite = data.itemIcon; // ItemData에 아이콘 변수가 있다고 가정
+        // 프리팹 생성
+        currentIcon = Instantiate(itemIconPrefab, iconParent);
+        ItemIcon iconScript = currentIcon.GetComponent<ItemIcon>();
+        iconScript.Setup(data, 1);
 
-        // 이름 설정 (로컬라이징 적용)
-        tagNameText.text = DataManager.Instance.GetLocalizedText(data.itemNameKey);
+        // 2. 버튼 리스너 연결 (이건 꼭 필요!)
+        confirmBtn.onClick.RemoveAllListeners();
+        confirmBtn.onClick.AddListener(confirmAction);
 
-        // 효과 텍스트 설정 (effectStatType과 effectValue 활용)
-        tagEffectText.text = $"{data.effectStatType} : +{data.effectValue}";
+        cancelBtn.onClick.RemoveAllListeners();
+        cancelBtn.onClick.AddListener(() => gameObject.SetActive(false));
 
-        // 팝업 활성화
         gameObject.SetActive(true);
     }
 }

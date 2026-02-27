@@ -22,6 +22,8 @@ public class CharacterSceneManager : MonoBehaviour
     [SerializeField] private TMP_Text hpText; // HP
     [SerializeField] private TMP_Text atkText; // ATK
     [SerializeField] private TMP_Text spdText; // SPD
+    [SerializeField] private Slider expSlider; // EXP Slider
+    [SerializeField] private TMP_Text expText; // EXP Text;
 
     [SerializeField] private Image detailImage;  // 왼쪽 큰 이미지
     [SerializeField] private Image typeIcon;     // Dealer, Healer, Buffer 아이콘
@@ -320,7 +322,15 @@ public class CharacterSceneManager : MonoBehaviour
         if (currentSelectedInfo == null) return;
 
         // 레벨 텍스트 갱신
-        levelText.text = $"Lv. {currentSelectedInfo.currentLevel}";
+        levelText.text = $"{currentSelectedInfo.currentLevel}";
+
+        Debug.Log(currentSelectedInfo.currentExp);
+        Debug.Log(DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel));
+
+        float targetValue = (float)currentSelectedInfo.currentExp / DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel);
+        expSlider.DOValue(targetValue, 0.5f).SetEase(Ease.OutCubic);
+
+        expText.text = $"{currentSelectedInfo.currentExp} / {DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel)}";
 
         // (선택) 레벨업 시 텍스트가 커졌다 작아지는 효과 (DOTween)
         levelText.transform.DOKill();

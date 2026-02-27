@@ -82,6 +82,7 @@ public class DataManager : MonoBehaviour
             //LoadGameDataByWorld(currentWorldIndex);
 
             GiveItem(2001, 50);
+            GiveItem(4001, 5);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {
@@ -172,8 +173,8 @@ public class DataManager : MonoBehaviour
                 unitID = charData.unitID,
                 currentLevel = charData.currentLevel,
                 currentExp = charData.currentExp,
-                currentBreakthrough = charData.currentBreakthrough
-                // currentRarity도 필요하다면 여기서 넣어주세요!
+                currentBreakthrough = charData.currentBreakthrough,
+                equippedTags = charData.customTags ?? new string[4]
             });
         }
     }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Header("UI Components")]
     public Image iconImage;
@@ -114,6 +114,17 @@ public class ItemIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (TooltipManager.Instance != null)
         {
             TooltipManager.Instance.HideTooltip();
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (currentItemData != null)
+        {
+            if (CharacterTagPanel.Instance != null && currentItemData.itemID >= 4000)
+            {
+                CharacterTagPanel.Instance.OnClickEquipRequest(currentItemData.itemID);
+            }
         }
     }
 }

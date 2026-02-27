@@ -20,25 +20,23 @@ public class CharacterTagPanel : MonoBehaviour
     public TMP_Text tagEffectText;  // Tag Effect 표시
 
     [Header("Popup")]
-    public GameObject confirmPopup; // "아이템이 사라집니다" 팝업
-    public Button confirmBtn;       // 팝업 내 확인 버튼
-    public Button cancelBtn;        // 팝업 내 취소 버튼
+    public ConfirmPopup confirmPopup; // "아이템이 사라집니다" 팝업
+
+    public static CharacterTagPanel Instance;
 
     private CharacterInfo currentSelectedInfo;  // 장착할 캐릭터
     private int selectedTagItemID;     // 장착할 아이템 ID 임시 저장
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     // 패널이 켜질 때 호출될 함수
     public void Init(CharacterInfo character)
     {
         currentSelectedInfo = character;
-        confirmPopup.SetActive(false);
-
-        // 팝업 버튼 리스너 설정 (한 번만 하면 됨)
-        confirmBtn.onClick.RemoveAllListeners();
-        confirmBtn.onClick.AddListener(OnConfirmEquip);
-        cancelBtn.onClick.RemoveAllListeners();
-        cancelBtn.onClick.AddListener(() => confirmPopup.SetActive(false));
-
+        confirmPopup.gameObject.SetActive(false);
         RefreshUI();
     }
 
@@ -118,27 +116,31 @@ public class CharacterTagPanel : MonoBehaviour
 
         // 2. 장착할 ID 저장 후 팝업 띄우기
         selectedTagItemID = tagID;
-        confirmPopup.SetActive(true);
+
+        // 3. ItemData를 가져와서 팝업 셋업 후 띄우기
+        ItemData data = DataManager.Instance.GetItemData(tagID);
+        if (data != null)
+        {
+            // 팝업에 정보를 채우고 활성화
+            confirmPopup.Setup(data, () => OnConfirmEquip(tagID, emptyIdx));
+        }
+
     }
 
-    private void OnConfirmEquip()
+    private void OnConfirmEquip(int tagID, int slotIndex)
     {
-        // 빈 슬롯 찾기
-        int emptyIdx = Array.FindIndex(currentSelectedInfo.equippedTags, string.IsNullOrEmpty);
 
-        if (emptyIdx != -1)
-        {
-            DataManager.Instance.EquipTag(currentSelectedInfo, selectedTagItemID, emptyIdx);
-            confirmPopup.SetActive(false);
-            RefreshUI();
-        }
+        DataManager.Instance.EquipTag(currentSelectedInfo, tagID, slotIndex);
+        confirmPopup.gameObject.SetActive(false);
+        RefreshUI();
+
     }
 
     // 슬롯 클릭 시 해제 (삭제)
     private void OnClickRemoveTag(int slotIndex)
     {
         // DataManager에 만들어둔 삭제 함수 호출 (변수명 유지)
-        //DataManager.Instance.RemoveTag(currentSelectedInfo, slotIndex);
+        DataManager.Instance.RemoveTag(currentSelectedInfo, slotIndex);
         RefreshUI();
     }
 
