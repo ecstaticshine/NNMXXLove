@@ -46,7 +46,7 @@ public class Character : Unit
 
         currentHp = Mathf.RoundToInt(characterdata.baseHp * totalHpGrowth) + tagBonus.hp;
         maxHp = currentHp;  //최대 체력으로
-        currentAttack = Mathf.RoundToInt(characterdata.baseAttack * totalAtkGrowth) + tagBonus.spd;
+        currentAttack = Mathf.RoundToInt(characterdata.baseAttack * totalAtkGrowth) + tagBonus.atk;
         currentSpeed = characterdata.baseSpeed + tagBonus.spd;
 
         if (hpBar != null)

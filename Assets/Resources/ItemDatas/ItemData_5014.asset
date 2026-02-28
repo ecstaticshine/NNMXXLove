@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 939c0fee496146b4f8f506e4fecc6461, type: 3}
+  m_Name: ItemData_5014
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemNameKey: ITEM_NAME_5014
+  descriptionKey: ITEM_DESC_5014
+  itemID: 5014
+  itemIcon: {fileID: -8397708857385434039, guid: 11711d4f434361f41bd592fbd922d2f1, type: 3}
+  grade: 1
+  itemType: 4
+  maxStack: 999
+  effectValue: 0
+  effectStatType: 
+  tagAbilityName: 

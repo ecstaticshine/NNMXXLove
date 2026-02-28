@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class CharacterTagPanel : MonoBehaviour
 {
     [Header("Equipped Tag Slots")]
-    public Image[] slotImages;       // 상단 4개의 슬롯 이미지
+    public ItemIcon[] tagSlots;       // 상단 4개의 슬롯
     public Button[] slotButtons;     // 상단 4개의 슬롯 버튼 (해제용)
     public Sprite emptySlotSprite;   // 빈 슬롯 이미지
 
@@ -21,6 +21,9 @@ public class CharacterTagPanel : MonoBehaviour
 
     [Header("Popup")]
     public ConfirmPopup confirmPopup; // "아이템이 사라집니다" 팝업
+
+    [Header("Pool Management")]
+    private List<ItemIcon> inventoryPool = new List<ItemIcon>();
 
     public static CharacterTagPanel Instance;
 
@@ -57,19 +60,25 @@ public class CharacterTagPanel : MonoBehaviour
 
             if (string.IsNullOrEmpty(tagID))
             {
-                slotImages[i].sprite = emptySlotSprite;
                 // Remove 버튼이나 슬롯 버튼 비활성화
-                slotButtons[i].gameObject.SetActive(false);
+                tagSlots[i].gameObject.SetActive(false);
             }
             else
             {
                 int itemID = int.Parse(tagID);
-                slotImages[i].sprite = DataManager.Instance.GetItemData(itemID).itemIcon;
+                ItemData data = DataManager.Instance.GetItemData(itemID);
+
+                tagSlots[i].Setup(data, 1);
+                tagSlots[i].isEquippedSlot = true;
+                tagSlots[i].gameObject.SetActive(true);
 
                 // Remove 버튼 활성화 및 삭제 함수 연결
                 slotButtons[i].gameObject.SetActive(true);
                 slotButtons[i].onClick.RemoveAllListeners();
-                slotButtons[i].onClick.AddListener(() => OnClickRemoveTag(index));
+                slotButtons[i].onClick.AddListener(() => {
+                    // 이미 장착된 상태이므로, 클릭 시 상세 설명 팝업을 띄우기
+                    DetailInfoPopup.Instance.Setup(data);
+                });
             }
         }
     }
@@ -77,23 +86,39 @@ public class CharacterTagPanel : MonoBehaviour
     // 2. 보유 중인 태그 아이템 리스트 생성
     private void RefreshInventoryList()
     {
-        foreach (Transform child in content) Destroy(child.gameObject);
+        foreach (var item in inventoryPool)
+        {
+            if (item != null) item.gameObject.SetActive(false);
+        }
 
         // 유저 인벤토리에서 '태그 아이템'만 필터링 (가정)
         var tagItems = DataManager.Instance.GetOwnedTagItems();
 
-        foreach (var item in tagItems)
+        for (int i = 0; i < tagItems.Count; i++)
         {
-            GameObject go = Instantiate(tagItemPrefab, content);
-            ItemIcon iconScript = go.GetComponent<ItemIcon>();
+            ItemIcon iconScript;
 
-            // 아이템 데이터 로드 및 셋업
-            ItemData data = DataManager.Instance.GetItemData(item.itemID);
-            iconScript.Setup(data, item.count); // 기존 Setup 함수 활용
+            // 2. 풀에 이미 생성된 게 있다면 재사용, 부족하면 생성합니다.
+            if (i < inventoryPool.Count)
+            {
+                iconScript = inventoryPool[i];
+            }
+            else
+            {
+                GameObject go = Instantiate(tagItemPrefab, content);
+                iconScript = go.GetComponent<ItemIcon>();
+                inventoryPool.Add(iconScript);
+            }
 
-            // 2. 버튼 클릭 시 장착 요청 연결 (변수명 유지)
-            Button btn = go.GetComponent<Button>();
-            int itemID = item.itemID;
+            // 3. 데이터를 셋업하고 다시 활성화합니다.
+            iconScript.gameObject.SetActive(true);
+            ItemData data = DataManager.Instance.GetItemData(tagItems[i].itemID);
+            iconScript.isEquippedSlot = false;
+            iconScript.Setup(data, tagItems[i].count);
+
+            // 4. 버튼 이벤트 연결 (중복 등록 방지를 위해 RemoveAllListeners 필수!)
+            Button btn = iconScript.GetComponent<Button>();
+            int itemID = tagItems[i].itemID;
             if (btn != null)
             {
                 btn.onClick.RemoveAllListeners();

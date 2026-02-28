@@ -8,6 +8,9 @@ public class ConfirmPopup : MonoBehaviour
 {
     [SerializeField] private Transform iconParent; // 아이콘이 생성될 부모 위치
     [SerializeField] private GameObject itemIconPrefab; // 인벤토리에서 쓰는 그 프리팹
+    [SerializeField] private TMP_Text itemName; // 아이콘 이름
+    [SerializeField] private TMP_Text itemDesc; // 아이콘 설명
+
 
     private GameObject currentIcon;
 
@@ -23,6 +26,13 @@ public class ConfirmPopup : MonoBehaviour
         currentIcon = Instantiate(itemIconPrefab, iconParent);
         ItemIcon iconScript = currentIcon.GetComponent<ItemIcon>();
         iconScript.Setup(data, 1);
+
+
+        if (itemName != null)
+            itemName.text = DataManager.Instance.GetLocalizedText(data.itemNameKey);
+
+        if (itemDesc != null)
+            itemDesc.text = DataManager.Instance.GetLocalizedText(data.tagAbilityName);
 
         // 2. 버튼 리스너 연결 (이건 꼭 필요!)
         confirmBtn.onClick.RemoveAllListeners();

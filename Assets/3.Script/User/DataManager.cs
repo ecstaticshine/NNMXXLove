@@ -40,7 +40,7 @@ public class DataManager : MonoBehaviour
 
     // 스테이지 ID로 스테이지 상세 정보 확인
     private Dictionary<string, StageDetailData> stageDetailDict = new Dictionary<string, StageDetailData>();
-    
+
     private Dictionary<int, UnitData> _playerDataCache = new Dictionary<int, UnitData>();
     private Dictionary<int, UnitData> _enemyDataCache = new Dictionary<int, UnitData>();
     private Dictionary<int, ItemData> itemDataCache = new Dictionary<int, ItemData>();
@@ -98,7 +98,7 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
 
- 
+
     }
 
     public CharacterInfo GetUserUnitInfo(int id)
@@ -183,7 +183,7 @@ public class DataManager : MonoBehaviour
         // 메모리 관리를 위해 기존 스테이지 상세 정보 초기화
         stageList.Clear();
         stageDetailDict.Clear();
-        
+
         // 지금 유저가 있는 월드 데이터 획득
         currentWorldInfo = GetWorldInfo(worldIndex);
         if (currentWorldInfo != null)
@@ -348,8 +348,8 @@ public class DataManager : MonoBehaviour
                 }
 
             }
-            else if(string.Compare(stageID_str, worldKey) > 0)
-        {
+            else if (string.Compare(stageID_str, worldKey) > 0)
+            {
                 break;
             }
         }
@@ -418,7 +418,7 @@ public class DataManager : MonoBehaviour
     public void InitializeLocalization()
     {
         LoadLocalization();
-        
+
     }
 
     private void LoadLocalization()
@@ -510,7 +510,7 @@ public class DataManager : MonoBehaviour
         StageHistory history = userData.stageHistory.Find(x => x.stageID == stageID);
         if (history == null)
         {
-            history = new StageHistory { stageID = stageID, isCleared = false, isFirstRewardClaimed = false  };
+            history = new StageHistory { stageID = stageID, isCleared = false, isFirstRewardClaimed = false };
             userData.stageHistory.Add(history);
         }
         history.isCleared = true;
@@ -864,6 +864,97 @@ public class DataManager : MonoBehaviour
         }
 
         return (totalHp, totalAtk, totalSpd);
+    }
+
+    public void AddCharacter(int characterID)
+    {
+        // 이미 보유 중인지 확인
+        if (IsCharacterOwned(characterID))
+        {
+            // 이미 있다면 조각으로 변환 (예: 5000번대 아이템)
+            int pieceID = 5000 + characterID;
+            int rewardAmount = 1; // 중복 획득 시 주는 조각 수
+            GiveItem(pieceID, rewardAmount);
+            Debug.Log($"{characterID} 중복! 조각 {pieceID}를 {rewardAmount}개 지급했습니다.");
+        }
+        else
+        {
+            // 처음 얻었다면 캐릭터 리스트에 추가
+            AddNewCharacter(characterID);
+            Debug.Log($"{characterID} 캐릭터를 처음 획득했습니다!");
+        }
+    }
+
+    private bool IsCharacterOwned(int characterID)
+    {
+        return userData.ownedCharacters.Exists(x => x.unitID == characterID);
+    }
+
+    private void AddNewCharacter(int characterID)
+    {
+        // 저장용 데이터 생성 (UserData에 저장될 녀석)
+        CharacterSaveData newSaveData = new CharacterSaveData
+        {
+            unitID = characterID,
+            currentLevel = 1,
+            currentExp = 0,
+            currentBreakthrough = 0,
+            customTags = new string[4]
+        };
+        userData.ownedCharacters.Add(newSaveData);
+
+        // 인게임 정보 리스트에도 추가 (실제 데이터 관리용)
+        userInventory.Add(new CharacterInfo
+        {
+            unitID = newSaveData.unitID,
+            currentLevel = newSaveData.currentLevel,
+            currentExp = newSaveData.currentExp,
+            currentBreakthrough = newSaveData.currentBreakthrough,
+            equippedTags = newSaveData.customTags
+        });
+
+        // 데이터 저장 및 UI 갱신 알림
+        SaveData();
+        OnDataChanged?.Invoke();
+        OnUserDataChanged?.Invoke();
+    }
+
+    public void BreakthroughCharacter(int unitID)
+    {
+        CharacterInfo unit = GetUserUnitInfo(unitID);
+        int pieceID = 5000 + unitID;
+
+        // 1. 재고 확인
+        ItemInventoryData piece = userData.inventory.Find(x => x.itemID == pieceID);
+
+        if (piece != null && piece.count >= 1)
+        {
+            // 2. 조각 소모
+            RemoveInventoryItem(pieceID, 1);
+
+            // 3. 돌파 단계 상승
+            unit.currentBreakthrough++;
+
+            // 4. 세이브 데이터에도 동기화 (UserData 내 리스트 업데이트)
+            var saveChar = userData.ownedCharacters.Find(x => x.unitID == unitID);
+            if (saveChar != null) saveChar.currentBreakthrough = unit.currentBreakthrough;
+
+            Debug.Log($"[돌파 성공] {unitID} 캐릭터가 {unit.currentBreakthrough}단계 돌파를 완료했습니다!");
+
+            SaveData();
+            OnUserDataChanged?.Invoke(); // UI 갱신 (빨간 점 알림 등을 끌 때 유용해요)
+        }
+        else
+        {
+            Debug.LogWarning("돌파에 필요한 캐릭터 조각이 부족합니다.");
+        }
+    }
+
+    public int GetCharacterIDByPiece(int pieceID)
+    {
+        if (pieceID >= 5000 && pieceID < 6000) { return pieceID - 5000; }
+
+        return -1;
     }
 }
 

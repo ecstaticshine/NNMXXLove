@@ -15,6 +15,8 @@ public class ItemIcon : MonoBehaviour, IPointerClickHandler
     public TMP_Text countText;
     public TMP_Text chanceText;
 
+    public bool isEquippedSlot = false;
+
     [Header("Obtained States")]
     public GameObject obtainedOverlay; // 어두운 패널 + 체크표시 묶음
 
@@ -132,6 +134,12 @@ public class ItemIcon : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if (currentItemData == null) return;
+
+        if (isEquippedSlot)
+        {
+            ShowItemDetailPopup(currentItemData);
+            return;
+        }
 
         if (GlobalUIManager.Instance.currentState == SceneState.CharacterCustomTag)
         {

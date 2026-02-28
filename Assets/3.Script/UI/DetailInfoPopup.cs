@@ -79,4 +79,5 @@ public class DetailInfoPopup : MonoBehaviour
             popupArea.transform.DOScale(1.0f, 0.2f).SetEase(Ease.OutBack);
         }
     }
+
 }
