@@ -468,7 +468,7 @@ public class StageManager : MonoBehaviour
         DataManager.Instance.SaveData();
 
         // 6. 씬 전환 및 상태 변경
-        GlobalUIManager.Instance.ChangeState(SceneState.Battle);
+        GlobalUIManager.Instance.ChangeState(SceneState.Battle, true);
     }
 
     public void RefreshEnemyUI(List<StageEnemyInfo> enemyList)

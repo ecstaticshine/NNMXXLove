@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 31325d7f0dbba254f905b233b4619108, type: 3}
-  m_Name: UnitData_2
+  m_Name: UnitData_6
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  unitID: 2
-  unitNameKey: UNIT_NAME_2
-  descriptionKey: UNIT_DESC_2
-  unitType: 0
+  unitID: 6
+  unitNameKey: UNIT_NAME_6
+  descriptionKey: UNIT_DESC_6
+  unitType: 1
   defaultTag: Direct
   unitPortrait: {fileID: -1703340179041964597, guid: 8ba6d30ff97b75f4c9e2671bd4f46591, type: 3}
   unitBattleSD: {fileID: -558471544904218037, guid: 3f1f1fc6434b7bd43a1d6cb8d416b746, type: 3}

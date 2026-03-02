@@ -22,7 +22,7 @@ MonoBehaviour:
   unitAttackSD: {fileID: -7630217312728748310, guid: 847272620a3ce1e499b70119274ab624, type: 3}
   unitTakeDamageSD: {fileID: 117189903056207879, guid: 7c762bf8fd65c8b4fa91386944ffefb4, type: 3}
   unitFullIllust: {fileID: 6733451529479259270, guid: d93c4366f3b5eb8479f0027238cb3a9d, type: 3}
-  rarity: 1
+  rarity: 2
   isEnemy: 0
   baseHp: 10000
   baseAttack: 1200

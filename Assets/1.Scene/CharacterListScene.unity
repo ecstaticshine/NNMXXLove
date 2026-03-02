@@ -1264,7 +1264,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: -470}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &201289103
 MonoBehaviour:
@@ -3110,6 +3110,7 @@ MonoBehaviour:
     ownedCharacters: []
     inventory: []
     stageHistory: []
+    gachaPityList: []
   maxStamina: 120
   staminaRegenSeconds: 300
   selectedStageID: 
@@ -3117,6 +3118,7 @@ MonoBehaviour:
   worldList: []
   currentParty: []
   userInventory: []
+  allUnitDatas: []
   currentLanguage: 2
 --- !u!1001 &742224259
 PrefabInstance:
@@ -3461,10 +3463,10 @@ RectTransform:
   - {fileID: 500034332}
   m_Father: {fileID: 2043120427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 380, y: -100}
+  m_SizeDelta: {x: 150, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &786839161
 MonoBehaviour:
@@ -4108,10 +4110,10 @@ RectTransform:
   - {fileID: 1397057301}
   m_Father: {fileID: 2043120427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 540, y: -100}
+  m_SizeDelta: {x: 150, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1056929195
 MonoBehaviour:
@@ -4549,10 +4551,10 @@ RectTransform:
   - {fileID: 1340633410}
   m_Father: {fileID: 2043120427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 220, y: -100}
+  m_SizeDelta: {x: 150, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1256285588
 MonoBehaviour:
@@ -5163,10 +5165,10 @@ RectTransform:
   - {fileID: 1057391280}
   m_Father: {fileID: 2043120427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 700, y: -100}
+  m_SizeDelta: {x: 150, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1400695991
 MonoBehaviour:
@@ -7545,7 +7547,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1872967088
 RectTransform:
   m_ObjectHideFlags: 0

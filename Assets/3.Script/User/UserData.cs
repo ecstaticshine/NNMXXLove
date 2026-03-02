@@ -22,6 +22,8 @@ public class UserData
 
     // 스테이지 진행도 리스트
     public List<StageHistory> stageHistory = new List<StageHistory>();
+    // 가챠별 천장 데이터 리스트
+    public List<GachaSaveData> gachaPityList = new List<GachaSaveData>();
 
     // [기본 생성자] JsonUtility가 로드할 때 사용
     public UserData() { }
@@ -57,6 +59,13 @@ public class ItemInventoryData
 {
     public int itemID;      //아이템 아이디
     public int count;
+}
+
+[System.Serializable]
+public class GachaSaveData
+{
+    public int gachaID;      // 어떤 가챠인지 구분
+    public int currentPity;  // 현재 쌓인 천장 스택
 }
 
 [Serializable]

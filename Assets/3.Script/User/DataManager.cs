@@ -55,6 +55,9 @@ public class DataManager : MonoBehaviour
 
     private List<ItemInventoryData> _lastEarnedRewards = new List<ItemInventoryData>();
 
+    // 게임에 존재하는 캐릭터 풀
+    public List<UnitData> allUnitDatas = new List<UnitData>();
+
     public int CurrentStamina => userData != null ? userData.stamina : 0;
 
     public enum Language { KO = 1, JP = 2 } // 0은 string키용
@@ -79,7 +82,7 @@ public class DataManager : MonoBehaviour
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
-            //LoadGameDataByWorld(currentWorldIndex);
+            LoadGameDataByWorld(currentWorldIndex);
 
             GiveItem(2001, 50);
             GiveItem(4001, 5);
@@ -883,6 +886,13 @@ public class DataManager : MonoBehaviour
             AddNewCharacter(characterID);
             Debug.Log($"{characterID} 캐릭터를 처음 획득했습니다!");
         }
+    }
+
+    public void LoadAllUnitDatas()
+    {
+        // Resources/UnitDatas/Players 폴더 내의 모든 UnitData SO를 가져옴
+        UnitData[] units = Resources.LoadAll<UnitData>("UnitDatas/Players");
+        allUnitDatas.AddRange(units);
     }
 
     private bool IsCharacterOwned(int characterID)

@@ -1,70 +1,148 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class GachaManager : MonoBehaviour
 {
-    public float[] rates = { 3f, 27f, 70f }; // SSR, SR, R 확률
-    public int pityLimit = 50; // 천장 횟수
-    private int currentPity = 0;
+    public static GachaManager Instance = null;
 
-    public string Pull()
+    [Header("Data")]
+    public List<GachaData> allGachaDatas;
+
+    [Header("UI References (오른쪽 콘텐츠 영역)")]
+    public VideoPlayer gachaVideo;
+    public TMP_Text timeLimitText;
+    public Image mainBannerImage; // 메인 일러스트용
+
+    [Header("Banner List")]
+    public Transform bannerParent;
+    public GameObject bannerPrefab;
+
+    private GachaData currentSelectedData; // 현재 선택된 가챠 정보
+
+    public GachaResultUI resultUI; // 가챠 결과
+
+    private void Awake()
     {
-        currentPity++;
-
-        // 1. 천장 체크
-        if (currentPity >= pityLimit)
+        if (Instance == null)
         {
-            ResetPity();
-            return "Pickup TL (Pity)";
+            Instance = this;
+        }
+    }
+
+    private void Start()
+    {
+        
+
+        GachaData[] loadedGachas = Resources.LoadAll<GachaData>("Data/GachaDatas");
+        allGachaDatas = new List<GachaData>(loadedGachas);
+
+        DataManager.Instance.LoadAllUnitDatas();
+
+
+        // 1. 왼쪽 배너 생성 (이건 데이터만큼 뽑아야 하니 유지)
+        foreach (GachaData data in allGachaDatas)
+        {
+            //가챠 캐릭터 풀 적용
+            data.InitGachaPool(DataManager.Instance.allUnitDatas);
+
+            GameObject go = Instantiate(bannerPrefab, bannerParent);
+            go.GetComponent<GachaBannerButton>().Setup(data);
         }
 
-        // 2. 일반 확률 계산 로직 (Random.Range 이용)
-        float randomValue = UnityEngine.Random.Range(0f, 100f);
-        if (randomValue <= rates[0]) // 3% 확률 당첨 시
+        // 2. 초기 가챠 설정
+        if (allGachaDatas.Count > 0) UpdateGachaDisplay(allGachaDatas[0]);
+    }
+
+    // 프리팹 생성 대신 "내용 교체" 함수
+    public void UpdateGachaDisplay(GachaData data)
+    {
+        currentSelectedData = data;
+
+        // 비주얼 교체
+        gachaVideo.clip = data.bgVideo;
+        gachaVideo.Play();
+
+        if (mainBannerImage != null) mainBannerImage.sprite = data.mainBannerSprite;
+
+        // 텍스트 교체
+        timeLimitText.text = $"{data.startDateTime} ~ {data.endDateTime}";
+        // descriptionText.text = data.description; // 필요한 설명값
+
+        Debug.Log($"{data.gachaTitle} 가챠로 화면 갱신 완료!");
+    }
+
+    public string Pull(GachaData data)
+    {
+        var pityData = DataManager.Instance.userData.gachaPityList.Find(x => x.gachaID == data.gachaID);
+        if (pityData == null)
         {
-            ResetPity();
-            return "TL Character";
-        }else if (randomValue <= (rates[0] + rates[1]))
+            pityData = new GachaSaveData { gachaID = data.gachaID, currentPity = 0 };
+            DataManager.Instance.userData.gachaPityList.Add(pityData);
+        }
+
+        if (DataManager.Instance.userData.diamond < 100) return "NotEnoughDiamond";
+
+        DataManager.Instance.userData.diamond -= 100;
+        pityData.currentPity++;
+
+        int resultID = 0;
+
+        // 1. 천장 체크
+        if (pityData.currentPity >= data.maxPity)
         {
-            return "PL Character";
+            resultID = data.pickupUnitID;
+            pityData.currentPity = 0;
         }
         else
         {
-            return "L Character";
+            // 2. 확률 계산
+            float rand = UnityEngine.Random.Range(0f, 100f);
+            if (rand <= data.rates[0]) // TL
+                resultID = data.tlPool[UnityEngine.Random.Range(0, data.tlPool.Count)];
+            else if (rand <= data.rates[0] + data.rates[1]) // PL
+                resultID = data.plPool[UnityEngine.Random.Range(0, data.plPool.Count)];
+            else // L
+                resultID = data.lPool[UnityEngine.Random.Range(0, data.lPool.Count)];
         }
+
+        DataManager.Instance.AddCharacter(resultID);
+        return resultID.ToString();
     }
 
-    public void Pull10()
+    public void OnPullButtonClick(int count)
     {
-        Debug.Log("10연차");
-        List<string> finalResults = new List<string>();
+        if (currentSelectedData == null) return;
 
-        for (int i = 0; i < 10; i++)
+        List<int> finalResultIDs = new List<int>();
+
+        for (int i = 0; i < count; i++)
         {
-            string result = Pull();
-
-            if (i == 9)
+            string res = Pull(currentSelectedData);
+            // 다이아 부족 체크
+            if (res == "NotEnoughDiamond")
             {
-                if(result == "L Character")
-                {
-                    result = "<color=green>[PL Character</color>";
-                }
+                Debug.Log("다이아가 부족합니다!");
+                break;
             }
 
-            // 기존 1회 뽑기 로직을 10번 반복하여 리스트에 저장
-            finalResults.Add(result);
+            if (int.TryParse(res, out int unitID))
+            {
+                finalResultIDs.Add(unitID);
+            }
         }
 
-        // 결과 리포트 출력 (기획안의 박스 연출 부분)
-        string report = "10연차 결과:\n";
-        for (int i = 0; i < finalResults.Count; i++)
+        if (finalResultIDs.Count > 0)
         {
-            report += $"{i + 1}번: {finalResults[i]}\n";
-        }
-        Debug.Log(report);
-    }
+            resultUI.ShowResult(finalResultIDs);
 
-    void ResetPity() { currentPity = 0; }
+            DataManager.Instance.SaveData();
+            DataManager.Instance.OnDataChanged?.Invoke();
+        }
+    }
 }
+

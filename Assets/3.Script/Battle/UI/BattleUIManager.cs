@@ -315,10 +315,11 @@ public class BattleUIManager : MonoBehaviour
             if (GlobalUIManager.Instance != null)
             {
                 // 스텍 지우기
-                GlobalUIManager.Instance.ClearStateStack();
+                //GlobalUIManager.Instance.ClearStateStack();
 
                 // 전투 종료 후 돌아갈 상태 설정 (예: Adventure)
                 // 글로벌UI은 전 상태로 돌아가기
+                GlobalUIManager.Instance.OnBackButtonClicked();
                 GlobalUIManager.Instance.ChangeState(SceneState.StageSelect, true);
             }
             else

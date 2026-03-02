@@ -107,7 +107,6 @@ public class GlobalUIManager : MonoBehaviour
         currentState = newState;
 
 
-
         bool isMainTab = (currentState == SceneState.Home ||
                       currentState == SceneState.CharacterList ||
                       currentState == SceneState.StorySelect ||
@@ -134,6 +133,7 @@ public class GlobalUIManager : MonoBehaviour
             case SceneState.Placement:        // Ãß°¡
                 PlayerInfo.SetActive(false);
                 topUI.SetActive(true);
+                bottomUI.SetActive(true);
                 if (currentSceneName != "AdventureScene") { 
                 SceneManager.LoadScene("AdventureScene");
                 }
@@ -143,6 +143,8 @@ public class GlobalUIManager : MonoBehaviour
                 }
                 break;
             case SceneState.Battle:
+                SetBattleLayout(false);
+                PlayerInfo.SetActive(false);
                 if (currentSceneName != "BattleScene")
                 {
                     SceneManager.LoadScene("BattleScene");
