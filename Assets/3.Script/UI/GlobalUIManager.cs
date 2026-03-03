@@ -17,6 +17,7 @@ public enum SceneState
     CharacterUpgrade,              //  Home -> CharacterList -> Upgrade
     CharacterCustomTag,     //  Home -> CharacterList -> Character -> CharacterCustomTag
     CharacterBreakThrough,  //  Home -> CharacterList -> Character -> CharacterBreakThrough
+    Detail,                 //  Home -> CharacterList -> Character -> Detail
     WorldSelect,            //  Home -> Adventure -> StageSelect -> WorldSelect 
     StageSelect,            //  Home -> Adventure -> StageSelect
     StageDetailPopup,       //  Home -> Adventure -> StageSelect -> StageDetailPopup 

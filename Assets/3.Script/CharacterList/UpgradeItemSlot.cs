@@ -11,6 +11,7 @@ public class UpgradeItemSlot : MonoBehaviour
     public ItemIcon itemIcon;          // 왼쪽 아이콘 프리팹
     public TMP_Text itemNameText;      // "일반 강화석"
     public TMP_Text expValueText;      // "EXP + 500"
+    public TMP_Text useButtonText;      // "사용하기"
     public TMP_InputField countInput;  // 숫자가 표시되는 입력창
     public Button plusButton;
     public Button minusButton;
@@ -54,6 +55,7 @@ public class UpgradeItemSlot : MonoBehaviour
         minusButton.onClick.RemoveAllListeners();
         minusButton.onClick.AddListener(() => ChangeCount(-1));
 
+        useButtonText.text = DataManager.Instance.GetLocalizedText("Character_Use");
         useButton.onClick.RemoveAllListeners();
         useButton.onClick.AddListener(OnUseClick);
 

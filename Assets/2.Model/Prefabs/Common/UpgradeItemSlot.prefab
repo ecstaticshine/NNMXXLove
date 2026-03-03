@@ -1346,6 +1346,7 @@ MonoBehaviour:
   itemIcon: {fileID: 2248250389276695286}
   itemNameText: {fileID: 3934703070204358556}
   expValueText: {fileID: 3951153490694265458}
+  useButtonText: {fileID: 7394571561729184202}
   countInput: {fileID: 4769914817842587999}
   plusButton: {fileID: 7657542511908327530}
   minusButton: {fileID: 63985645516524172}

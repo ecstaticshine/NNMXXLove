@@ -12,8 +12,14 @@ public class CharacterBTPanel : MonoBehaviour
     public TMP_Text tierText;          // "현재 등급 : PL"
     public TMP_Text btStatusText;      // "현재 돌파 : 3 / 7"
     public TMP_Text totalInfoText;     // "총 획득 조각 : 15개"
+    public TMP_Text upgradeButtonText;     // "강화하기"
 
     private CharacterInfo currentSelectedInfo;
+
+    private string labelTier;
+    private string labelBT;
+    private string labelPiece;
+    private string labelAmount;
 
     // 패널이 켜질 때 호출될 함수
     public void Init(CharacterInfo character)
@@ -22,14 +28,18 @@ public class CharacterBTPanel : MonoBehaviour
         RefreshUI();
     }
 
+    private void Awake()
+    {
+        labelTier = DataManager.Instance.GetLocalizedText("Character_Rarity"); // 예: "등급" 또는 "Rarity"
+        labelBT = DataManager.Instance.GetLocalizedText("Character_BT");     // 예: "돌파 단계"
+        labelPiece = DataManager.Instance.GetLocalizedText("Character_Piece"); // 예: "보유 조각"
+        labelAmount = DataManager.Instance.GetLocalizedText("Character_Amount"); // 예: "개수"
+        upgradeButtonText.text = DataManager.Instance.GetLocalizedText("Character_Upgrade_Btn"); // 강화하기
+    }
+
     public void RefreshUI()
     {
         if (currentSelectedInfo == null) return;
-
-        string labelTier = DataManager.Instance.GetLocalizedText("UI_LABEL_TIER"); // 예: "등급" 또는 "Rarity"
-        string labelBT = DataManager.Instance.GetLocalizedText("UI_LABEL_BT");     // 예: "돌파 단계"
-        string labelPiece = DataManager.Instance.GetLocalizedText("UI_LABEL_PIECE"); // 예: "보유 조각"
-
         int totalPt = currentSelectedInfo.TotalPoint; // 예: TL(14) + 0돌파 = 14점
 
         // 3. 점수에 따른 현재 등급 및 단계 계산
@@ -139,21 +149,21 @@ public class CharacterBTPanel : MonoBehaviour
         {
             string colorTag = GetTierColor(newRarity);
             if (oldRarity != newRarity)
-                tierText.text = $"등급 : {oldRarity} -> <color={colorTag}><b>{newRarity}</b></color>";
+                tierText.text = $"{labelTier} : {oldRarity} -> <color={colorTag}><b>{newRarity}</b></color>";
             else
-                tierText.text = $"등급 : <color={colorTag}>{newRarity}</color>";
+                tierText.text = $"{labelTier} : <color={colorTag}>{newRarity}</color>";
         }
 
         // [연출 2] 돌파 단계: 3 -> <color=green>4</color>
         if (btStatusText != null)
         {
-            btStatusText.text = $"돌파 단계 : {oldStep} -> <color=#00FF00><b>{newStep}</b></color> / 7";
+            btStatusText.text = $"{labelBT} : {oldStep} -> <color=#00FF00><b>{newStep}</b></color> / 7";
         }
 
         // [연출 3] 보유 조각: 15 -> <color=red>14</color>
         if (totalInfoText != null)
         {
-            totalInfoText.text = $"보유 조각 : {oldOwned} -> <color=#FF0000><b>{newOwned}</b></color>개";
+            totalInfoText.text = $"{labelPiece} : {oldOwned} -> <color=#FF0000><b>{newOwned}</b></color>{labelAmount}";
         }
 
         // 1초 동안 반짝거리는 느낌 (폰트 크기를 키웠다 줄였다 하거나, 텍스트를 깜빡이게 할 수 있음)

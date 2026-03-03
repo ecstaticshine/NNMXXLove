@@ -37,3 +37,12 @@ Adventure_Enemy,적,エネミー
 Adventure_Item,획득,アイテム
 Adventure_Rewards,보상,報酬
 Adventure_Stamina,스테미나,スタミナ
+Character_Upgrade,강화,強化
+Character_Tag,태그,タグ
+Character_BT,돌파,突破
+Character_Detail,상세,詳細
+Character_Rarity,등급,レアリティ
+Character_Piece,보유 조각,保有中のカケラ
+Character_Amount,개,個
+Character_Upgrade_Btn,강화하기,強化する
+Character_Use,사용,使う

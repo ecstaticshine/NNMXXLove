@@ -679,7 +679,7 @@ public class BattleManager : MonoBehaviour
             // [수정] 현재 플레이어 페이즈라면 플레이어 리스트로 타임라인 유지
             if (currentPhase == BattlePhase.PlayerSelectPhase || currentPhase == BattlePhase.PlayerActionPhase)
             {
-                uiManager.RefreshTimeline(playerTurnOrder);
+                //uiManager.RefreshTimeline(playerTurnOrder);
             }
             else
             {

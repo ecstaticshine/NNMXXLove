@@ -77,7 +77,7 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         unitIcon.color = placed ? new Color(1f, 1f, 1f, 0.5f) : Color.white;
     }
 
-    public void SetUnitIcon(UnitData data, int level)
+    public void SetUnitIcon(UnitData data, int level, int breakthrough = 0)
     {
         if (data == null) return;
 
@@ -86,8 +86,25 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         this.unitIcon.sprite = data.unitPortrait;
         this.levelText.text = $"{level}";
 
+        int baseOffset = data.rarity switch
+        {
+            Rarity.L => 0,
+            Rarity.PL => 7,
+            Rarity.TL => 14,
+            Rarity.EL => 21,
+            _ => 0
+        };
+
+        int totalPt = baseOffset + breakthrough;
+        Rarity currentRarity;
+
+        if (totalPt >= 21) currentRarity = Rarity.EL;
+        else if (totalPt >= 14) currentRarity = Rarity.TL;
+        else if (totalPt >= 7) currentRarity = Rarity.PL;
+        else currentRarity = Rarity.L;
+
         // 등급 UI 업데이트 (isEnemy 정보 포함)
-        UpdateRarityUI(data.isEnemy, data.rarity);
+        UpdateRarityUI(data.isEnemy, currentRarity);
     }
 
     private void UpdateRarityUI(bool isEnemy, Rarity rarity)

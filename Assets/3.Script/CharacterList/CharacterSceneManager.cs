@@ -15,6 +15,7 @@ public class CharacterSceneManager : MonoBehaviour
     public CharacterUpgradePanel upgradePanel;
     public CharacterTagPanel tagPanel;
     public CharacterBTPanel breakthroughPanel;
+    public DetailPanel detailPanel;
 
     [Header("Character Info")]
     [SerializeField] private TMP_Text nameText;  // 캐릭터 이름
@@ -42,11 +43,13 @@ public class CharacterSceneManager : MonoBehaviour
     public Image upgradeBtnImg;
     public Image tagBtnImg;
     public Image breakthroughBtnImg;
+    public Image detailBtnImg;
 
     [Header("Tab Text Components")]
     public TMP_Text upgradeBtnText;
     public TMP_Text tagBtnText;
     public TMP_Text breakthroughBtnText;
+    public TMP_Text detailBtnText;
 
     [Header("Tab Button Colors")]
     public Sprite activeTabSprite;    // 선택된 탭 배경 (밝거나 무늬가 있음)
@@ -64,7 +67,7 @@ public class CharacterSceneManager : MonoBehaviour
     public Sprite[] rarityIconImages;
     public GameObject[] breakThrough;   // 돌파에 따라 하트 표시
 
-    public enum CharacterPanelState { Default, Upgrade, Tag, Breakthrough }
+    public enum CharacterPanelState { Default, Upgrade, Tag, Breakthrough, Detail }
 
     private CharacterPanelState currentPanel = CharacterPanelState.Default;
 
@@ -104,6 +107,12 @@ public class CharacterSceneManager : MonoBehaviour
             Debug.Log($"[자동 선택 완료] {firstData.name} (ID: {firstInfo.unitID})");
 
         }
+
+        upgradeBtnText.text = DataManager.Instance.GetLocalizedText("Character_Upgrade");
+        tagBtnText.text = DataManager.Instance.GetLocalizedText("Character_Tag");
+        breakthroughBtnText.text = DataManager.Instance.GetLocalizedText("Character_BT");
+        detailBtnText.text = DataManager.Instance.GetLocalizedText("Character_Detail");
+
     }
 
     private void UpdateStatTexts(UnitData data, CharacterInfo info)
@@ -240,6 +249,7 @@ public class CharacterSceneManager : MonoBehaviour
     public void OnClickUpgrade() => SwitchPanel(CharacterPanelState.Upgrade);
     public void OnClickTag() => SwitchPanel(CharacterPanelState.Tag);
     public void OnClickBreakthrough() => SwitchPanel(CharacterPanelState.Breakthrough);
+    public void OnClickDetail() => SwitchPanel(CharacterPanelState.Detail);
 
     private void SwitchPanel(CharacterPanelState target)
     {
@@ -286,6 +296,14 @@ public class CharacterSceneManager : MonoBehaviour
                 GlobalUIManager.Instance.ChangeState(SceneState.CharacterBreakThrough, true);
                 backButton.SetActive(true);
                 break;
+            case CharacterPanelState.Detail:
+                detailPanel.gameObject.SetActive(true);
+                detailBtnText.color = activeTextColor;
+                detailBtnImg.sprite = activeTabSprite;
+                GlobalUIManager.Instance.ChangeState(SceneState.Detail, true);
+                backButton.SetActive(true);
+                break;
+
         }
 
         currentPanel = target;

@@ -111,5 +111,26 @@ public class Character : Unit
         return tags;
     }
 
+    public Rarity GetCurrentRarity()
+    {
+        // DataManager의 CharacterInfo.TotalPoint 계산 로직을 그대로 가져옵니다.
+        int totalPoint = GetTierOffset(data.rarity) + breakthroughCount;
 
+        if (totalPoint >= 21) return Rarity.EL;
+        if (totalPoint >= 14) return Rarity.TL;
+        if (totalPoint >= 7) return Rarity.PL;
+        return Rarity.L;
+    }
+
+    private int GetTierOffset(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.L: return 0;
+            case Rarity.PL: return 7;
+            case Rarity.TL: return 14;
+            case Rarity.EL: return 21;
+            default: return 0;
+        }
+    }
 }

@@ -130,7 +130,14 @@ public class BattleUIManager : MonoBehaviour
 
             if (unitIcon != null)
             {
-                unitIcon.SetUnitIcon(unit.data, unit.level);
+                int btLevel = 0;
+                if (unit is Character character)
+                {
+                    // Character 클래스에 현재 돌파 단계를 저장하는 변수.
+                    btLevel = character.breakthroughCount;
+                }
+
+                unitIcon.SetUnitIcon(unit.data, unit.level, btLevel);
             }
 
             _activeIcons.Add(iconObj);
@@ -438,8 +445,9 @@ public class BattleUIManager : MonoBehaviour
 
                     if (unitIcon != null)
                     {
+
                         // 기본 정보 세팅 (기존 함수 재사용)
-                        unitIcon.SetUnitIcon(character.data, character.level);
+                        unitIcon.SetUnitIcon(character.data, character.level, character.breakthroughCount);
 
                         // 경험치/레벨업 연출 (만렙 100 체크 포함)
                         if (character.level < 100)
