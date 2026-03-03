@@ -36,7 +36,15 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetUnitIcon(UnitData data, CharacterInfo info)
     {
-        if (data == null) return;
+        int totalPt = info.TotalPoint;
+        Rarity currentRarity;
+
+        if (totalPt >= 21) currentRarity = Rarity.EL;
+        else if (totalPt >= 14) currentRarity = Rarity.TL;
+        else if (totalPt >= 7) currentRarity = Rarity.PL;
+        else currentRarity = Rarity.L;
+
+        int rarityIndex = (int)currentRarity;
 
         this.currentUnitData = data;
         this.characterInfo = info;
@@ -48,7 +56,7 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         levelText.text = $"{info.currentLevel}";
 
         // 등급(Rarity)에 따른 연출 처리
-        UpdateRarityUI(data.isEnemy, data.rarity);
+        UpdateRarityUI(data.isEnemy, currentRarity);
     }
 
     public bool IsPlaced()

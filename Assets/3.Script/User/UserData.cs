@@ -17,7 +17,7 @@ public class UserData
 
     // 각 유저가 보유한 모든 캐릭터들의 상세 정보 리스트
     public List<CharacterSaveData> ownedCharacters = new List<CharacterSaveData>();
-
+    // 인벤토리
     public List<ItemInventoryData> inventory = new List<ItemInventoryData>();
 
     // 스테이지 진행도 리스트

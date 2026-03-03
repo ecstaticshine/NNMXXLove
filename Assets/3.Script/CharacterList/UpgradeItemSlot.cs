@@ -91,6 +91,9 @@ public class UpgradeItemSlot : MonoBehaviour
         // 사용 후 보유량 갱신
         maxPossession -= currentCount;
 
+        // 데이터 변경된 걸 알려주기
+        DataManager.OnUserDataChanged?.Invoke();
+
         // 3. 수량 초기화 로직 추가
         if (maxPossession <= 0)
         {

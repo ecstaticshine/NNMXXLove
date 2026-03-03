@@ -9,10 +9,25 @@ public class CharacterInfo
     public int unitID;      // 어떤 캐릭터인지 (ID)
     public int currentLevel;       // 현재 레벨
     public int currentAttack;      //
+    public Rarity baseRarity;       // 태생 등급 (데이터시트에서 가져온 고정값)
     public Rarity currentRarity;    // 레어리티
     public int currentBreakthrough; // 돌파 단계
     public int currentExp;      // 필요하다면 경험치까지
     public string[] equippedTags = new string[4]; // 4개의 슬롯
+
+    public int TotalPoint => GetTierOffset(baseRarity) + currentBreakthrough;
+
+    private int GetTierOffset(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.L: return 0;
+            case Rarity.PL: return 7;
+            case Rarity.TL: return 14;
+            case Rarity.EL: return 21;
+            default: return 0;
+        }
+    }
 }
 
 public class DataManager : MonoBehaviour
@@ -33,7 +48,7 @@ public class DataManager : MonoBehaviour
     private WorldDataInfo currentWorldInfo;
 
     // 유저가 현재 위치한 월드 (UserData 등에서 가져옴)
-    public int currentWorldIndex = 0;
+    public int currentWorldIndex = 1;
 
     // 스테이지 리스트
     public List<StageDetailData> stageList = new List<StageDetailData>();
@@ -86,6 +101,7 @@ public class DataManager : MonoBehaviour
 
             GiveItem(2001, 50);
             GiveItem(4001, 5);
+            GiveItem(5001, 7);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {
@@ -170,6 +186,9 @@ public class DataManager : MonoBehaviour
         userInventory.Clear();
         foreach (CharacterSaveData charData in userData.ownedCharacters)
         {
+            UnitData originalData = GetPlayerData(charData.unitID);
+            Rarity rarity = (originalData != null) ? originalData.rarity : Rarity.L;
+
             Debug.Log(charData.unitID);
             userInventory.Add(new CharacterInfo
             {
@@ -177,6 +196,7 @@ public class DataManager : MonoBehaviour
                 currentLevel = charData.currentLevel,
                 currentExp = charData.currentExp,
                 currentBreakthrough = charData.currentBreakthrough,
+                baseRarity = rarity,
                 equippedTags = charData.customTags ?? new string[4]
             });
         }
@@ -902,6 +922,9 @@ public class DataManager : MonoBehaviour
 
     private void AddNewCharacter(int characterID)
     {
+        UnitData originalData = GetPlayerData(characterID);
+        Rarity rarity = (originalData != null) ? originalData.rarity : Rarity.L;
+
         // 저장용 데이터 생성 (UserData에 저장될 녀석)
         CharacterSaveData newSaveData = new CharacterSaveData
         {
@@ -920,6 +943,7 @@ public class DataManager : MonoBehaviour
             currentLevel = newSaveData.currentLevel,
             currentExp = newSaveData.currentExp,
             currentBreakthrough = newSaveData.currentBreakthrough,
+            baseRarity = rarity,
             equippedTags = newSaveData.customTags
         });
 
@@ -945,6 +969,13 @@ public class DataManager : MonoBehaviour
             // 3. 돌파 단계 상승
             unit.currentBreakthrough++;
 
+            // 레어도 등급 로직 갱신
+            int totalPt = unit.TotalPoint;
+            if (totalPt >= 21) unit.currentRarity = Rarity.EL;
+            else if (totalPt >= 14) unit.currentRarity = Rarity.TL;
+            else if (totalPt >= 7) unit.currentRarity = Rarity.PL;
+            else unit.currentRarity = Rarity.L;
+
             // 4. 세이브 데이터에도 동기화 (UserData 내 리스트 업데이트)
             var saveChar = userData.ownedCharacters.Find(x => x.unitID == unitID);
             if (saveChar != null) saveChar.currentBreakthrough = unit.currentBreakthrough;
@@ -965,6 +996,11 @@ public class DataManager : MonoBehaviour
         if (pieceID >= 5000 && pieceID < 6000) { return pieceID - 5000; }
 
         return -1;
+    }
+
+    public ItemInventoryData GetOwnedItem(int itemID)
+    {
+        return userData.inventory.Find(x => x.itemID == itemID);
     }
 }
 

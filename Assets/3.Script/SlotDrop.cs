@@ -137,9 +137,19 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 
     public void UpdateOverallSynergy()
     {
+        StopAllCoroutines();
+        StartCoroutine(UpdateSynergy_Co());
+    }
+
+    private IEnumerator UpdateSynergy_Co()
+    {
+        // 드롭된 후에 갱신될 시간을 줌
+        yield return new WaitForEndOfFrame();
+
         int direct = 0, splash = 0, dot = 0;
 
-        SlotDrop[] allSlots = transform.parent.GetComponentsInChildren<SlotDrop>();
+        SlotDrop[] allSlots = FindObjectsOfType<SlotDrop>();
+        //SlotDrop[] allSlots = transform.parent.GetComponentsInChildren<SlotDrop>();
 
         foreach (var slot in allSlots)
         {
@@ -148,10 +158,12 @@ public class SlotDrop : MonoBehaviour, IDropHandler
                 Unit unit = slot.characterAnchorSlot.GetChild(0).GetComponent<Unit>();
                 if (unit != null && unit.data != null) // UnitData 기반
                 {
+                    string tag = unit.data.defaultTag.Trim();
+
                     // 태그 문자열에 따라 카운트 증가
-                    if (unit.data.defaultTag == "Direct") direct++;
-                    else if (unit.data.defaultTag == "Splash") splash++;
-                    else if (unit.data.defaultTag == "Dot") dot++;
+                    if (tag.Equals("Direct", StringComparison.OrdinalIgnoreCase)) direct++;
+                    else if (tag.Equals("Splash", StringComparison.OrdinalIgnoreCase)) splash++;
+                    else if (tag.Equals("Dot", StringComparison.OrdinalIgnoreCase)) dot++;
                 }
             }
         }

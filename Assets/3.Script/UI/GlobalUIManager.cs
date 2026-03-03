@@ -34,6 +34,10 @@ public class GlobalUIManager : MonoBehaviour
     [Header("Global UI")]
     [SerializeField] private GameObject topUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
     [SerializeField] private GameObject bottomUI;// 배틀 씬 등에서 필요없을 경우 끄기.
+   
+    [Header("Top Bar Controller")]
+    [SerializeField] private TopBarUI topBarUI;
+
     [Header("World")]
     [SerializeField] private GameObject worldArea;
     [SerializeField] private TMP_Text worldNameText;
@@ -177,6 +181,9 @@ public class GlobalUIManager : MonoBehaviour
 
     public void RefreshCurrentUI()
     {
+
+        topBarUI.RefreshUI();
+
         string currentSceneName = SceneManager.GetActiveScene().name;
 
         if (currentSceneName == "AdventureScene")
@@ -227,6 +234,9 @@ public class GlobalUIManager : MonoBehaviour
 
         // 2. 뒤로가기 버튼 숨기기
         ChangeState(target, true); // true를 넣어서 현재 상태가 스택에 쌓이지 않게 합니다.
+
+        // 3. 리프레쉬
+        RefreshCurrentUI();
     }
 
     public void SetBattleLayout(bool isActive)

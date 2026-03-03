@@ -111,6 +111,7 @@ public class GachaManager : MonoBehaviour
         }
 
         DataManager.Instance.AddCharacter(resultID);
+
         return resultID.ToString();
     }
 

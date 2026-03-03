@@ -141,6 +141,18 @@ public class CharacterSceneManager : MonoBehaviour
         currentSelectedData = data;
         currentSelectedInfo = info;
 
+        // 레어도 표시
+        int totalPt = info.TotalPoint;
+        Rarity currentRarity;
+
+        if (totalPt >= 21) currentRarity = Rarity.EL;
+        else if (totalPt >= 14) currentRarity = Rarity.TL;
+        else if (totalPt >= 7) currentRarity = Rarity.PL;
+        else currentRarity = Rarity.L;
+
+        int rarityIndex = (int)currentRarity;
+
+
         //스텟 계산 및 표시
         UpdateStatTexts(data, info);
 
@@ -168,32 +180,11 @@ public class CharacterSceneManager : MonoBehaviour
             _ => null
         };
 
-        rarityIcon.sprite = data.rarity switch
-        {
-            Rarity.L => rarityIconImages[0],
-            Rarity.PL => rarityIconImages[1],
-            Rarity.TL => rarityIconImages[2],
-            Rarity.EL => rarityIconImages[3],
-            _ => null
-        };
+        rarityIcon.sprite = rarityIconImages[rarityIndex];
 
-        background.sprite = data.rarity switch
-        {
-            Rarity.L => rarityBackGroundImages[0],
-            Rarity.PL => rarityBackGroundImages[1],
-            Rarity.TL => rarityBackGroundImages[2],
-            Rarity.EL => rarityBackGroundImages[3],
-            _ => null
-        };
+        background.sprite = rarityBackGroundImages[rarityIndex];
 
-        frameImage.sprite = data.rarity switch
-        {
-            Rarity.L => rarityFrameImages[0],
-            Rarity.PL => rarityFrameImages[1],
-            Rarity.TL => rarityFrameImages[2],
-            Rarity.EL => rarityFrameImages[3],
-            _ => null
-        };
+        frameImage.sprite = rarityFrameImages[rarityIndex];
 
         // 3. 레어리티에 따른 배경색 변경
         background.color = GetRarityColor(data.rarity);
@@ -311,6 +302,7 @@ public class CharacterSceneManager : MonoBehaviour
         {
             case CharacterPanelState.Upgrade:
                 upgradePanel.Init(currentSelectedInfo);
+                upgradePanel.RefreshList();
                 break;
             case CharacterPanelState.Tag:
                 tagPanel.Init(currentSelectedInfo); // TagPanel에도 Init이 있다고 가정
@@ -324,6 +316,32 @@ public class CharacterSceneManager : MonoBehaviour
     private void RefreshUI()
     {
         if (currentSelectedInfo == null) return;
+
+        //레어도 가지고 오기
+        int totalPt = currentSelectedInfo.TotalPoint;
+        Rarity currentRarity;
+
+        if (totalPt >= 21) currentRarity = Rarity.EL;
+        else if (totalPt >= 14) currentRarity = Rarity.TL;
+        else if (totalPt >= 7) currentRarity = Rarity.PL;
+        else currentRarity = Rarity.L;
+
+        // 2. 등급에 따른 아이콘/배경/프레임 갱신 (UpdateDetailUI의 로직 활용)
+        int rarityIndex = (int)currentRarity; // Enum 순서와 배열 순서가 같다면 사용 가능
+
+        // 만약 Enum 순서와 배열 순서가 다르다면 switch 사용
+        rarityIcon.sprite = rarityIconImages[rarityIndex];
+        background.sprite = rarityBackGroundImages[rarityIndex];
+        frameImage.sprite = rarityFrameImages[rarityIndex];
+        background.color = GetRarityColor(currentRarity);
+
+        // 3. 돌파 하트(breakThrough) UI 갱신
+        bool isMaxRarity = (currentRarity == Rarity.EL);
+        for (int i = 0; i < breakThrough.Length; i++)
+        {
+            if (isMaxRarity) breakThrough[i].SetActive(false);
+            else breakThrough[i].SetActive(i < currentSelectedInfo.currentBreakthrough);
+        }
 
         // 레벨 텍스트 갱신
         levelText.text = $"{currentSelectedInfo.currentLevel}";
