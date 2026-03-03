@@ -2,14 +2,17 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StaminaTooltipTrigger : UITooltipTrigger
+public class StaminaTooltipTrigger : MonoBehaviour, IPointerClickHandler
 {
-    private void Update()
+    [SerializeField] private string nameKey = "STAMINA_NAME";
+    [SerializeField] private string descriptionKey = "STAMINA_DESC";
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-        if (isHovering) Show(); // 마우스를 올리고 있을 때만 매 프레임 갱신
+        ShowStaminaDetail();
     }
 
-    protected override void Show()
+    private void ShowStaminaDetail()
     {
         string title = DataManager.Instance.GetLocalizedText(nameKey);
         string baseDesc = DataManager.Instance.GetLocalizedText(descriptionKey);
@@ -17,7 +20,7 @@ public class StaminaTooltipTrigger : UITooltipTrigger
         // 시간을 계산해서 문자열로 만드는 로직 (전달해드린 코드 활용)
         string timeInfo = GetStaminaTimeText();
 
-        TooltipManager.Instance.ShowTooltip(title, string.Format(baseDesc, timeInfo));
+        DetailInfoPopup.Instance.SetupCustom(title, string.Format(baseDesc, timeInfo));
     }
 
     private string GetStaminaTimeText()
@@ -27,20 +30,20 @@ public class StaminaTooltipTrigger : UITooltipTrigger
 
         if (userData.stamina >= DataManager.Instance.maxStamina)
         {
-            timeStatus = "이미 가득 찼습니다."; // 이 부분도 키값으로 관리 권장
+            timeStatus = DataManager.Instance.GetLocalizedText("Stamina_Full"); // "이미 가득 찼습니다."
         }
         else
         {
             // 남은 시간 계산 로직
             DateTime lastTime = DateTime.Parse(userData.lastStaminaUpdateTime);
-            TimeSpan nextRegenTime = TimeSpan.FromSeconds(DataManager.Instance.staminaRegenSeconds) - (DateTime.Now - lastTime);
+            TimeSpan timeSinceLastUpdate = TimeSpan.FromSeconds(DataManager.Instance.staminaRegenSeconds) - (DateTime.Now - lastTime);
 
-            double elapsedSeconds = (DateTime.Now - lastTime).TotalSeconds;
-            double nextSeconds = DataManager.Instance.staminaRegenSeconds - elapsedSeconds;
+            double nextSeconds = DataManager.Instance.staminaRegenSeconds - timeSinceLastUpdate.TotalSeconds;
+            if (nextSeconds < 0) nextSeconds = 0;
 
             // 전체 풀 회복까지 남은 시간 계산
             int missingStamina = DataManager.Instance.maxStamina - userData.stamina;
-            int totalSecondsLeft = (missingStamina - 1) * DataManager.Instance.staminaRegenSeconds + (int)nextRegenTime.TotalSeconds;
+            int totalSecondsLeft = (missingStamina - 1) * DataManager.Instance.staminaRegenSeconds + (int)timeSinceLastUpdate.TotalSeconds;
 
             TimeSpan totalSpan = TimeSpan.FromSeconds(totalSecondsLeft);
             timeStatus = string.Format("{0:D2}분 {1:D2}초", (int)totalSpan.TotalMinutes, totalSpan.Seconds);

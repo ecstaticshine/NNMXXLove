@@ -14,7 +14,7 @@ public enum SceneState
     Home,
     Gacha,                  //  Home -> Gacha
     Settings,               //  Home -> Settings
-    CharacterUpgrade,              //  Home -> CharacterList -> Upgrade
+    CharacterUpgrade,       //  Home -> CharacterList -> Upgrade
     CharacterCustomTag,     //  Home -> CharacterList -> Character -> CharacterCustomTag
     CharacterBreakThrough,  //  Home -> CharacterList -> Character -> CharacterBreakThrough
     Detail,                 //  Home -> CharacterList -> Character -> Detail
