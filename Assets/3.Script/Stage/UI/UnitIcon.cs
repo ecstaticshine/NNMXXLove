@@ -285,6 +285,11 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private Unit FindBattleUnit()
     {
+        if (BattleManager.instance == null)
+        {
+            return null;
+        }
+
         // BattleManager의 딕셔너리에서 이 아이콘의 UnitData와 일치하는 Unit을 찾음
         foreach (var unit in BattleManager.instance.playerTurnOrder)
         {
@@ -297,49 +302,5 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
-    private void ShowUnitDetailPopup(UnitData unitData)
-    {
-        DetailInfoPopup.Instance.Setup(unitData);
-    }
-
-    private void ShowUnitDetailWithStats(Unit unit)
-    {
-        if (unit == null || unit.data == null) return;
-
-        // 1. 이름 및 기본 정보
-        string unitName = DataManager.Instance.GetLocalizedText(unit.data.unitNameKey);
-
-        // 2. 실시간 스탯 계산 (BattleManager 로직 활용)
-        // 기본값과 현재 적용된 최종값의 차이를 버프 수치로 계산
-        int currentAtk = unit.GetCurrentAttack();
-        int baseAtk = unit.data.baseAttack; // 또는 성장치가 반영된 기본 공격력
-        int atkBuff = currentAtk - baseAtk;
-
-        int currentSpd = unit.GetCurrentSpeed();
-        int baseSpd = unit.data.baseSpeed;
-        int spdBuff = currentSpd - baseSpd;
-
-        // 3. 현재 체력 상태 (HP는 최대치 대비 현재치 표시가 중요)
-        int curHp = unit.GetCurrentHP();
-        int maxHp = unit.GetMaxHP();
-
-        // 4. 리치 텍스트 구성
-        // 팁: 가독성을 위해 항목별로 컬러를 지정하면 좋습니다.
-        string hpString = $"<color=#FF5555>HP</color> : {curHp} / {maxHp}";
-
-        string atkString = $"<color=#FFCC00>ATK</color> : {baseAtk}";
-        if (atkBuff > 0) atkString += $" <color=#00FF00>(+{atkBuff})</color>";
-        else if (atkBuff < 0) atkString += $" <color=#FF0000>({atkBuff})</color>";
-
-        string spdString = $"<color=#55CCFF>SPD</color> : {baseSpd}";
-        if (spdBuff > 0) spdString += $" <color=#00FF00>(+{spdBuff})</color>";
-
-        // 5. 시너지 및 설명 합치기
-        string description = DataManager.Instance.GetLocalizedText(unit.data.descriptionKey);
-        string fullContent = $"{hpString}\n{atkString}\n{spdString}\n\n{description}";
-
-        // 6. 팝업 표시
-        // 이미 DetailInfoPopup에 OpenUnitBattleDetail을 만드셨다면 그걸 호출하는 게 가장 좋습니다.
-        DetailInfoPopup.Instance.OpenUnitBattleDetail(unit);
-    }
+ 
 }

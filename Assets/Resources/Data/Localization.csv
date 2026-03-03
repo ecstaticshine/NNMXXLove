@@ -46,3 +46,12 @@ Character_Piece,보유 조각,保有中のカケラ
 Character_Amount,개,個
 Character_Upgrade_Btn,강화하기,強化する
 Character_Use,사용,使う
+Character_HP,캐릭터 HP,キャラクター HP
+synergy_direct,<color=#FFCC00>[직접공격 시너지]</color> 피해 {0}%,<color=#FFCC00>[ダイレクトシナジー]</color> ダメージ {0}%
+synergy_dot,<color=#FFCC00>[지속피해 시너지]</color> 타격 +{0}회,<color=#FFCC00>[持続シナジー]</color> 打撃 +{0}回
+synergy_splash,<color=#FFCC00>[확산피해]</color> 주변에 {0}% 확산 피해,<color=#FFCC00>[スプラッシュシナジー]</color> 周りに {0}% 拡散ダメージ
+synergy_none,활성화된 시너지 없음,活性化中のシナジーなし
+shield_info_format,남은 횟수: {0}회\n방어 상한: {1},残り回数：{0}回\n防御上限: {1}
+tag_equip_question,해당 태그를 장착하시겠습니까?,こちらのタグを装備しますか？
+tag_equip_confirm,장착,装備
+tag_equip_cancel,취소,キャンセル

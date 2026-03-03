@@ -17,6 +17,10 @@ public class ConfirmPopup : MonoBehaviour
     public Button confirmBtn;
     public Button cancelBtn;
 
+    [SerializeField] private TMP_Text equip_question; // 장착할지 질문
+    [SerializeField] private TMP_Text confirmBtn_text; // 장착
+    [SerializeField] private TMP_Text cancelBtn_text; // 취소
+
     // 팝업을 열 때 호출할 함수
     public void Setup(ItemData data, UnityAction confirmAction)
     {
@@ -26,6 +30,10 @@ public class ConfirmPopup : MonoBehaviour
         currentIcon = Instantiate(itemIconPrefab, iconParent);
         ItemIcon iconScript = currentIcon.GetComponent<ItemIcon>();
         iconScript.Setup(data, 1);
+
+        equip_question.text = DataManager.Instance.GetLocalizedText("tag_equip_question");
+        confirmBtn_text.text = DataManager.Instance.GetLocalizedText("tag_equip_confirm");
+        cancelBtn_text.text = DataManager.Instance.GetLocalizedText("tag_equip_cancel");
 
 
         if (itemName != null)

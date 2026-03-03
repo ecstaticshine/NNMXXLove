@@ -5831,6 +5831,9 @@ MonoBehaviour:
   itemDesc: {fileID: 1940286726}
   confirmBtn: {fileID: 591081963}
   cancelBtn: {fileID: 1934966265}
+  equip_question: {fileID: 2040306242}
+  confirmBtn_text: {fileID: 660264580}
+  cancelBtn_text: {fileID: 1839796386}
 --- !u!1 &1410954700
 GameObject:
   m_ObjectHideFlags: 0
@@ -9500,7 +9503,7 @@ GameObject:
   - component: {fileID: 2040306243}
   - component: {fileID: 2040306242}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Equip_qText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
