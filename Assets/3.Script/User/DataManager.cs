@@ -80,7 +80,9 @@ public class DataManager : MonoBehaviour
 
     public static event Action<UnitData, CharacterInfo> OnCharacterSelected;    //캐릭터 선택
 
-    public static Action OnUserDataChanged; //유저 정보 변경
+    public StoryData selectedStoryData { get; set; } // 선택한 스토리 데이터
+
+public static Action OnUserDataChanged; //유저 정보 변경
 
     // 로컬라이제이션맵
     private Dictionary<string, string> localizationMap = new Dictionary<string, string>();
@@ -991,6 +993,26 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    public List<ItemInventoryData> GiveStoryReward(int itemID, int count)
+{
+        // 1. 보상 리스트 생성 (결과창 연출용)
+        List<ItemInventoryData> storyRewards = new List<ItemInventoryData>();
+
+        // 2. 실제 아이템 지급
+        GiveItem(itemID, count);
+
+        // 3. 연출을 위해 리스트에 담기
+        storyRewards.Add(new ItemInventoryData { itemID = itemID, count = count });
+
+        // 4. (선택 사항) 스토리 전용 추가 보상이 있다면 여기서 처리
+        // 예: 모든 스토리 클리어 시 계정 경험치 추가 등
+        // AddAccountExp(10); 
+
+        Debug.Log($"[Story Reward] ID: {itemID}, Count: {count} 지급 완료");
+
+        return storyRewards; // 이 리스트를 받아 UI에서 '보상 획득!' 팝업을 띄울 수 있습니다.
+    }
+
     public int GetCharacterIDByPiece(int pieceID)
     {
         if (pieceID >= 5000 && pieceID < 6000) { return pieceID - 5000; }
@@ -1001,6 +1023,19 @@ public class DataManager : MonoBehaviour
     public ItemInventoryData GetOwnedItem(int itemID)
     {
         return userData.inventory.Find(x => x.itemID == itemID);
+    }
+
+    public bool IsStoryUnlocked(StoryData storyData)
+    {
+        // 1. 필수 스테이지 클리어 여부 확인
+        bool stageCondition = string.IsNullOrEmpty(storyData.requiredStageID) ||
+                              IsStageCleared(storyData.requiredStageID);
+
+        // 2. 필수 이전 스토리 읽음 여부 확인
+        bool storyCondition = string.IsNullOrEmpty(storyData.requiredStoryID) ||
+                              userData.stageHistory.Exists(x => x.stageID == storyData.requiredStoryID && x.isStoryRead);
+
+        return stageCondition && storyCondition;
     }
 }
 

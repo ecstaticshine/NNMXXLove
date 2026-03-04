@@ -160,7 +160,7 @@ public class GlobalUIManager : MonoBehaviour
                 SceneManager.LoadScene("GachaScene");
                 break;
             case SceneState.StorySelect:
-                SceneManager.LoadScene("StoryScene");
+                SceneManager.LoadScene("StorySelectScene");
                 break;
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");

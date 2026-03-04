@@ -51,6 +51,7 @@ public class StageHistory
 {
     public string stageID;          // 스테이지 아이디 (예: W01S01)
     public bool isCleared;          // 클리어 여부
+    public bool isStoryRead;        // 스토리 감상시 true
     public bool isFirstRewardClaimed; // 첫 보상 수령 여부
 }
 

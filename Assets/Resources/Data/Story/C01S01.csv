@@ -1,0 +1,10 @@
+Speaker,Emotion,Voice,Sound(BGM/SE),BG,Position,KO,JP
+None,None,None,bgm_MusicBox_03,BlackOut,None,,
+None,Sad,v_Skuld_Prologue_001,None,None,Center,"""있잖아? 만약 네가 미래를 담당하는 여신이고,\n네 운명의 상대를 미리 알 수 있다면 어떻게 할 것 같아?""",あのね、もしも君が未来を司る女神だとして、\n君の運命の相手が誰なのか先に知ることが出来たら、君はどうしたい？
+None,Sad,v_Skuld_Prologue_002,None,None,Center,"""보통은 그 사람과 행복해지는 미래를 꿈꾸겠지.""",まぁ、普通にその者と幸せな未来を描くだろう。
+None,Angry,v_Skuld_Prologue_003,None,None,Center,"""하지만... 그 사람 곁에 이미 다른 여자가 있다면?""",でもね。その者に別の女がいるんだとしたら？
+None,Angry,v_Skuld_Prologue_004,None,None,Center,"""그게 한 명이면 어떻게 이해를 해보겠는데... XX명이나 된다면?""",それが、一人ならともかくXX名もいるなら。
+None,Crazy,v_Skuld_Prologue_005,None,None,Center,"""전부 죽여서라도 내 것으로 만들고 싶지 않겠어?""",皆殺して独り占めしたいと思わない？
+None,None,None,se_jingle_06,None,Center,프롤로그,プロローグ
+NoName,confused,,bgm_EarthQuake,,left,"""이런, """,あちゃー
+NoName,confused,,None,,left,"""이건 위험한데?""",これはヤバいな

@@ -52,6 +52,8 @@ public class BattleManager : MonoBehaviour
 
     private int _actionIndex = 0;
 
+    public bool isPrologue = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -84,8 +86,16 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+        AudioManager.Instance.PlayBGM("Drumnbass_02");
+        if (isPrologue)
+        {
+            InitPrologueBattle();
+        }
+        else
+        {
+            InitBattleUnits();
+        }
 
-        InitBattleUnits();
         RefreshSynergies();
 
         battleTimer.OnTimerOut += HandleTimerOut;
@@ -100,6 +110,8 @@ public class BattleManager : MonoBehaviour
             BattleStart();
         }
     }
+
+
 
     public void BattleStart()
     {
@@ -915,4 +927,67 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    #region 프롤로그용 배틀
+    private void InitPrologueBattle()
+    {
+        playerSlot.Clear();
+        enemySlot.Clear();
+
+        // 1. 프롤로그 전용 아군 스폰 (데이터 매니저의 실제 파티 무시)
+        SpawnProloguePlayers();
+
+        // 2. 프롤로그 전용 적 스폰
+        SpawnEnemiesFromData(); // selectedStageID를 "STAGE_PROLOGUE"로 미리 세팅
+
+        SortTurnOrder();
+        RefreshSynergies();
+        ForceUpdateAllSlotColors();
+    }
+
+    private void SpawnProloguePlayers()
+    {
+        // 프롤로그용 프리팹 로드
+        GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+        var prologueMembers = new List<(int unitID, int slotIndex)>
+    {
+        (991, 0),
+        (992, 3),
+        (993, 6),
+        (994, 1),
+        (995, 4),
+        (996, 7),
+        (997, 2),
+        (998, 5),
+        (999, 8)
+    };
+
+        foreach(var member in prologueMembers)
+    {
+            UnitData data = DataManager.Instance.GetPlayerData(member.unitID);
+
+            if (playerPrefab != null && member.slotIndex < playerSlotTransforms.Length)
+            {
+                Transform targetSlot = playerSlotTransforms[member.slotIndex];
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
+                GameObject instance = Instantiate(playerPrefab, anchor);
+                instance.transform.localPosition = Vector3.zero;
+
+                Character character = instance.GetComponent<Character>();
+
+                if (character != null && data is CharacterData charData)
+                {
+                    // 프롤로그니까 다들 든든한 레벨로 설정해 주세요!
+                    character.SetCharacterData(charData, 50, 0, (5, 5, 5));
+
+                    character.SetSlotIndex(member.slotIndex);
+                    playerSlot[member.slotIndex] = character;
+                    playerTurnOrder.Add(character);
+                    characterParties.Add(character); // 결과창에 보여주기 위해 추가
+                }
+            }
+        }
+    }
+    #endregion
 }
