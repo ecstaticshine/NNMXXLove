@@ -10,6 +10,7 @@ public enum SceneState
 {
     CharacterList,          //  Home -> CharacterList
     StorySelect,            //  Home -> StorySelect
+    Story,            //  Home -> StorySelect
     Adventure,              //  Home -> Adventure
     Home,
     Gacha,                  //  Home -> Gacha
@@ -160,7 +161,14 @@ public class GlobalUIManager : MonoBehaviour
                 SceneManager.LoadScene("GachaScene");
                 break;
             case SceneState.StorySelect:
+                topUI.SetActive(true);
+                bottomUI.SetActive(true);
                 SceneManager.LoadScene("StorySelectScene");
+                break;
+            case SceneState.Story:
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                bottomUI.SetActive(false);
                 break;
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");

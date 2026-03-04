@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -37,12 +39,30 @@ public class DialogueManager : MonoBehaviour
     [Header("Settings")]
     public float typingSpeed = 0.05f;
 
+    [Header("Automation Settings")]
+    public bool isAutoMode = false;
+    public bool isSkipMode = false;
+    public float autoDelay = 1.5f; // 대사 종료 후 대기 시간
+    public float skipSpeedMultiplier = 5f; // 스킵 시 타이핑 속도 배율
+
+    [Header("Log UI")]
+    public GameObject logPanel;          // 로그 전체 패널
+    public TMP_Text logTextContents;    // Scroll View -> Content 안에 있는 그 텍스트
+    public ScrollRect logScrollRect;    // 자동 스크롤 조절용
+
+    [Header("Summary UI")]
+    public GameObject summaryPanel;      // 줄거리 패널
+    public TMP_Text summaryTitleText;
+    public TMP_Text summaryContentText;  // 줄거리 내용 텍스트
+
     private Queue<string> sentences = new Queue<string>();
     private StoryData currentStoryData;
     private bool isTyping = false;
     private TMP_Text currentActiveText; // 현재 글자가 써지고 있는 텍스트 컴포넌트
 
+    private string currentFullContent; // 현재 출력 중인 문장 전체
 
+    private List<string> dialogueLog = new List<string>(); // 로그 저장용
 
 
     void Start()
@@ -54,14 +74,24 @@ public class DialogueManager : MonoBehaviour
     // 화면 클릭 시 호출 (Unity UI Event 등으로 연결)
     public void OnClickDialogue()
     {
+        // 스킵 중 클릭하면 스킵 중단
+        if (isSkipMode)
+        {
+            isSkipMode = false;
+            return;
+        }
+
         if (isTyping)
         {
-            // 타이핑 중이면 즉시 완성 (생략 가능)
+            // 1. 타이핑 코루틴 중단
             StopAllCoroutines();
             isTyping = false;
-            // 줄바꿈 처리 포함하여 출력
-            string finalContent = sentences.Peek().Split(',')[COL_KO + (int)DataManager.Instance.currentLanguage - 1];
-            currentActiveText.text = finalContent.Replace("\\n", "\n").Trim();
+
+            // 2. 미리 저장해둔 현재 문장 전체를 즉시 출력
+            currentActiveText.text = currentFullContent;
+
+            //즉시 완성 후 Auto 모드라면 대기 시작
+            if (isAutoMode) StartCoroutine(AutoNextRoutine());
         }
         else
         {
@@ -77,9 +107,9 @@ public class DialogueManager : MonoBehaviour
 
         // CSV 파일 파싱 (줄바꿈 기준)
         string[] lines = data.storyCsv.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
-        foreach (string line in lines)
+        for (int i = 1; i < lines.Length; i++)
         {
-            sentences.Enqueue(line);
+            sentences.Enqueue(lines[i]);
         }
 
         DisplayNextSentence();
@@ -93,19 +123,20 @@ public class DialogueManager : MonoBehaviour
         }
 
         string fullLine = sentences.Dequeue();
-        string[] parts = fullLine.Split(',');
+        string[] parts = Regex.Split(fullLine, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
         // 1. 데이터 파싱
-        string speakerKey = parts[COL_SPEAKER].Trim();
-        string emotion = parts[COL_EMOTION].Trim();
-        string voiceKey = parts[COL_VOICE].Trim();
-        string soundKey = parts[COL_SOUND].Trim();
-        string bgKey = parts[COL_BG].Trim();
-        string posKey = parts[COL_POS].Trim();
+        string speakerKey = parts[COL_SPEAKER].Trim().Trim('"');
+        string emotion = parts[COL_EMOTION].Trim().Trim('"');
+        string voiceKey = parts[COL_VOICE].Trim().Trim('"');
+        string soundKey = parts[COL_SOUND].Trim().Trim('"');
+        string bgKey = parts[COL_BG].Trim().Trim('"');
+        string posKey = parts[COL_POS].Trim().Trim('"');
 
         // 2. 언어별 텍스트 추출 (KO=1, JP=2 기준)
         int langOffset = (int)DataManager.Instance.currentLanguage == 1 ? COL_KO : COL_JP;
         string content = parts.Length > langOffset ? parts[langOffset].Trim() : "";
+        content = content.Replace("\"", "").Trim();
 
         // 3. 연출 적용 (배경, 사운드)
         ApplyVisualAndAudio(bgKey, soundKey, voiceKey, speakerKey, emotion, posKey);
@@ -121,12 +152,13 @@ public class DialogueManager : MonoBehaviour
         if (speakerKey.ToLower() == "none" || string.IsNullOrEmpty(speakerKey))
         {
             ShowNarrative(content);
+            AddToLog("narration", content); // 나레이션도 로그에 남김
         }
         else
         {
             string translatedName = DataManager.Instance.GetLocalizedText(speakerKey);
             ShowSpeakerDialogue(translatedName, content);
-            // 여기서 posKey(left, Center 등)를 이용해 패널 위치를 조절할 수 있습니다.
+            AddToLog(translatedName, content); // 대화 로그 추가
         }
     }
 
@@ -139,16 +171,22 @@ public class DialogueManager : MonoBehaviour
             if (newBG != null) backgroundImage.sprite = newBG;
         }
 
-        // 2. 사운드 처리 (AudioManager 연동)
-        if (AudioManager.Instance != null)
+        // 2. 사운드 처리
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(sound) && sound != "None")
         {
-            if (sound.StartsWith("bgm_")) AudioManager.Instance.PlayBGM(sound);
-            else if (sound.StartsWith("se_")) AudioManager.Instance.PlaySE(sound);
-
-            if (voice != "None" && !string.IsNullOrEmpty(voice))
-                AudioManager.Instance.PlayVoice(voice);
+            if (sound.StartsWith("bgm_"))
+            {
+                // "bgm_"을 제외한 "MusicBox_03"만 추출
+                string bgmName = sound.Substring(4);
+                AudioManager.Instance.PlayBGM(bgmName);
+            }
+            else if (sound.StartsWith("se_"))
+            {
+                // "se_"를 제외한 파일명 추출
+                string seName = sound.Substring(3);
+                AudioManager.Instance.PlaySE(seName);
+            }
         }
-
         // 3. 캐릭터 이미지 처리
         // 나레이션(None)이 아닐 때만 이미지를 업데이트합니다.
         if (!string.IsNullOrEmpty(speaker) && speaker.ToLower() != "none")
@@ -156,6 +194,8 @@ public class DialogueManager : MonoBehaviour
             UpdateCharacterImage(speaker, emotion, pos);
         }
     }
+
+
 
     private void UpdateCharacterImage(string speaker, string emotion, string pos)
     {
@@ -212,17 +252,46 @@ public class DialogueManager : MonoBehaviour
     IEnumerator TypeSentence(string sentence, TMP_Text textUI)
     {
         isTyping = true;
+
+        // 1. 정제된 문장을 전역 변수에 저장 (클릭 시 즉시 완성용)
+        currentFullContent = sentence.Trim().Trim('"')
+                                     .Replace("\"\"", "\"")
+                                     .Replace("\\n", "\n");
+
+        dialogueLog.Add(currentFullContent);
+
         textUI.text = "";
 
-        // CSV의 \n 문자를 실제 줄바꿈으로 변환
-        string processedSentence = sentence.Replace("\\n", "\n");
+        // 스킵 모드일 때는 속도를 조절하거나 즉시 완성
+        float currentSpeed = isSkipMode ? typingSpeed / skipSpeedMultiplier : typingSpeed;
 
-        foreach (char letter in processedSentence.ToCharArray())
+        // 2. 한 글자씩 출력
+        foreach (char letter in currentFullContent.ToCharArray())
         {
             textUI.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
+            yield return new WaitForSeconds(isSkipMode ? typingSpeed / skipSpeedMultiplier : typingSpeed);
         }
+
         isTyping = false;
+
+        // 대사가 끝난 후 자동 처리
+        if (isSkipMode)
+        {
+            yield return new WaitForSeconds(0.1f); // 아주 잠깐 대기 후 다음
+            DisplayNextSentence();
+        }
+        else if (isAutoMode)
+        {
+            yield return new WaitForSeconds(autoDelay); // 설정된 시간만큼 대기
+            if (isAutoMode) DisplayNextSentence();
+        }
+    }
+
+    // Auto 모드 대기 루틴 (별도 분리하여 관리 용이)
+    IEnumerator AutoNextRoutine()
+    {
+        yield return new WaitForSeconds(autoDelay);
+        if (isAutoMode && !isTyping) DisplayNextSentence();
     }
 
     private void EndStory()
@@ -249,6 +318,119 @@ public class DialogueManager : MonoBehaviour
             DataManager.Instance.GiveStoryReward(data.rewardItemID, data.rewardCount);
             DataManager.Instance.SaveData();
         }
+
+        if (GlobalUIManager.Instance != null)
+        {
+            // 스토리 선택 화면으로 상태 변경 (내부에서 LoadScene("StorySelectScene") 실행됨)
+            GlobalUIManager.Instance.ChangeState(SceneState.StorySelect, true);
+        }
+        else
+        {
+            // 만약 테스트 용도로 Manager 없이 실행 중일 때를 대비한 예외 처리
+            SceneManager.LoadScene("StorySelectScene");
+        }
     }
 
+    public void ToggleAutoMode()
+    {
+        isAutoMode = !isAutoMode;
+        isSkipMode = false; // 스킵과 오토는 보통 하나만 활성화
+        if (isAutoMode && !isTyping) DisplayNextSentence();
+    }
+
+    public void ShowLog()
+    {
+        if (logPanel == null) return;
+
+        logPanel.SetActive(true);
+        Time.timeScale = 0f;
+
+        // 핵심: 텍스트가 적용된 직후 레이아웃을 강제로 재계산하게 함
+        StartCoroutine(ForceUpdateLogScroll());
+    }
+
+    IEnumerator ForceUpdateLogScroll()
+    {
+        // 한 프레임 대기하여 TMP가 텍스트 높이를 계산할 시간을 줌
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
+
+        if (logScrollRect != null)
+        {
+            // 0f는 맨 아래, 1f는 맨 위입니다.
+            logScrollRect.verticalNormalizedPosition = 0f;
+        }
+    }
+
+    // 로그를 초기화하거나 새 대사를 추가하는 함수
+    public void AddToLog(string speaker, string content)
+    {
+        if (logTextContents == null) return;
+
+        // 화자 이름에 색상을 넣어 가독성을 높입니다 (Rich Text 활용)
+        string speakerColor = "#FFD700"; // 금색 예시
+        string formattedLog = $"<color={speakerColor}><b>[{speaker}]</b></color> {content}\n\n";
+
+        // 기존 텍스트에 계속 덧붙임
+        logTextContents.text += formattedLog;
+    }
+
+
+    public void CloseLog()
+    {
+        if (logPanel != null)
+        {
+            logPanel.SetActive(false);
+            // 로그창 닫으면 다시 시간 흐르게 하기
+            Time.timeScale = 1f;
+        }
+    }
+
+    public void ShowSummaryAndSkip()
+    {
+        // 1. 진행 중인 모든 연출 중단
+        StopAllCoroutines();
+        isTyping = false;
+        Time.timeScale = 0f;
+
+        // 2. 제목 세팅 (storyTitle 활용)
+        if (summaryTitleText != null)
+        {
+            // 예: [시작의 해변] 줄거리
+            string localizedTitle = DataManager.Instance.GetLocalizedText(currentStoryData.storyTitle);
+            summaryTitleText.text = $"[{localizedTitle}] {DataManager.Instance.GetLocalizedText("UI_SUMMARY_LABEL")}";
+        }
+
+        // 3. 내용 세팅 (로컬라이제이션 키 활용)
+        if (summaryContentText != null)
+        {
+            // StoryData에 추가한 summaryLogKey를 사용하여 다국어 텍스트를 가져옵니다.
+            summaryContentText.text = DataManager.Instance.GetLocalizedText(currentStoryData.summaryLogKey);
+        }
+        summaryPanel.SetActive(true);
+    }
+
+    // 줄거리 패널의 '확인' 버튼에 연결
+    public void ConfirmSkip()
+    {
+        summaryPanel.SetActive(false);
+
+        // 4. 모든 대사를 소모한 것으로 처리하고 종료
+        sentences.Clear();
+        EndStory();
+    }
+    public void CancelSummarySkip()
+    {
+        // 1. 시간 다시 흐르게 하기
+        Time.timeScale = 1f;
+
+        // 2. 패널 비활성화
+        if (summaryPanel != null)
+        {
+            summaryPanel.SetActive(false);
+        }
+
+        isTyping = false;
+    }
 }

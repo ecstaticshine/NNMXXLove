@@ -9,15 +9,13 @@ public class StoryButton : MonoBehaviour
     private bool isUnlocked;
     private Button button;
 
-    private void Awake()
-    {
-        button = GetComponent<Button>();
-    }
-
     // 매니저가 버튼을 생성한 후 이 함수를 호출해서 데이터를 세팅
     public void Setup(StoryData newData, bool isUnlocked)
     {
         data = newData;
+
+        if (button == null) button = GetComponent<Button>();
+
         titleText.text = isUnlocked ? data.storyTitle : "???";
         GetComponent<Button>().interactable = isUnlocked;
 
@@ -31,6 +29,8 @@ public class StoryButton : MonoBehaviour
         
         // 선택한 스토리 데이터 넣기.
         DataManager.Instance.selectedStoryData = data;
+
+        GlobalUIManager.Instance.ChangeState(SceneState.Story, true);
 
         // 1. 스토리 전용 씬으로 이동
         UnityEngine.SceneManagement.SceneManager.LoadScene("StoryScene");
