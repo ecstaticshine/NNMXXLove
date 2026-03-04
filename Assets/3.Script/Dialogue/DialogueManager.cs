@@ -174,17 +174,32 @@ public class DialogueManager : MonoBehaviour
         // 2. 사운드 처리
         if (AudioManager.Instance != null && !string.IsNullOrEmpty(sound) && sound != "None")
         {
-            if (sound.StartsWith("bgm_"))
+
+            string[] soundCommands = sound.Split(',');
+
+            foreach (string cmd in soundCommands)
             {
-                // "bgm_"을 제외한 "MusicBox_03"만 추출
-                string bgmName = sound.Substring(4);
-                AudioManager.Instance.PlayBGM(bgmName);
-            }
-            else if (sound.StartsWith("se_"))
-            {
-                // "se_"를 제외한 파일명 추출
-                string seName = sound.Substring(3);
-                AudioManager.Instance.PlaySE(seName);
+                // 공백 제거 (매우 중요!)
+                string trimmedCmd = cmd.Trim();
+
+                if (trimmedCmd.StartsWith("bgm_"))
+                {
+                    string bgmName = trimmedCmd.Substring(4);
+                    if (bgmName.ToLower() == "stop" || bgmName.ToLower() == "none")
+                    {
+                        AudioManager.Instance.StopBGM();
+                    }
+                    else
+                    {
+                        AudioManager.Instance.PlayBGM(bgmName);
+                    }
+                }
+                else if (trimmedCmd.StartsWith("se_"))
+                {
+                    // "se_"를 제외한 파일명 추출
+                    string seName = trimmedCmd.Substring(3);
+                    AudioManager.Instance.PlaySE(seName);
+                }
             }
         }
         // 3. 캐릭터 이미지 처리

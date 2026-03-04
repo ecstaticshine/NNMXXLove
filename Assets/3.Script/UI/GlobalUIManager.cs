@@ -10,7 +10,6 @@ public enum SceneState
 {
     CharacterList,          //  Home -> CharacterList
     StorySelect,            //  Home -> StorySelect
-    Story,            //  Home -> StorySelect
     Adventure,              //  Home -> Adventure
     Home,
     Gacha,                  //  Home -> Gacha
@@ -26,6 +25,7 @@ public enum SceneState
     Stage,                  //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage
     Battle,                 //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage -> Battle
     Multi,                  //  Home -> Adventure -> Multi
+    Story,                   //  Home -> StorySelect
 
 }
 

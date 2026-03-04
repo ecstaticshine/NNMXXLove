@@ -5,6 +5,6 @@ None,Sad,v_Skuld_Prologue_002,None,None,Center,"""보통은 그 사람과 행복
 None,Angry,v_Skuld_Prologue_003,None,None,Center,"""하지만... 그 사람 곁에 이미 다른 여자가 있다면?""",でもね。その者に別の女がいるんだとしたら？
 None,Angry,v_Skuld_Prologue_004,None,None,Center,"""그게 한 명이면 어떻게 이해를 해보겠는데... XX명이나 된다면?""",それが、一人ならともかくXX名もいるなら。
 None,Crazy,v_Skuld_Prologue_005,None,None,Center,"""전부 죽여서라도 내 것으로 만들고 싶지 않겠어?""",皆殺して独り占めしたいと思わない？
-None,None,None,se_jingle_06,None,Center,프롤로그,プロローグ
+None,None,None,"bgm_stop, se_jingle_06",None,Center,프롤로그,プロローグ
 NoName,confused,,bgm_EarthQuake,,left,"""이런, """,あちゃー
 NoName,confused,,None,,left,"""이건 위험한데?""",これはヤバいな

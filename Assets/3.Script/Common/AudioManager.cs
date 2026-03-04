@@ -41,6 +41,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public void StopBGM()
+    {
+        if (bgmSource.isPlaying)
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
+        }
+    }
+
     // --- SE 재생 (중첩 가능) ---
     public void PlaySE(string clipName)
     {
