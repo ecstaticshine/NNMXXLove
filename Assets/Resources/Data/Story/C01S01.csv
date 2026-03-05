@@ -1,10 +1,35 @@
 Speaker,Emotion,Voice,Sound(BGM/SE),BG,Position,KO,JP
 None,None,None,bgm_MusicBox_03,BlackOut,None,,
-None,Sad,v_Skuld_Prologue_001,None,None,Center,"""있잖아? 만약 네가 미래를 담당하는 여신이고,\n네 운명의 상대를 미리 알 수 있다면 어떻게 할 것 같아?""",あのね、もしも君が未来を司る女神だとして、\n君の運命の相手が誰なのか先に知ることが出来たら、君はどうしたい？
-None,Sad,v_Skuld_Prologue_002,None,None,Center,"""보통은 그 사람과 행복해지는 미래를 꿈꾸겠지.""",まぁ、普通にその者と幸せな未来を描くだろう。
-None,Angry,v_Skuld_Prologue_003,None,None,Center,"""하지만... 그 사람 곁에 이미 다른 여자가 있다면?""",でもね。その者に別の女がいるんだとしたら？
-None,Angry,v_Skuld_Prologue_004,None,None,Center,"""그게 한 명이면 어떻게 이해를 해보겠는데... XX명이나 된다면?""",それが、一人ならともかくXX名もいるなら。
-None,Crazy,v_Skuld_Prologue_005,None,None,Center,"""전부 죽여서라도 내 것으로 만들고 싶지 않겠어?""",皆殺して独り占めしたいと思わない？
+None,None,v_Skuld_Prologue_001,None,None,Center,"""있잖아? 만약 네가 미래를 담당하는 여신이고,\n네 운명의 상대를 미리 알 수 있다면 어떻게 할 것 같아?""",あのね、もしも君が<r=スクルド>未来を司る女神</r>だとして、\n君の運命の相手が誰なのか先に知ることが出来たら、君はどうしたい？
+None,None,v_Skuld_Prologue_002,None,None,Center,"""보통은 그 사람과 행복해지는 미래를 꿈꾸겠지.""",まぁ、普通にその者と幸せな未来を描くだろう。
+None,None,v_Skuld_Prologue_003,None,None,Center,"""하지만... 그 사람 곁에 이미 다른 여자가 있다면?""",でもね。その者に別の女がいるんだとしたら？
+None,None,v_Skuld_Prologue_004,None,None,Center,"""그게 한 명이면 어떻게 이해를 해보겠는데...\n<color=#FF0000>XX명이나 된다면?</color>""",それが、一人ならともかく\n<color=#FF0000>XX名もいるなら。</color>
+None,None,v_Skuld_Prologue_005,None,None,Center,"""전부 죽여서라도 내 것으로 만들고 싶지 않겠어?""",皆殺して独り占めしたいと思わない？
 None,None,None,"bgm_stop, se_jingle_06",None,Center,프롤로그,プロローグ
-NoName,confused,,bgm_EarthQuake,,left,"""이런, """,あちゃー
-NoName,confused,,None,,left,"""이건 위험한데?""",これはヤバいな
+NoName,Default,None,bgm_EarthQuake,forest-dungeon1,left,"""이런, """,あちゃー
+NoName,Default,None,None,None,left,"""이건 위험한데?""",こりゃ、まずいな。
+Igna,Default,None,None,None,right,"""무슨일인가? 서방님""",何事か？旦那様！
+NoName,Default,None,None,None,left,"”이그나, 다들 그 곳으로 불러주게”",イグナ、みんなをあの場所に集めてくれ
+Igna,Default,None,None,None,right,"""알겠다!""",承知した！
+None,None,None,"bgm_stop, bgm_Forest_01",Leaves2,Center,- 숲 어딘가 -,ー　深き森のどこか　ー
+NoName,Default,None,None,None,left,"""다들 잘 모여줬어""",みんな、よく集まった。
+NoName,Default,None,None,None,left,"""더 오래 걸릴 거라 예상했지만\n무언가로 인해 갑자기 이 별의 수명이 다 한 것 같다.""",もうちょっと先の話になると思ったが、\n何かによって急遽この星の寿命が尽きたようだ。
+Igna,Default,None,None,None,right,"""그게 사실인 거냐? 서방님""",それは誠か！旦那様
+NoName,Default,None,None,None,left,"""그러기에 계획Ｂ를 실시하려고 판단했다.""",だから、計画Bを実施することにした。
+NoName,Default,None,None,None,left,"""모두에게는 위험한 길을 걷게 해서 미안하지만,\n우리 모두가 살 수 있는 방법은 이 방법밖에 없다.""",みんなには危ない橋を渡らせて申し訳ないと思ってるが、\nみんなが生きる<r=すべ>道</r>はこれしかない。
+Serena,Default,None,None,None,right2,"""애초에 다들 너를 믿으니깐, 여기에 모인거지.""",大体、みんなアンタを信じてるから、ここに集まっているわけよ。
+NoName,Default,None,None,None,left,"""고마워 이그나!""",ありがとう。イグナ！
+Serena,Default,None,None,None,right2,"""그래서 계획이라는 게 그 카드 한장 한장에 우리를 봉인시키고,""",それで、計画って、そのカードに私たちを封印して、
+Serena,Default,None,None,None,right2,"""이세게로 이동한다는 소리인 거지?""",異世界へ転移するっていう話だよね？
+NoName,Default,None,None,None,left,"""원래라면 계획A인 대규모 전이 마법으로 이동할 계획이였지만""",本来なら、<r=計画A>大規模転移魔法</r>で転移するつもりだったけど。
+NoName,Default,None,None,None,left,"""갑자기 결정된 일이라 준비할 시간이 없었다.""",急に決まった事だから、用意する時間なんてなかった。
+Serena,Default,None,None,None,right2,"""그러니깐 평소에 마력을 아끼라고 그렇게 말을 했을 텐데.""",だから、普段から魔力は温存しなさいとあれだけ言ってたのに。
+Haru,Default,None,None,None,right,"""죄송해요. 집안일이 너무 많아서 부탁드렸어요.""",ご、ごめんなさい。家事の量が多くてお願いしちゃいました。
+Serena,Default,None,None,None,toleft2,"""아니야, 하루. 보통 집안일은 육체노동이니깐.""",違うよ、ハル。家事って肉体労働だから。
+Serena,Default,None,None,None,left2,"""남편한테 부탁하는 건 큰 문제가 되는 게 아니지""",旦那さんに頼むのは全然間違った選択ではないのよ。
+Serena,Default,None,None,None,left2,"""단지, 이 바보가 모든 일을 마법으로 해결하려고 하니깐 문제지.""",ただ、このバカがあらゆることに魔法を使って\n解決しようとするからダメなわけだよ。
+NoName,Default,None,None,None,left,"""마법으로 딸깍. 세탁에 마법을 사용한다는 내 선택은 잘못된 게 아니다.""",魔法の言葉でぽぽぽぽーん！\n洗濯に魔法を使う俺の選択って間違ってないのだ。
+NoName,Default,None,None,None,left,"""보아라, 저번에 소스를 흘려서 자국이 생겼던 이 옷을!""",ご覧あれ！この間、ソースがついてしまったこの服を！
+NoName,Default,None,None,None,left,"""깨끗하지요? 이것이 바로 최첨단 마법 사이클론 V3!""",綺麗でしょう？これこそが最近開発した魔法、サイクロンV3！
+Haru,Default,None,None,None,right,"""와! 대단해요!""",わぁ！すごいです！
+Serena,Default,None,None,None,toright2,"""하루, 그렇게 반응하면 버릇 나빠져.""",ハル、反応しないようが奴のためよ。

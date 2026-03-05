@@ -573,6 +573,7 @@ MonoBehaviour:
     diamond: 0
     stamina: 120
     lastStaminaUpdateTime: 
+    textSpeed: 0
     ownedCharacters: []
     inventory: []
     stageHistory: []
@@ -585,7 +586,7 @@ MonoBehaviour:
   currentParty: []
   userInventory: []
   allUnitDatas: []
-  currentLanguage: 1
+  currentLanguage: 2
 --- !u!4 &799960858
 Transform:
   m_ObjectHideFlags: 0

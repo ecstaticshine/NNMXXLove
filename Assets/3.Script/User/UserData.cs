@@ -13,7 +13,9 @@ public class UserData
     public int gold = 0;            // 재화
     public int diamond = 0;         // 다이아몬드
     public int stamina = 120;         // 스태미너
-    public string lastStaminaUpdateTime; // 스테미나 회복 계산용 시간            
+    public string lastStaminaUpdateTime; // 스테미나 회복 계산용 시간
+
+    public float textSpeed =0.05f;
 
     // 각 유저가 보유한 모든 캐릭터들의 상세 정보 리스트
     public List<CharacterSaveData> ownedCharacters = new List<CharacterSaveData>();

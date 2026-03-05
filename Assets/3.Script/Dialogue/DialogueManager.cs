@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using TMP_Ruby;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -26,8 +27,8 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Texts")]
     public TMP_Text speakerNameText;
-    public TMP_Text speakerContentText;
-    public TMP_Text narrativeContentText;
+    public TextMeshProRuby speakerContentText;
+    public TextMeshProRuby narrativeContentText;
 
     [Header("Character Images")]
     public Image leftCharacterImage;   // 왼쪽 캐릭터 슬롯
@@ -38,6 +39,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Settings")]
     public float typingSpeed = 0.05f;
+    public float moveDuration = 0.5f;
 
     [Header("Automation Settings")]
     public bool isAutoMode = false;
@@ -58,17 +60,50 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> sentences = new Queue<string>();
     private StoryData currentStoryData;
     private bool isTyping = false;
-    private TMP_Text currentActiveText; // 현재 글자가 써지고 있는 텍스트 컴포넌트
+    private TextMeshProRuby currentActiveText; // 현재 글자가 써지고 있는 텍스트 컴포넌트
 
     private string currentFullContent; // 현재 출력 중인 문장 전체
 
     private List<string> dialogueLog = new List<string>(); // 로그 저장용
 
+    private Dictionary<string, Vector2> posAnchors = new Dictionary<string, Vector2>();
+
 
     void Start()
     {
+        SaveAnchorPositions();
+
+        LoadSettings();
+
         if (DataManager.Instance != null && DataManager.Instance.selectedStoryData != null)
             StartStory(DataManager.Instance.selectedStoryData);
+    }
+
+    public void LoadSettings()
+    {
+        // DataManager나 PlayerPrefs에서 유저가 설정한 속도를 가져옵니다.
+        // 예: PlayerPrefs.GetFloat("TypingSpeed", 0.05f);
+        if (DataManager.Instance != null)
+        {
+            // DataManager에 관련 변수가 있다면 여기서 연동
+            typingSpeed = DataManager.Instance.userData.textSpeed; 
+        }
+    }
+
+    // 타이핑 속도 실시간 변경 (슬라이더 등에 연결 가능)
+    public void SetTypingSpeed(float newSpeed)
+    {
+        typingSpeed = newSpeed;
+        PlayerPrefs.SetFloat("TextSpeed", newSpeed);
+    }
+
+    private void SaveAnchorPositions()
+    {
+        if (leftCharacterImage != null) posAnchors["left"] = leftCharacterImage.rectTransform.anchoredPosition;
+        if (leftCharacterImage2 != null) posAnchors["left2"] = leftCharacterImage2.rectTransform.anchoredPosition;
+        if (rightCharacterImage != null) posAnchors["right"] = rightCharacterImage.rectTransform.anchoredPosition;
+        if (rightCharacterImage2 != null) posAnchors["right2"] = rightCharacterImage2.rectTransform.anchoredPosition;
+        if (centerCharacterImage != null) posAnchors["center"] = centerCharacterImage.rectTransform.anchoredPosition;
     }
 
     // 화면 클릭 시 호출 (Unity UI Event 등으로 연결)
@@ -88,7 +123,8 @@ public class DialogueManager : MonoBehaviour
             isTyping = false;
 
             // 2. 미리 저장해둔 현재 문장 전체를 즉시 출력
-            currentActiveText.text = currentFullContent;
+            TMP_Text textMesh = currentActiveText.GetComponent<TMP_Text>();
+            textMesh.maxVisibleCharacters = 999;
 
             //즉시 완성 후 Auto 모드라면 대기 시작
             if (isAutoMode) StartCoroutine(AutoNextRoutine());
@@ -164,11 +200,12 @@ public class DialogueManager : MonoBehaviour
 
     private void ApplyVisualAndAudio(string bg, string sound, string voice, string speaker, string emotion, string pos)
     {
-        // 1. 배경 변경
-        if (bg != "None" && !string.IsNullOrEmpty(bg) && backgroundImage != null)
+        // 1. 배경 변경 시 캐릭터들 자동 퇴장 (주인공 잔상 방지)
+        if (bg != "None" && !string.IsNullOrEmpty(bg))
         {
+            ClearAllCharacterImages();
             Sprite newBG = Resources.Load<Sprite>($"Backgrounds/{bg}");
-            if (newBG != null) backgroundImage.sprite = newBG;
+            if (newBG != null && backgroundImage != null) backgroundImage.sprite = newBG;
         }
 
         // 2. 사운드 처리
@@ -210,39 +247,136 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    IEnumerator HandleMovementCommand(string speaker, string emotion, string posCommand)
+    {
+        string toKey = posCommand.ToLower().Replace("to", "").Trim();
 
+        Image fromSlot = FindCurrentCharacterImage(speaker);
+
+        Image toSlot = GetImageByPos(toKey);
+
+        if (fromSlot == null || toSlot == null || fromSlot == toSlot)
+        {
+            UpdateCharacterImage(speaker, emotion, toKey); // 예외 상황 시 즉시 배치
+            yield break;
+        }
+
+        GameObject dummyObj = new GameObject("MovementDummy");
+        dummyObj.transform.SetParent(fromSlot.transform.parent, false);
+        Image dummyImage = dummyObj.AddComponent<Image>();
+        dummyImage.sprite = fromSlot.sprite; // 현재 캐릭터 모습 복사
+        dummyImage.rectTransform.sizeDelta = fromSlot.rectTransform.sizeDelta;
+        dummyImage.rectTransform.anchoredPosition = fromSlot.rectTransform.anchoredPosition;
+
+        // 원래 있던 슬롯은 일단 끕니다 (이동하는 것처럼 보이게)
+        fromSlot.gameObject.SetActive(false);
+
+        // 4. Lerp 이동
+        Vector2 startPos = fromSlot.rectTransform.anchoredPosition;
+        Vector2 endPos = posAnchors[toKey];
+
+        float elapsed = 0f;
+        while (elapsed < moveDuration)
+        {
+            elapsed += Time.deltaTime;
+            dummyImage.rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, elapsed / moveDuration);
+            yield return null;
+        }
+
+        // 5. 도착 후 처리
+        // 목적지 슬롯에 캐릭터 정보 입력하고 활성화
+        string fileName = $"{speaker}_{emotion}";
+        toSlot.sprite = Resources.Load<Sprite>($"Characters/{speaker}/{fileName}");
+        toSlot.gameObject.SetActive(true);
+        // 목적지 슬롯 위치는 고정된 앵커 좌표로 리셋 (혹시 모르니)
+        toSlot.rectTransform.anchoredPosition = posAnchors[toKey];
+
+        // 연출용 더미 삭제
+        Destroy(dummyObj);
+    }
+
+    private Image FindCurrentCharacterImage(string speaker)
+    {
+        Image[] allSlots = { leftCharacterImage, leftCharacterImage2, rightCharacterImage, rightCharacterImage2, centerCharacterImage };
+        foreach (var slot in allSlots)
+        {
+            // 슬롯이 켜져 있고, 스프라이트 이름에 캐릭터 이름이 포함되어 있다면 해당 슬롯 반환
+            if (slot.gameObject.activeSelf && slot.sprite != null && slot.sprite.name.Contains(speaker))
+                return slot;
+        }
+        return null;
+    }
+
+    private Image GetImageByPos(string pos)
+    {
+        switch (pos.ToLower())
+        {
+            case "left": return leftCharacterImage;
+            case "left2": return leftCharacterImage2;
+            case "right": return rightCharacterImage;
+            case "right2": return rightCharacterImage2;
+            case "center": return centerCharacterImage;
+            default: return null;
+        }
+    }
 
     private void UpdateCharacterImage(string speaker, string emotion, string pos)
     {
-        string fileName = $"{speaker}_{emotion}";
-        Sprite characterSprite = Resources.Load<Sprite>($"Characters/{speaker}/{fileName}");
+        string posLower = pos.ToLower();
+        string targetPos = posLower;
 
-        if (characterSprite == null)
+        // 1. "to" 명령 처리 (순간이동)
+        if (posLower.StartsWith("to"))
         {
-            Debug.LogWarning($"{fileName} 이미지를 찾을 수 없습니다.");
-            return;
+            targetPos = posLower.Replace("to", "").Trim();
+
+            // 현재 이 캐릭터가 활성화된 슬롯을 찾아서 꺼줍니다.
+            Image currentSlot = FindCurrentCharacterImage(speaker);
+            if (currentSlot != null)
+            {
+                currentSlot.gameObject.SetActive(false);
+                currentSlot.sprite = null; // 잔상 방지
+            }
         }
 
-        // 위치(pos) 값에 따라 어떤 Image 슬롯을 쓸지 결정
-        Image targetImage = null;
+        // 2. 목적지 슬롯에 이미지 배치
+        Image targetSlot = GetImageByPos(targetPos);
 
-        switch (pos.ToLower())
+        if (targetSlot != null)
         {
-            case "left": targetImage = leftCharacterImage; break;
-            case "left2": targetImage = leftCharacterImage2; break;
-            case "right": targetImage = rightCharacterImage; break;
-            case "right2": targetImage = rightCharacterImage2; break;
-            case "center": targetImage = centerCharacterImage; break;
+            // 만약 이동 명령이 아니더라도, 다른 곳에 이미 켜져 있다면 꺼줌 (중복 방지)
+            Image oldSlot = FindCurrentCharacterImage(speaker);
+            if (oldSlot != null && oldSlot != targetSlot)
+            {
+                oldSlot.gameObject.SetActive(false);
+            }
+
+            string fileName = $"{speaker}_{emotion}";
+            Sprite characterSprite = Resources.Load<Sprite>($"Characters/{speaker}/{fileName}");
+
+            if (characterSprite != null)
+            {
+                targetSlot.sprite = characterSprite;
+                targetSlot.gameObject.SetActive(true);
+
+                // 중요: 슬롯 자체의 위치는 건드리지 않고, 
+                // 혹시라도 틀어져 있을 경우를 대비해 저장된 앵커 위치로만 고정합니다.
+                if (posAnchors.ContainsKey(targetPos))
+                {
+                    targetSlot.rectTransform.anchoredPosition = posAnchors[targetPos];
+                }
+            }
         }
 
-        if (targetImage != null)
-        {
-            targetImage.sprite = characterSprite;
-            targetImage.gameObject.SetActive(true);
+    }
 
-            // (팁) 만약 새로운 캐릭터가 등장할 때 기존 이미지를 지우고 싶다면 
-            // 여기서 다른 슬롯들을 돌며 비워주는 로직을 추가할 수 있습니다.
-        }
+    private void ClearAllCharacterImages()
+    {
+        leftCharacterImage.gameObject.SetActive(false);
+        leftCharacterImage2.gameObject.SetActive(false);
+        rightCharacterImage.gameObject.SetActive(false);
+        rightCharacterImage2.gameObject.SetActive(false);
+        centerCharacterImage.gameObject.SetActive(false);
     }
 
     public void ShowNarrative(string content)
@@ -264,7 +398,7 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(TypeSentence(content, speakerContentText));
     }
 
-    IEnumerator TypeSentence(string sentence, TMP_Text textUI)
+    IEnumerator TypeSentence(string sentence, TextMeshProRuby rubyComponent)
     {
         isTyping = true;
 
@@ -275,16 +409,28 @@ public class DialogueManager : MonoBehaviour
 
         dialogueLog.Add(currentFullContent);
 
-        textUI.text = "";
+        rubyComponent.Text = currentFullContent;
+        rubyComponent.Apply();
+
+        // 핵심: 일단 글자를 모두 안 보이게 설정
+        TMP_Text textMesh = rubyComponent.GetComponent<TMP_Text>();
+
+        // 일단 글자를 모두 안 보이게 설정
+        textMesh.maxVisibleCharacters = 0;
+
+        // 2. 한 프레임 대기 (TMP가 텍스트 정보를 갱신할 시간을 줍니다)
+        yield return null;
 
         // 스킵 모드일 때는 속도를 조절하거나 즉시 완성
         float currentSpeed = isSkipMode ? typingSpeed / skipSpeedMultiplier : typingSpeed;
 
+        int totalVisibleCharacters = textMesh.textInfo.characterCount;
+
         // 2. 한 글자씩 출력
-        foreach (char letter in currentFullContent.ToCharArray())
+        for (int i = 0; i <= totalVisibleCharacters; i++)
         {
-            textUI.text += letter;
-            yield return new WaitForSeconds(isSkipMode ? typingSpeed / skipSpeedMultiplier : typingSpeed);
+            textMesh.maxVisibleCharacters = i;
+            yield return new WaitForSeconds(currentSpeed);
         }
 
         isTyping = false;
