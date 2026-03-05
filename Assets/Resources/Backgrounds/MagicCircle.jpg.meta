@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7bf478e9d8a28414d8c5c6e1bd8f6194
+guid: 833f0bd13179fe64daee2dcb719b47e2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6302105745271675338
-    second: Igna_Default_0
+      213: -1592909544050637166
+    second: MagicCircle_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Igna_Default_0
+      name: MagicCircle_0
       rect:
         serializedVersion: 2
-        x: 16
+        x: 0
         y: 0
-        width: 432
-        height: 442
+        width: 1216
+        height: 848
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6362224f63c6a88a0800000000000000
-      internalID: -6302105745271675338
+      spriteID: 29648839539d4e9e0800000000000000
+      internalID: -1592909544050637166
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Igna_Default_0: -6302105745271675338
+      MagicCircle_0: -1592909544050637166
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

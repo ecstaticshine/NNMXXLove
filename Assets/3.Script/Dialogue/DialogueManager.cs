@@ -368,6 +368,34 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        ApplySpeakerFocus(speaker);
+
+    }
+
+    private void ApplySpeakerFocus(string currentSpeaker)
+    {
+        Image[] allSlots = { leftCharacterImage, leftCharacterImage2, rightCharacterImage, rightCharacterImage2, centerCharacterImage };
+
+        foreach (var slot in allSlots)
+        {
+            if (slot.gameObject.activeSelf && slot.sprite != null)
+            {
+                // 슬롯의 스프라이트 이름에 화자 이름이 포함되어 있는지 확인
+                if (slot.sprite.name.Contains(currentSpeaker))
+                {
+                    // 말하는 사람은 원래 밝기(Color.white)
+                    slot.color = Color.white;
+                    // 만약 더 돋보이게 하고 싶다면 크기를 살짝 키울 수도 있습니다.
+                    slot.rectTransform.localScale = new Vector3(1.05f, 1.05f, 1f);
+                }
+                else
+                {
+                    // 말하지 않는 사람은 어둡게/회색으로 (Color.gray)
+                    slot.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+                    slot.rectTransform.localScale = Vector3.one;
+                }
+            }
+        }
     }
 
     private void ClearAllCharacterImages()

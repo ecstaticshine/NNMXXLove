@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7bf478e9d8a28414d8c5c6e1bd8f6194
+guid: d1604112fb8b5764ab3c99776665164d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6302105745271675338
-    second: Igna_Default_0
+      213: -4125511694038617812
+    second: Haru_Default_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Igna_Default_0
+      name: Haru_Default_0
       rect:
         serializedVersion: 2
-        x: 16
+        x: 114
         y: 0
-        width: 432
-        height: 442
+        width: 262
+        height: 485
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6362224f63c6a88a0800000000000000
-      internalID: -6302105745271675338
+      spriteID: c21bb10e8fc3fb6c0800000000000000
+      internalID: -4125511694038617812
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Igna_Default_0: -6302105745271675338
+      Haru_Default_0: -4125511694038617812
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

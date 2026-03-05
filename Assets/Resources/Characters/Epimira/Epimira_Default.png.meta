@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7bf478e9d8a28414d8c5c6e1bd8f6194
+guid: aa6e415041b1dd04cb065cb0926f7deb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6302105745271675338
-    second: Igna_Default_0
+      213: 9017594382262003323
+    second: Epimira_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Igna_Default_0
+      name: Epimira_0
       rect:
         serializedVersion: 2
-        x: 16
+        x: 68
         y: 0
-        width: 432
-        height: 442
+        width: 244
+        height: 589
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6362224f63c6a88a0800000000000000
-      internalID: -6302105745271675338
+      spriteID: b76e84b305ee42d70800000000000000
+      internalID: 9017594382262003323
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Igna_Default_0: -6302105745271675338
+      Epimira_0: 9017594382262003323
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
