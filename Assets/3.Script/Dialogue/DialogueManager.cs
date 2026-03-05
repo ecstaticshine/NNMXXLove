@@ -180,7 +180,7 @@ public class DialogueManager : MonoBehaviour
         // 4. 대사가 비어있으면 (연출용 줄) 바로 다음 줄로
         if (string.IsNullOrEmpty(content) || content == "None")
         {
-            DisplayNextSentence();
+            ShowNarrative("");
             return;
         }
 
