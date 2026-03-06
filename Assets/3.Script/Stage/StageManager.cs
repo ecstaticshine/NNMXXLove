@@ -70,6 +70,8 @@ public class StageManager : MonoBehaviour
 
     void Start()
     {
+        AudioManager.Instance.PlayBGM("The_distant_TERRA");
+
         LoadWorld(DataManager.Instance.currentWorldIndex);
         if (GlobalUIManager.Instance != null)
         {

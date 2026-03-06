@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3224454385142945786}
   - component: {fileID: 4809208803508576872}
   - component: {fileID: 9160780431446860765}
+  - component: {fileID: 5176349040745897304}
   m_Layer: 5
   m_Name: StoryButton
   m_TagString: Untagged
@@ -168,6 +169,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryButton
   titleText: {fileID: 5538633063619566525}
+--- !u!114 &5176349040745897304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1351774465420740532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &1639560756557520704
 GameObject:
   m_ObjectHideFlags: 0

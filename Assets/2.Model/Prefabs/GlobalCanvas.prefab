@@ -1546,6 +1546,7 @@ GameObject:
   - component: {fileID: 7730284634244075591}
   - component: {fileID: 1564556537090528552}
   - component: {fileID: 4628367733652743878}
+  - component: {fileID: 7258541083355252625}
   m_Layer: 5
   m_Name: Story
   m_TagString: Untagged
@@ -1668,6 +1669,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7258541083355252625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1392353158983552666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &1590733546036611439
 GameObject:
   m_ObjectHideFlags: 0
@@ -5266,6 +5280,7 @@ GameObject:
   - component: {fileID: 6120991051707925850}
   - component: {fileID: 3559064549612209769}
   - component: {fileID: 2405765927298212286}
+  - component: {fileID: 4783966704584862825}
   m_Layer: 5
   m_Name: Adventure
   m_TagString: Untagged
@@ -5388,6 +5403,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4783966704584862825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6149148071131034328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &6164070269091262756
 GameObject:
   m_ObjectHideFlags: 0
@@ -6653,6 +6681,7 @@ GameObject:
   - component: {fileID: 1729776252032288695}
   - component: {fileID: 1073227446827929550}
   - component: {fileID: 2936396584851632306}
+  - component: {fileID: 8852290865041259637}
   m_Layer: 5
   m_Name: Gacha
   m_TagString: Untagged
@@ -6775,6 +6804,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8852290865041259637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7153009133059775203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &7157092476910221983
 GameObject:
   m_ObjectHideFlags: 0
@@ -7554,6 +7596,7 @@ GameObject:
   - component: {fileID: 7503943104864674015}
   - component: {fileID: 375659814952202518}
   - component: {fileID: 8119714833211696844}
+  - component: {fileID: 411341567825425911}
   m_Layer: 5
   m_Name: Character
   m_TagString: Untagged
@@ -7676,6 +7719,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &411341567825425911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8050083428468481393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &8269435937786089283
 GameObject:
   m_ObjectHideFlags: 0
@@ -7899,6 +7955,7 @@ GameObject:
   - component: {fileID: 5656278235623583456}
   - component: {fileID: 7045974873559129002}
   - component: {fileID: 5548769498922597851}
+  - component: {fileID: 3762185223339354655}
   m_Layer: 5
   m_Name: Home
   m_TagString: Untagged
@@ -8021,6 +8078,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3762185223339354655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8473553271756775832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &8478200762825272669
 GameObject:
   m_ObjectHideFlags: 0
@@ -8404,6 +8474,7 @@ GameObject:
   - component: {fileID: 9157244540055636005}
   - component: {fileID: 5900892237813442609}
   - component: {fileID: 861134154228144712}
+  - component: {fileID: 8118414914622727682}
   m_Layer: 5
   m_Name: Option
   m_TagString: Untagged
@@ -8526,6 +8597,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8118414914622727682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8750268198565089570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &8786981594333897567
 GameObject:
   m_ObjectHideFlags: 0

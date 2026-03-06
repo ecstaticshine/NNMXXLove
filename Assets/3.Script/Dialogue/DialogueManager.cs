@@ -420,7 +420,7 @@ public class DialogueManager : MonoBehaviour
     {
         narrativePanel.SetActive(false);
         speakerPanel.SetActive(true);
-        speakerNameText.text = name;
+        speakerNameText.text = DataManager.Instance.GetLocalizedText(name);
         currentActiveText = speakerContentText;
 
         StartCoroutine(TypeSentence(content, speakerContentText));

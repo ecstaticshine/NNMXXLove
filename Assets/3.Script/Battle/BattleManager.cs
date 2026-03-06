@@ -87,6 +87,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         AudioManager.Instance.PlayBGM("Drumnbass_02");
+
         if (isPrologue)
         {
             InitPrologueBattle();
@@ -115,6 +116,7 @@ public class BattleManager : MonoBehaviour
 
     public void BattleStart()
     {
+        AudioManager.Instance.PlaySE("Battle_Start_Horn");
         Debug.Log("전투 개시!");
         EnterTurnStart();
     }
@@ -297,6 +299,8 @@ public class BattleManager : MonoBehaviour
 
     public void ChangeGameSpeed()
     {
+        AudioManager.Instance.PlaySE("UI_Click_Speed");
+
         if (currentSpeed == 1f) currentSpeed = 2f;
         else if (currentSpeed == 2f) currentSpeed = 3f;
         else currentSpeed = 1f;
@@ -359,6 +363,9 @@ public class BattleManager : MonoBehaviour
 
                     int healAmount = Mathf.RoundToInt(attacker.GetCurrentAttack() * attacker.data.skillMultiplier);
                     Debug.Log($"{healAmount} 만큼 힐합니다.");
+                    
+                    AudioManager.Instance.PlaySE("Heal_Magic");
+
                     target.Heal(healAmount);
                     break;
                 case UnitType.Buffer:
@@ -756,6 +763,8 @@ public class BattleManager : MonoBehaviour
             attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
             yield return new WaitForSeconds(0.4f);
 
+            AudioManager.Instance.PlaySE("Attack1");
+
             // --- 합산을 위한 저장소 ---
             HashSet<int> processedIndices = new HashSet<int>();
 
@@ -880,6 +889,7 @@ public class BattleManager : MonoBehaviour
             int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.5f);
             ApplyBuffToLine(0, attacker.data.isEnemy, (u) =>
             {
+                AudioManager.Instance.PlaySE("Shield1");
                 u.AddShield(1, shieldHP);
                 Debug.Log($"{u.data.unitNameKey}: 전열 쉴드 부여 (내구도: {shieldHP})");
             });

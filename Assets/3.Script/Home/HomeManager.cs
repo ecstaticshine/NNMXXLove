@@ -17,6 +17,8 @@ public class HomeManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        AudioManager.Instance.PlayBGM("Summer_ice_flower");
+
         // 1. 배경 설정
         WorldDataInfo info = DataManager.Instance.GetCurrentWorldInfo();
         if (info != null)
@@ -85,15 +87,26 @@ public class HomeManager : MonoBehaviour
             // [수정] 분모를 250으로 키워 이동 속도를 대폭 상향 (기존 100~150)
             float duration = distance / 250f;
 
+            // 한 번 점프할 때 걸리는 시간
+            float singleJumpDuration = duration / jumpCount;
+
             // 방향 전환
             float lookDir = targetX > currentX ? -1f : 1f;
             trans.localScale = new Vector3(lookDir, 1f, 1f);
 
-            // [수정] 점프 높이는 30f 정도로 낮춰서 "빨리빨리" 튀는 느낌 강조
-            // Ease.Linear보다 OutQuad가 착지 시 탄력감이 좋습니다.
-            yield return trans.DOLocalJump(new Vector3(targetX, -300f, 0f), 30f, jumpCount, duration)
-                .SetEase(Ease.Linear)
-                .WaitForCompletion();
+            for (int i = 0; i < jumpCount; i++)
+            {
+                // 다음 점프 지점 계산
+                float nextX = Mathf.Lerp(currentX, targetX, (float)(i + 1) / jumpCount);
+
+                // 점프를 시작하자마자 소리 재생!
+                AudioManager.Instance.PlaySE("Jump_Sound");
+
+                // 한 번의 점프 실행
+                yield return trans.DOLocalJump(new Vector3(nextX, -300f, 0f), 30f, 1, singleJumpDuration)
+                    .SetEase(Ease.Linear)
+                    .WaitForCompletion();
+            }
 
             // [수정] 대기 시간도 조금 줄여서 더 활발하게 움직이게 함
             yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));

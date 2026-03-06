@@ -906,6 +906,7 @@ GameObject:
   - component: {fileID: 343268431}
   - component: {fileID: 343268430}
   - component: {fileID: 343268429}
+  - component: {fileID: 343268432}
   m_Layer: 5
   m_Name: LogButton
   m_TagString: Untagged
@@ -1026,6 +1027,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343268427}
   m_CullTransparentMesh: 1
+--- !u!114 &343268432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343268427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &346561536
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,6 +1553,7 @@ GameObject:
   - component: {fileID: 612589823}
   - component: {fileID: 612589822}
   - component: {fileID: 612589821}
+  - component: {fileID: 612589824}
   m_Layer: 5
   m_Name: AutoButton
   m_TagString: Untagged
@@ -1659,6 +1674,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 612589819}
   m_CullTransparentMesh: 1
+--- !u!114 &612589824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612589819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: UI_Click_Speed
 --- !u!1 &624639156
 GameObject:
   m_ObjectHideFlags: 0
@@ -1979,6 +2007,7 @@ GameObject:
   - component: {fileID: 882439596}
   - component: {fileID: 882439595}
   - component: {fileID: 882439594}
+  - component: {fileID: 882439597}
   m_Layer: 5
   m_Name: SkipButton
   m_TagString: Untagged
@@ -2099,6 +2128,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882439592}
   m_CullTransparentMesh: 1
+--- !u!114 &882439597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882439592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &1241814915
 GameObject:
   m_ObjectHideFlags: 0

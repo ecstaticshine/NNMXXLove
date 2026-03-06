@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 4552754769065045167}
   - component: {fileID: 4263458820354819332}
   - component: {fileID: 8811467438484460372}
+  - component: {fileID: 8034265788015667800}
   m_Layer: 5
   m_Name: ClickArea
   m_TagString: Untagged
@@ -332,6 +333,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8034265788015667800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2950685625300568532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &9010057967534201650
 GameObject:
   m_ObjectHideFlags: 0

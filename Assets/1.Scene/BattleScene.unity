@@ -2040,6 +2040,7 @@ GameObject:
   - component: {fileID: 1055707991}
   - component: {fileID: 1055707990}
   - component: {fileID: 1055707989}
+  - component: {fileID: 1055707993}
   m_Layer: 5
   m_Name: Auto
   m_TagString: Untagged
@@ -2177,6 +2178,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1055707987}
   m_CullTransparentMesh: 1
+--- !u!114 &1055707993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055707987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &1060156576
 GameObject:
   m_ObjectHideFlags: 0

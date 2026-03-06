@@ -256,6 +256,8 @@ public class CharacterSceneManager : MonoBehaviour
         // 이미 열려있는 걸 다시 누르면 닫거나 유지
         if (currentPanel == target) return;
 
+        AudioManager.Instance.PlaySE("UI_Tab_Switch");
+
         // 1. 모든 패널 끄기
         upgradePanel.gameObject.SetActive(false);
         tagPanel.gameObject.SetActive(false);
@@ -335,6 +337,9 @@ public class CharacterSceneManager : MonoBehaviour
     {
         if (currentSelectedInfo == null) return;
 
+        int previousLevel = int.Parse(levelText.text);
+        int currentLevel = currentSelectedInfo.currentLevel;
+
         //레어도 가지고 오기
         int totalPt = currentSelectedInfo.TotalPoint;
         Rarity currentRarity;
@@ -367,17 +372,28 @@ public class CharacterSceneManager : MonoBehaviour
         Debug.Log(currentSelectedInfo.currentExp);
         Debug.Log(DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel));
 
+ 
+
         float targetValue = (float)currentSelectedInfo.currentExp / DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel);
         expSlider.DOValue(targetValue, 0.5f).SetEase(Ease.OutCubic);
 
         expText.text = $"{currentSelectedInfo.currentExp} / {DataManager.Instance.GetRequiredExp(currentSelectedInfo.currentLevel)}";
 
-        // (선택) 레벨업 시 텍스트가 커졌다 작아지는 효과 (DOTween)
-        levelText.transform.DOKill();
+        if (currentLevel > previousLevel)
+        {
+            AudioManager.Instance.PlaySE("Level_Up_Jingle");
+
+            // (선택) 레벨업 시 텍스트가 커졌다 작아지는 효과 (DOTween)
+            levelText.transform.DOKill();
         levelText.transform.DOScale(1.2f, 0.1f).OnComplete(() =>
         {
             levelText.transform.DOScale(1f, 0.1f);
         });
+        }
+        else
+        {
+            AudioManager.Instance.PlaySE("EXP_Bar_Fill");
+        }
 
         // 강화나 태그 교체 후 변화된 스탯을 왼쪽 UI에 다시 반영
         UpdateStatTexts(currentSelectedData, currentSelectedInfo);

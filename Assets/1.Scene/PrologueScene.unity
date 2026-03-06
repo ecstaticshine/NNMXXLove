@@ -329,9 +329,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668b9e738f3f68c46b580a6e7c9efa36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
-  dialogueText: {fileID: 1354206796}
   dialoguePanel: {fileID: 1627289334}
+  speakerPanel: {fileID: 0}
+  narrativePanel: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  speakerNameText: {fileID: 0}
+  speakerContentText: {fileID: 0}
+  narrativeContentText: {fileID: 0}
+  leftCharacterImage: {fileID: 0}
+  leftCharacterImage2: {fileID: 0}
+  rightCharacterImage: {fileID: 0}
+  rightCharacterImage2: {fileID: 0}
+  centerCharacterImage: {fileID: 0}
   typingSpeed: 0.15
+  moveDuration: 0.5
+  isAutoMode: 0
+  isSkipMode: 0
+  autoDelay: 1.5
+  skipSpeedMultiplier: 5
+  logPanel: {fileID: 0}
+  logTextContents: {fileID: 0}
+  logScrollRect: {fileID: 0}
+  summaryPanel: {fileID: 0}
+  summaryTitleText: {fileID: 0}
+  summaryContentText: {fileID: 0}
 --- !u!1 &1190596271
 GameObject:
   m_ObjectHideFlags: 0
