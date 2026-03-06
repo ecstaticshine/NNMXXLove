@@ -41,7 +41,7 @@ public class CharacterBTPanel : MonoBehaviour
     public void RefreshUI()
     {
         if (currentSelectedInfo == null) return;
-        int totalPt = currentSelectedInfo.TotalPoint; // 예: TL(14) + 0돌파 = 14점
+        int totalPt = currentSelectedInfo.totalPoint; // 예: TL(14) + 0돌파 = 14점
 
         // 3. 점수에 따른 현재 등급 및 단계 계산
         Rarity displayRarity;
@@ -67,10 +67,6 @@ public class CharacterBTPanel : MonoBehaviour
             displayRarity = Rarity.L;
             displayStep = totalPt;
         }
-
-        //데이터 동기화
-        currentSelectedInfo.currentRarity = displayRarity;
-        currentSelectedInfo.currentBreakthrough = displayStep;
 
 
         // 4. UI 반영 (자간 보정은 로컬라이징 키값에 포함하거나 space 태그 활용)
@@ -98,7 +94,7 @@ public class CharacterBTPanel : MonoBehaviour
 
         if (upgradeButton != null) // 버튼 컴포넌트 연결 필요
         {
-            bool canUpgrade = (currentSelectedInfo.TotalPoint < 21) && (ownedCount > 0);
+            bool canUpgrade = (currentSelectedInfo.totalPoint < 21) && (ownedCount > 0);
             upgradeButton.interactable = canUpgrade;
         }
 
@@ -108,7 +104,7 @@ public class CharacterBTPanel : MonoBehaviour
     {
         if (currentSelectedInfo == null) return;
 
-        if (currentSelectedInfo.TotalPoint >= 21)
+        if (currentSelectedInfo.totalPoint >= 21)
         {
             Debug.Log("이미 최대 등급입니다.");
             return;
@@ -152,6 +148,9 @@ public class CharacterBTPanel : MonoBehaviour
 
     private IEnumerator PlayUpgradeEffect_Co(Rarity oldRarity, int oldStep, int oldOwned)
     {
+        // 1. 여기서 확실하게 DataManager의 최신 정보를 다시 가져옵니다.
+        currentSelectedInfo = DataManager.Instance.GetUserUnitInfo(currentSelectedInfo.unitID);
+
         // 강화 후 데이터 가져오기
         int newStep = currentSelectedInfo.currentBreakthrough;
         Rarity newRarity = currentSelectedInfo.currentRarity;

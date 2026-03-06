@@ -105,6 +105,8 @@ public class CharacterSceneManager : MonoBehaviour
             // 3. UnitData(스프라이트 등)를 DataManager에서 찾아옵니다.
             UnitData firstData = DataManager.Instance.GetPlayerData(firstInfo.unitID);
 
+            firstInfo.InitializePoint(firstData, firstInfo.currentBreakthrough);
+
             // 4. UpdateDetailUI를 직접 호출해서 화면을 채워줍니다!
             // CharacterInfo로 변환해서 넣어줘야 한다면 형식을 맞춰주세요.
             UpdateDetailUI(firstData, firstInfo);
@@ -156,14 +158,7 @@ public class CharacterSceneManager : MonoBehaviour
         currentSelectedInfo = info;
 
         // 레어도 표시
-        int totalPt = info.TotalPoint;
-        Rarity currentRarity;
-
-        if (totalPt >= 21) currentRarity = Rarity.EL;
-        else if (totalPt >= 14) currentRarity = Rarity.TL;
-        else if (totalPt >= 7) currentRarity = Rarity.PL;
-        else currentRarity = Rarity.L;
-
+        Rarity currentRarity = DataManager.Instance.CalculateRarity(info.totalPoint);
         int rarityIndex = (int)currentRarity;
 
 
@@ -201,7 +196,7 @@ public class CharacterSceneManager : MonoBehaviour
         frameImage.sprite = rarityFrameImages[rarityIndex];
 
         // 3. 레어리티에 따른 배경색 변경
-        background.color = GetRarityColor(data.rarity);
+        background.color = DataManager.Instance.GetRarityColor(data.rarity);
 
         //4. 돌파 UI 설정 (오른쪽 하트 표시)
         bool isMaxRarity = (data.rarity == Rarity.EL);
@@ -227,27 +222,6 @@ public class CharacterSceneManager : MonoBehaviour
         detailImage.DOFade(0f, 0f); // 순식간에 투명하게
         detailImage.DOFade(1f, 0.4f); // 페이드 인
     }
-
-    private Color GetRarityColor(Rarity rarity)
-    {
-        // 아까 UnitIcon에서 썼던 컬러셋을 그대로 가져오거나 
-        // 상세창용으로 더 밝은/화려한 컬러를 써보세요.
-        string hex = rarity switch
-        {
-            Rarity.L => "#8CCBF3",
-            Rarity.PL => "#C5AEE1",
-            Rarity.TL => "#F9E985",
-            Rarity.EL => "#E9B9D2",
-            _ => "#5F6267"
-        };
-
-        ColorUtility.TryParseHtmlString(hex, out Color color);
-        return color;
-    }
-
-
-
-
 
     // 버튼들에 연결할 함수
     public void OnClickBack() => SwitchPanel(CharacterPanelState.Default);
@@ -346,22 +320,14 @@ public class CharacterSceneManager : MonoBehaviour
         int currentLevel = currentSelectedInfo.currentLevel;
 
         //레어도 가지고 오기
-        int totalPt = currentSelectedInfo.TotalPoint;
-        Rarity currentRarity;
-
-        if (totalPt >= 21) currentRarity = Rarity.EL;
-        else if (totalPt >= 14) currentRarity = Rarity.TL;
-        else if (totalPt >= 7) currentRarity = Rarity.PL;
-        else currentRarity = Rarity.L;
-
-        // 2. 등급에 따른 아이콘/배경/프레임 갱신 (UpdateDetailUI의 로직 활용)
-        int rarityIndex = (int)currentRarity; // Enum 순서와 배열 순서가 같다면 사용 가능
+        Rarity currentRarity = DataManager.Instance.CalculateRarity(currentSelectedInfo.totalPoint);
+        int rarityIndex = (int)currentRarity;
 
         // 만약 Enum 순서와 배열 순서가 다르다면 switch 사용
         rarityIcon.sprite = rarityIconImages[rarityIndex];
         background.sprite = rarityBackGroundImages[rarityIndex];
         frameImage.sprite = rarityFrameImages[rarityIndex];
-        background.color = GetRarityColor(currentRarity);
+        background.color = DataManager.Instance.GetRarityColor(currentRarity);
 
         // 3. 돌파 하트(breakThrough) UI 갱신
         bool isMaxRarity = (currentRarity == Rarity.EL);

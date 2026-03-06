@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 007e1581a93ea62408be16f2318a7ec9, type: 3}
-  m_Name: Story_C01S01
+  m_Name: Story_Prologue
   m_EditorClassIdentifier: Assembly-CSharp::StoryData
-  storyID: C01S01
+  storyID: Prologue
   storyTitle: Prologue
   storyCsv: {fileID: 4900000, guid: 094987448b7503340b8366b4a38390c7, type: 3}
   summaryLogKey: Prologue_S

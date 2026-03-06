@@ -28,7 +28,7 @@ public class GachaData : ScriptableObject
     public int costPerPull = 100;   // 1회 가격
 
     [Header("확률 및 천장")]
-    public float[] rates = { 3f, 27f, 70f }; // SSR, SR, R 확률
+    public int[] rates = { 3, 27, 70 }; // SSR, SR, R 확률
     public int maxPity = 50;        // UI 표시 및 로직용 천장 값
 
     [Header("Localization Keys")]   // 나중에 다국어를 고려한다면
@@ -52,7 +52,9 @@ public class GachaData : ScriptableObject
 
     public void InitGachaPool(List<UnitData> allUnits)
     {
-        if (isPoolLoaded) return;
+        tlPool = new List<int>(); // 초기화 안전성 강화
+        plPool = new List<int>();
+        lPool = new List<int>();
 
         tlPool.Clear(); plPool.Clear(); lPool.Clear();
 

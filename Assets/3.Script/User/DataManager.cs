@@ -16,18 +16,13 @@ public class CharacterInfo
     public int currentExp;      // 필요하다면 경험치까지
     public string[] equippedTags = new string[4]; // 4개의 슬롯
 
-    public int TotalPoint => GetTierOffset(baseRarity) + currentBreakthrough;
+    public int totalPoint;
 
-    private int GetTierOffset(Rarity rarity)
+    public void InitializePoint(UnitData data, int breakthrough)
     {
-        switch (rarity)
-        {
-            case Rarity.L: return 0;
-            case Rarity.PL: return 7;
-            case Rarity.TL: return 14;
-            case Rarity.EL: return 21;
-            default: return 0;
-        }
+        // DataManager를 참조하여 등급 점수를 가져와 계산
+        this.totalPoint = DataManager.Instance.GetRarityOffset(data.rarity) + breakthrough;
+        Debug.Log($"[포인트 계산] {data.name}의 총점은 {totalPoint}로 설정됨");
     }
 }
 
@@ -125,9 +120,15 @@ public static Action OnUserDataChanged; //유저 정보 변경
 
     public CharacterInfo GetUserUnitInfo(int id)
     {
-        // 리스트에서 ID가 일치하는 정보를 찾고, 없으면 기본값(1레벨) 반환
-        return userInventory.Find(info => info.unitID == id)
-               ?? new CharacterInfo { unitID = id, currentLevel = 1, currentBreakthrough = 0 };
+        var info = userInventory.Find(info => info.unitID == id);
+
+        if (info == null)
+        {
+            Debug.LogError($"[치명적 오류] 인벤토리에 없는 캐릭터 정보를 요청했습니다! ID: {id}");
+            return null; // 아예 null을 리턴해서 어디서 오류가 나는지 확인하는 게 나아
+        }
+
+        return info; // 원본 주소값을 그대로 반환
     }
 
     public List<PartyMember> GetCurrentParty()
@@ -161,6 +162,21 @@ public static Action OnUserDataChanged; //유저 정보 변경
     {
         string json = JsonUtility.ToJson(userData);
         PlayerPrefs.SetString("SaveFile", json);
+
+        foreach (var info in userInventory)
+        {
+            var saveChar = userData.ownedCharacters.Find(x => x.unitID == info.unitID);
+            if (saveChar != null)
+            {
+                saveChar.currentLevel = info.currentLevel;
+                saveChar.currentBreakthrough = info.currentBreakthrough;
+                saveChar.currentRarity = info.currentRarity;
+                saveChar.currentExp = info.currentExp;
+
+                // [추가] 여기서 꼭 저장해줘야 합니다!
+                saveChar.totalPoint = info.totalPoint;
+            }
+        }
 
         Debug.Log("로컬 데이터 저장 완료");
 
@@ -199,6 +215,8 @@ public static Action OnUserDataChanged; //유저 정보 변경
                 currentLevel = charData.currentLevel,
                 currentExp = charData.currentExp,
                 currentBreakthrough = charData.currentBreakthrough,
+                currentRarity = charData.currentRarity, // 저장된 등급 로드
+                totalPoint = charData.totalPoint,       // 저장된 포인트 로드
                 baseRarity = rarity,
                 equippedTags = charData.customTags ?? new string[4]
             });
@@ -935,6 +953,7 @@ public static Action OnUserDataChanged; //유저 정보 변경
             currentLevel = 1,
             currentExp = 0,
             currentBreakthrough = 0,
+            currentRarity = originalData.rarity,
             customTags = new string[4]
         };
         userData.ownedCharacters.Add(newSaveData);
@@ -958,40 +977,76 @@ public static Action OnUserDataChanged; //유저 정보 변경
 
     public void BreakthroughCharacter(int unitID)
     {
-        CharacterInfo unit = GetUserUnitInfo(unitID);
-        int pieceID = 5000 + unitID;
+        var unit = userInventory.Find(x => x.unitID == unitID); // 내 인벤토리에서 유닛 찾기
+        var piece = userData.inventory.Find(x => x.itemID == 5000 + unitID); // 내가 가지고 있는 조각 찾기
+        UnitData data = GetPlayerData(unitID);
 
-        // 1. 재고 확인
-        ItemInventoryData piece = userData.inventory.Find(x => x.itemID == pieceID);
-
-        if (piece != null && piece.count >= 1)
+        if (unit == null || piece == null || piece.count <= 0)
         {
-            // 2. 조각 소모
-            RemoveInventoryItem(pieceID, 1);
-
-            // 3. 돌파 단계 상승
-            unit.currentBreakthrough++;
-
-            // 레어도 등급 로직 갱신
-            int totalPt = unit.TotalPoint;
-            if (totalPt >= 21) unit.currentRarity = Rarity.EL;
-            else if (totalPt >= 14) unit.currentRarity = Rarity.TL;
-            else if (totalPt >= 7) unit.currentRarity = Rarity.PL;
-            else unit.currentRarity = Rarity.L;
-
-            // 4. 세이브 데이터에도 동기화 (UserData 내 리스트 업데이트)
-            var saveChar = userData.ownedCharacters.Find(x => x.unitID == unitID);
-            if (saveChar != null) saveChar.currentBreakthrough = unit.currentBreakthrough;
-
-            Debug.Log($"[돌파 성공] {unitID} 캐릭터가 {unit.currentBreakthrough}단계 돌파를 완료했습니다!");
-
-            SaveData();
-            OnUserDataChanged?.Invoke(); // UI 갱신 (빨간 점 알림 등을 끌 때 유용해요)
+            Debug.LogWarning("돌파 불가: 유닛이 없거나 조각이 없음");
+            return;
         }
-        else
+
+        if (unit.totalPoint >= 21)
         {
-            Debug.LogWarning("돌파에 필요한 캐릭터 조각이 부족합니다.");
+            Debug.LogWarning("돌파 불가: 이미 최대 등급");
+            return;
         }
+
+        // 조각 1개만 소모
+        piece.count -= 1;
+        unit.currentBreakthrough += 1;
+
+        unit.InitializePoint(data, unit.currentBreakthrough);
+        unit.currentRarity = CalculateRarity(unit.totalPoint);
+
+        var saveChar = userData.ownedCharacters.Find(x => x.unitID == unitID);
+        if (saveChar != null)
+        {
+            saveChar.currentBreakthrough = unit.currentBreakthrough;
+            saveChar.currentRarity = unit.currentRarity;
+            saveChar.totalPoint = unit.totalPoint;
+        }
+
+        SaveData();
+        OnUserDataChanged?.Invoke();
+    }
+
+    public int GetRarityOffset(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.L: return 0;
+            case Rarity.PL: return 7;
+            case Rarity.TL: return 14;
+            case Rarity.EL: return 21;
+            default: return 0;
+        }
+    }
+
+
+    public Rarity CalculateRarity(int totalPt)
+    {
+        Debug.Log($"[CalculateRarity] 총점:{totalPt}");
+
+        if (totalPt >= 21) return Rarity.EL;
+        if (totalPt >= 14) return Rarity.TL;
+        if (totalPt >= 7) return Rarity.PL;
+        return Rarity.L;
+    }
+
+    public Color GetRarityColor(Rarity rarity)
+    {
+        string hex = rarity switch
+        {
+            Rarity.L => "#8CCBF3",
+            Rarity.PL => "#C5AEE1",
+            Rarity.TL => "#F9E985",
+            Rarity.EL => "#E9B9D2",
+            _ => "#5F6267"
+        };
+        ColorUtility.TryParseHtmlString(hex, out Color color);
+        return color;
     }
 
     public List<ItemInventoryData> GiveStoryReward(int itemID, int count)

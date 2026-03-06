@@ -34,15 +34,18 @@ public class CharacterListUI : MonoBehaviour
 
         foreach (CharacterInfo info in characterInventory)
         {
-            // 아이콘 생성
-            GameObject go = Instantiate(unitIconPrefab, content);
-            UnitIcon iconScript = go.GetComponent<UnitIcon>();
-
-            // 3. 실제 데이터(ScriptableObject)를 가져와서 UI에 세팅
+            // 3. 실제 데이터(ScriptableObject)를 가져옴
             UnitData data = DataManager.Instance.GetPlayerData(info.unitID);
+
             if (data != null)
             {
-                // 여기서 에러 방지를 위해 확실히 데이터를 넣어줍니다!
+                // [핵심] UI에 넘기기 전에 반드시 점수를 먼저 계산합니다!
+                info.InitializePoint(data, info.currentBreakthrough);
+
+                // 아이콘 생성 및 세팅
+                GameObject go = Instantiate(unitIconPrefab, content);
+                UnitIcon iconScript = go.GetComponent<UnitIcon>();
+
                 iconScript.SetUnitIcon(data, info);
             }
         }

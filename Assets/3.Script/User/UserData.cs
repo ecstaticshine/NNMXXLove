@@ -38,7 +38,7 @@ public class UserData
         this.currentLevel = 1;
         this.currentExp = 0;
         this.gold = 5000;      // 초기 자금
-        this.diamond = 1000;    // 초기 유료 재화
+        this.diamond = 100000;    // 초기 유료 재화
         this.stamina = 120;    // 최대치로 시작
         this.lastStaminaUpdateTime = DateTime.Now.ToString();
 
@@ -75,7 +75,7 @@ public class GachaSaveData
 public class CharacterSaveData
 {
     public int unitID;       // 어떤 캐릭터인지 (ID)
-    public Rarity rarity;     // 현재 레어리티 (L, PL, TL 등)
+    public Rarity currentRarity;     // 현재 레어리티 (L, PL, TL 등)
 
     // 현재 적용 중인 외형
     public string currentSkin;
@@ -83,6 +83,8 @@ public class CharacterSaveData
     public int currentLevel;        // 현재 레벨
     public int currentExp;          // 현재 경험치
     public int currentBreakthrough; // 돌파 단계
+
+    public int totalPoint;
 
     // 캐릭터마다 개별적으로 붙인 태그 정보 (한 번 붙이면 끝!)
     public string[] customTags = new string[4]; //

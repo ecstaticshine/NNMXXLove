@@ -36,26 +36,16 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetUnitIcon(UnitData data, CharacterInfo info)
     {
-        int totalPt = info.TotalPoint;
-        Rarity currentRarity;
-
-        if (totalPt >= 21) currentRarity = Rarity.EL;
-        else if (totalPt >= 14) currentRarity = Rarity.TL;
-        else if (totalPt >= 7) currentRarity = Rarity.PL;
-        else currentRarity = Rarity.L;
-
-        int rarityIndex = (int)currentRarity;
-
         this.currentUnitData = data;
         this.characterInfo = info;
 
-        // SO에서 초상화 가져오기
         unitIcon.sprite = data.unitPortrait;
-
-        // 레벨 표시
         levelText.text = $"{info.currentLevel}";
 
-        // 등급(Rarity)에 따른 연출 처리
+        // [디버깅 로그 추가]
+        Debug.Log($"[Icon-Info] 유닛:{data.unitID}, 이름:{data.name}, TotalPt:{info.totalPoint}");
+
+        Rarity currentRarity = DataManager.Instance.CalculateRarity(info.totalPoint);
         UpdateRarityUI(data.isEnemy, currentRarity);
     }
 
@@ -80,30 +70,17 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void SetUnitIcon(UnitData data, int level, int breakthrough = 0)
     {
         if (data == null) return;
-
         this.currentUnitData = data;
-        // 전투 중에는 DB의 CharacterInfo 대신 Unit이 가진 레벨 정보를 바로 사용
         this.unitIcon.sprite = data.unitPortrait;
         this.levelText.text = $"{level}";
 
-        int baseOffset = data.rarity switch
-        {
-            Rarity.L => 0,
-            Rarity.PL => 7,
-            Rarity.TL => 14,
-            Rarity.EL => 21,
-            _ => 0
-        };
-
+        int baseOffset = DataManager.Instance.GetRarityOffset(data.rarity);
         int totalPt = baseOffset + breakthrough;
-        Rarity currentRarity;
 
-        if (totalPt >= 21) currentRarity = Rarity.EL;
-        else if (totalPt >= 14) currentRarity = Rarity.TL;
-        else if (totalPt >= 7) currentRarity = Rarity.PL;
-        else currentRarity = Rarity.L;
+        // [디버깅 로그 추가]
+        Debug.Log($"[Icon-Param] 유닛:{data.unitID}, 이름:{data.name}, Rarity:{data.rarity}, BaseOffset:{baseOffset}, Break:{breakthrough}, TotalPt:{totalPt}");
 
-        // 등급 UI 업데이트 (isEnemy 정보 포함)
+        Rarity currentRarity = DataManager.Instance.CalculateRarity(totalPt);
         UpdateRarityUI(data.isEnemy, currentRarity);
     }
 

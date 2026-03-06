@@ -26,6 +26,8 @@ public class GachaManager : MonoBehaviour
 
     public GachaResultUI resultUI; // 가챠 결과
 
+    private System.Random rng = new System.Random();
+
     private void Awake()
     {
         if (Instance == null)
@@ -52,6 +54,8 @@ public class GachaManager : MonoBehaviour
         {
             //가챠 캐릭터 풀 적용
             data.InitGachaPool(DataManager.Instance.allUnitDatas);
+
+            Debug.Log($"{data.gachaTitle} 체크 -> TL:{data.tlPool.Count}, PL:{data.plPool.Count}, L:{data.lPool.Count}");
 
             GameObject go = Instantiate(bannerPrefab, bannerParent);
             go.GetComponent<GachaBannerButton>().Setup(data);
@@ -81,8 +85,10 @@ public class GachaManager : MonoBehaviour
 
     public string Pull(GachaData data)
     {
-        int tlRate = (int)(data.rates[0] >= 1.0f ? data.rates[0] * 100 : data.rates[0] * 10000);
-        int plRate = (int)(data.rates[1] >= 1.0f ? data.rates[1] * 100 : data.rates[1] * 10000);
+        int tlRate = (int)data.rates[0] * 100; // 300
+        int plRate = (int)data.rates[1] * 100; // 2700
+
+        Debug.Log($"[가챠] tlRate: {tlRate}, plRate: {plRate}, Sum: {tlRate + plRate}");
 
         var pityData = DataManager.Instance.userData.gachaPityList.Find(x => x.gachaID == data.gachaID);
         if (pityData == null)
@@ -109,7 +115,7 @@ public class GachaManager : MonoBehaviour
             int totalRate = 10000;                   // 10000 (100%)
 
             // 2. 0 ~ 9999 사이의 정수 생성
-            int rand = UnityEngine.Random.Range(0, totalRate);
+            int rand = rng.Next(0, totalRate);
 
             // 3. 누적 확률 비교
             if (rand < tlRate)
@@ -160,7 +166,7 @@ public class GachaManager : MonoBehaviour
 
         if (finalResultIDs.Count > 0)
         {
-            resultUI.ShowResult(finalResultIDs);
+            resultUI.ShowResult(finalResultIDs, currentSelectedData.pickupUnitID);
 
             DataManager.Instance.SaveData();
             DataManager.Instance.OnDataChanged?.Invoke();
