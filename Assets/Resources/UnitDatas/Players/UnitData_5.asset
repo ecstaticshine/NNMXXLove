@@ -16,7 +16,7 @@ MonoBehaviour:
   unitNameKey: UNIT_NAME_5
   descriptionKey: UNIT_DESC_5
   unitType: 1
-  defaultTag: Direct
+  defaultTag: Splash
   unitPortrait: {fileID: -4027452960032655383, guid: 9e2b49a47f7f40e4783df1b32be02276, type: 3}
   unitBattleSD: {fileID: -3362255311268882673, guid: 488325164d8f3f54aab8413bb5e27bec, type: 3}
   unitAttackSD: {fileID: 6666385881707925761, guid: 0d7e3d984425ef743948e5bc38e7006a, type: 3}

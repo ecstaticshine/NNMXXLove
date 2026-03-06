@@ -89,6 +89,11 @@ public class CharacterSceneManager : MonoBehaviour
 
     private void Start()
     {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM("so_sweet");
+        }
+
         // 1. 유저가 보유한 캐릭터 리스트를 가져오기
         List<CharacterSaveData> ownedCharacters = DataManager.Instance.userData.ownedCharacters;
 

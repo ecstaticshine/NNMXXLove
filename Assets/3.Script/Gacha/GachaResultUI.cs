@@ -67,8 +67,15 @@ public class GachaResultUI : MonoBehaviour
                 // 3. ÅåÅå Æ¢¾î³ª¿À´Â ¿¬Ãâ
                 iconObj.transform.localScale = Vector3.zero;
                 iconObj.transform.DOScale(1f, 0.4f)
-                    .SetDelay(i * 0.1f) // 10»ÌÀÏ ¶§ ¼øÂ÷ÀûÀ¸·Î »Ð»Ð»Ð!
-                    .SetEase(Ease.OutBack);
+                    .SetDelay(i * 0.1f)
+                    .SetEase(Ease.OutBack)
+                    .OnStart(() => {
+                // ¿©±â¿¡ ¼Ò¸® Àç»ý ÄÚµå Ãß°¡
+                if (AudioManager.Instance != null)
+                        {
+                            AudioManager.Instance.PlaySE("Pon");
+                        }
+                    });
             }
         }
     }

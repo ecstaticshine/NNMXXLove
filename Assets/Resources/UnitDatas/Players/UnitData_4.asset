@@ -17,7 +17,7 @@ MonoBehaviour:
   descriptionKey: UNIT_DESC_4
   unitType: 2
   defaultTag: Direct
-  unitPortrait: {fileID: -1737129688044469152, guid: 544ee7960bfa5bc46a86e541f9ea0dcb, type: 3}
+  unitPortrait: {fileID: 21300000, guid: 544ee7960bfa5bc46a86e541f9ea0dcb, type: 3}
   unitBattleSD: {fileID: 5202249958562666257, guid: 71f9abcdad0b5bc4a963263b11e167ec, type: 3}
   unitAttackSD: {fileID: 1802451849012843866, guid: 10667f7e64fa3e14085e8a9398a07772, type: 3}
   unitTakeDamageSD: {fileID: 1649158102006177439, guid: 3dc74c953c8f6b247a4ee18f6b51e86f, type: 3}

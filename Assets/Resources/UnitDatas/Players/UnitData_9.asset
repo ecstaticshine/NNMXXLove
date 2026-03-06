@@ -16,12 +16,12 @@ MonoBehaviour:
   unitNameKey: UNIT_NAME_9
   descriptionKey: UNIT_DESC_9
   unitType: 0
-  defaultTag: Direct
-  unitPortrait: {fileID: -1703340179041964597, guid: 8ba6d30ff97b75f4c9e2671bd4f46591, type: 3}
-  unitBattleSD: {fileID: -558471544904218037, guid: 3f1f1fc6434b7bd43a1d6cb8d416b746, type: 3}
-  unitAttackSD: {fileID: 21300000, guid: 8245c5ea5961e7c44b6ac194d9cff883, type: 3}
-  unitTakeDamageSD: {fileID: 4506006062418298840, guid: ea564f44378cef540a22576f54eb4186, type: 3}
-  unitFullIllust: {fileID: -5542588597653135446, guid: b0e1b56baa907804caea5210d0f452ed, type: 3}
+  defaultTag: Dot
+  unitPortrait: {fileID: 8120118108599516706, guid: 2f43cfa2e14fc5e4eb2f9438d8355026, type: 3}
+  unitBattleSD: {fileID: -2801717556339360282, guid: f428825eafbf92742b1552b6bfa78751, type: 3}
+  unitAttackSD: {fileID: 4667509961347795244, guid: 1bcaf4c6220485448829ec8d8895969a, type: 3}
+  unitTakeDamageSD: {fileID: 3451253768435128598, guid: 8b1c22b999be7a94eba014013a6777c0, type: 3}
+  unitFullIllust: {fileID: 909586443465233673, guid: 4d146d7328aa4e445b765976a88cfde6, type: 3}
   rarity: 0
   isEnemy: 0
   baseHp: 10000

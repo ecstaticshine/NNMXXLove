@@ -12,6 +12,7 @@ public class CharacterBTPanel : MonoBehaviour
     public TMP_Text tierText;          // "현재 등급 : PL"
     public TMP_Text btStatusText;      // "현재 돌파 : 3 / 7"
     public TMP_Text totalInfoText;     // "총 획득 조각 : 15개"
+    public Button upgradeButton;
     public TMP_Text upgradeButtonText;     // "강화하기"
 
     private CharacterInfo currentSelectedInfo;
@@ -95,11 +96,23 @@ public class CharacterBTPanel : MonoBehaviour
         if (pieceIcon != null)
             pieceIcon.Setup(DataManager.Instance.GetItemData(pieceID), ownedCount);
 
+        if (upgradeButton != null) // 버튼 컴포넌트 연결 필요
+        {
+            bool canUpgrade = (currentSelectedInfo.TotalPoint < 21) && (ownedCount > 0);
+            upgradeButton.interactable = canUpgrade;
+        }
+
     }
 
     public void OnClickUpgrade()
     {
         if (currentSelectedInfo == null) return;
+
+        if (currentSelectedInfo.TotalPoint >= 21)
+        {
+            Debug.Log("이미 최대 등급입니다.");
+            return;
+        }
 
         // 1. 강화 전 데이터 기억 (연출용)
         Rarity prevRarity = currentSelectedInfo.currentRarity;

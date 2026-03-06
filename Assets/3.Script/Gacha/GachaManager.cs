@@ -36,7 +36,10 @@ public class GachaManager : MonoBehaviour
 
     private void Start()
     {
-        
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM("kinematic_01");
+        }
 
         GachaData[] loadedGachas = Resources.LoadAll<GachaData>("Data/GachaDatas");
         allGachaDatas = new List<GachaData>(loadedGachas);
@@ -78,6 +81,9 @@ public class GachaManager : MonoBehaviour
 
     public string Pull(GachaData data)
     {
+        int tlRate = (int)(data.rates[0] >= 1.0f ? data.rates[0] * 100 : data.rates[0] * 10000);
+        int plRate = (int)(data.rates[1] >= 1.0f ? data.rates[1] * 100 : data.rates[1] * 10000);
+
         var pityData = DataManager.Instance.userData.gachaPityList.Find(x => x.gachaID == data.gachaID);
         if (pityData == null)
         {
@@ -100,15 +106,30 @@ public class GachaManager : MonoBehaviour
         }
         else
         {
-            // 2. 확률 계산
-            float rand = UnityEngine.Random.Range(0f, 100f);
-            if (rand <= data.rates[0]) // TL
+            int totalRate = 10000;                   // 10000 (100%)
+
+            // 2. 0 ~ 9999 사이의 정수 생성
+            int rand = UnityEngine.Random.Range(0, totalRate);
+
+            // 3. 누적 확률 비교
+            if (rand < tlRate)
+            {
+                // 0 ~ 299 범위 (정확히 3%)
                 resultID = data.tlPool[UnityEngine.Random.Range(0, data.tlPool.Count)];
-            else if (rand <= data.rates[0] + data.rates[1]) // PL
+            }
+            else if (rand < (tlRate + plRate))
+            {
+                // 300 ~ 2999 범위 (정확히 27%)
                 resultID = data.plPool[UnityEngine.Random.Range(0, data.plPool.Count)];
-            else // L
+            }
+            else
+            {
+                // 3000 ~ 9999 범위 (정확히 70%)
                 resultID = data.lPool[UnityEngine.Random.Range(0, data.lPool.Count)];
+            }
         }
+
+        GlobalUIManager.Instance.RefreshCurrentUI();
 
         DataManager.Instance.AddCharacter(resultID);
 

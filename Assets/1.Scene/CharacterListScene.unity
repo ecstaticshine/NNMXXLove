@@ -2031,6 +2031,7 @@ MonoBehaviour:
   tierText: {fileID: 1006581453}
   btStatusText: {fileID: 2126068423}
   totalInfoText: {fileID: 1605353841}
+  upgradeButton: {fileID: 192537914}
   upgradeButtonText: {fileID: 9218309}
 --- !u!1 &427353488
 GameObject:

@@ -158,6 +158,7 @@ public class GlobalUIManager : MonoBehaviour
                 SetBattleLayout(false);
                 break;
             case SceneState.Gacha:
+                topUI.SetActive(true);
                 SceneManager.LoadScene("GachaScene");
                 break;
             case SceneState.StorySelect:
