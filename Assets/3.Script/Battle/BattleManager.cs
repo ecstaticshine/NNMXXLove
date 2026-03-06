@@ -619,7 +619,7 @@ public class BattleManager : MonoBehaviour
             Debug.Log(" 전투 승리! 보상을 획득합니다.");
             // DataManager에 클리어 알림 (보상 지급 및 다음 스테이지 해금이 여기서 처리됨)
             List<ItemInventoryData> earnedRewards = DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
-
+            AudioManager.Instance.PlaySE("Victory_Fanfare");
             uiManager.ShowResult(victory, earnedRewards, characterParties);
         }
         else

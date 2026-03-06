@@ -1003,6 +1003,7 @@ GameObject:
   - component: {fileID: 4158826670014202706}
   - component: {fileID: 6382308436515013346}
   - component: {fileID: 4950587458152303175}
+  - component: {fileID: 4014400571778434912}
   m_Layer: 5
   m_Name: UseButton
   m_TagString: Untagged
@@ -1112,6 +1113,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4014400571778434912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4817945496369424080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131ff18424d7f504c9c39b1c16d579b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  sfxName: Button_Click
 --- !u!1 &5873164642432848488
 GameObject:
   m_ObjectHideFlags: 0

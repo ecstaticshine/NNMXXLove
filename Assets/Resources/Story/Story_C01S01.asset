@@ -15,6 +15,7 @@ MonoBehaviour:
   storyID: C01S01
   storyTitle: Prologue
   storyCsv: {fileID: 4900000, guid: 094987448b7503340b8366b4a38390c7, type: 3}
+  summaryLogKey: Prologue_S
   requiredStageID: 
   requiredStoryID: 
   rewardItemID: 5001

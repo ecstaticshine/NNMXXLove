@@ -65,6 +65,7 @@ public class UpgradeItemSlot : MonoBehaviour
 
     void ChangeCount(int amount)
     {
+        AudioManager.Instance.PlaySE("Button_Amount");
         currentCount = Mathf.Clamp(currentCount + amount, 1, maxPossession);
         UpdateCountUI();
     }

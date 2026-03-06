@@ -57,6 +57,23 @@ public class DialogueManager : MonoBehaviour
     public TMP_Text summaryTitleText;
     public TMP_Text summaryContentText;  // 줄거리 내용 텍스트
 
+    [Header("Button Images")]
+    public Image autoBtnImage;
+    public Image skipBtnImage;
+    public Image logBtnImage;
+
+    [Header("Auto Button Sprites")]
+    public Sprite autoDefault;
+    public Sprite autoActive;
+
+    [Header("Skip Button Sprites")]
+    public Sprite skipDefault;
+    public Sprite skipActive;
+
+    [Header("Log Button Sprites")]
+    public Sprite logDefault;
+    public Sprite logActive;
+
     private Queue<string> sentences = new Queue<string>();
     private StoryData currentStoryData;
     private bool isTyping = false;
@@ -72,8 +89,9 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         SaveAnchorPositions();
-
         LoadSettings();
+
+        UpdateButtonVisuals();
 
         if (DataManager.Instance != null && DataManager.Instance.selectedStoryData != null)
             StartStory(DataManager.Instance.selectedStoryData);
@@ -113,6 +131,7 @@ public class DialogueManager : MonoBehaviour
         if (isSkipMode)
         {
             isSkipMode = false;
+            UpdateButtonVisuals();
             return;
         }
 
@@ -524,12 +543,28 @@ public class DialogueManager : MonoBehaviour
     {
         isAutoMode = !isAutoMode;
         isSkipMode = false; // 스킵과 오토는 보통 하나만 활성화
+
+        UpdateButtonVisuals();
+
         if (isAutoMode && !isTyping) DisplayNextSentence();
+    }
+
+    public void ToggleSkipMode()
+    {
+        isSkipMode = !isSkipMode;
+        if (isSkipMode) isAutoMode = false;
+
+        UpdateButtonVisuals();
+
+        if (isSkipMode && !isTyping) DisplayNextSentence();
     }
 
     public void ShowLog()
     {
         if (logPanel == null) return;
+
+        // 로그 버튼 눌린 이미지로 교체
+        if (logBtnImage != null) logBtnImage.sprite = logActive;
 
         logPanel.SetActive(true);
         Time.timeScale = 0f;
@@ -570,6 +605,9 @@ public class DialogueManager : MonoBehaviour
     {
         if (logPanel != null)
         {
+            // 로그 버튼 기본 이미지로 복구
+            if (logBtnImage != null) logBtnImage.sprite = logDefault;
+
             logPanel.SetActive(false);
             // 로그창 닫으면 다시 시간 흐르게 하기
             Time.timeScale = 1f;
@@ -578,6 +616,8 @@ public class DialogueManager : MonoBehaviour
 
     public void ShowSummaryAndSkip()
     {
+        ToggleSkipMode();
+
         // 1. 진행 중인 모든 연출 중단
         StopAllCoroutines();
         isTyping = false;
@@ -596,9 +636,26 @@ public class DialogueManager : MonoBehaviour
         {
             // StoryData에 추가한 summaryLogKey를 사용하여 다국어 텍스트를 가져옵니다.
             summaryContentText.text = DataManager.Instance.GetLocalizedText(currentStoryData.summaryLogKey);
+
+            // 레이아웃 강제 갱신 및 스크롤 위치 조정
+            StartCoroutine(UpdateSummaryLayout());
         }
         summaryPanel.SetActive(true);
     }
+
+    IEnumerator UpdateSummaryLayout()
+    {
+        yield return null; // 한 프레임 대기하여 텍스트 높이 계산
+        Canvas.ForceUpdateCanvases(); // UI 갱신
+
+        // 스크롤뷰 초기화
+        ScrollRect scrollRect = summaryPanel.GetComponentInChildren<ScrollRect>();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 1f; // 맨 위로
+        }
+    }
+
 
     // 줄거리 패널의 '확인' 버튼에 연결
     public void ConfirmSkip()
@@ -611,6 +668,8 @@ public class DialogueManager : MonoBehaviour
     }
     public void CancelSummarySkip()
     {
+        ToggleSkipMode();
+
         // 1. 시간 다시 흐르게 하기
         Time.timeScale = 1f;
 
@@ -621,5 +680,16 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
+    }
+
+    private void UpdateButtonVisuals()
+    {
+        // Auto 버튼 처리
+        if (autoBtnImage != null)
+            autoBtnImage.sprite = isAutoMode ? autoActive : autoDefault;
+
+        // Skip 버튼 처리
+        if (skipBtnImage != null)
+            skipBtnImage.sprite = isSkipMode ? skipActive : skipDefault;
     }
 }

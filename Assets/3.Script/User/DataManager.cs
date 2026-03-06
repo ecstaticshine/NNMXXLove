@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 [System.Serializable]
@@ -462,7 +463,7 @@ public static Action OnUserDataChanged; //유저 정보 변경
             if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
             // 쉼표로 분리 (데이터 내부에 쉼표가 있다면 정규식이나 별도 파서 사용 권장)
-            string[] split = lines[i].Trim().Split(',');
+            string[] split = Regex.Split(lines[i], ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
             if (split.Length > langCol)
             {

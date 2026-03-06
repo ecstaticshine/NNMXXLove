@@ -686,7 +686,7 @@ MonoBehaviour:
   currentParty: []
   userInventory: []
   allUnitDatas: []
-  currentLanguage: 2
+  currentLanguage: 1
 --- !u!4 &746852694
 Transform:
   m_ObjectHideFlags: 0
