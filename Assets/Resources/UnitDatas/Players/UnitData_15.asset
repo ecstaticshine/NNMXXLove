@@ -17,11 +17,11 @@ MonoBehaviour:
   descriptionKey: UNIT_DESC_15
   unitType: 0
   defaultTag: Dot
-  unitPortrait: {fileID: -1703340179041964597, guid: 8ba6d30ff97b75f4c9e2671bd4f46591, type: 3}
-  unitBattleSD: {fileID: -558471544904218037, guid: 3f1f1fc6434b7bd43a1d6cb8d416b746, type: 3}
-  unitAttackSD: {fileID: 21300000, guid: 8245c5ea5961e7c44b6ac194d9cff883, type: 3}
-  unitTakeDamageSD: {fileID: 4506006062418298840, guid: ea564f44378cef540a22576f54eb4186, type: 3}
-  unitFullIllust: {fileID: -5542588597653135446, guid: b0e1b56baa907804caea5210d0f452ed, type: 3}
+  unitPortrait: {fileID: -8137889458392816170, guid: fee0ca867f25f4743802f96faca35ebf, type: 3}
+  unitBattleSD: {fileID: -3989156320674535306, guid: b318fc832f1f9c94387bf02b24754fae, type: 3}
+  unitAttackSD: {fileID: 4078395544102053870, guid: 312f19d9b50681841b678613253497f1, type: 3}
+  unitTakeDamageSD: {fileID: 7271313524192471270, guid: 3dd919612ea72ca4ebf8af75e47b2928, type: 3}
+  unitFullIllust: {fileID: 1881413173962464803, guid: 25bb41ea9f47df94288a7d69192e8f1c, type: 3}
   rarity: 0
   isEnemy: 0
   baseHp: 10000
