@@ -85,8 +85,14 @@ public class GachaManager : MonoBehaviour
 
     public string Pull(GachaData data)
     {
+
+
         int tlRate = (int)data.rates[0] * 100; // 300
         int plRate = (int)data.rates[1] * 100; // 2700
+
+        Debug.Log($"[È®·ü È®ÀÎ] TL:{data.rates[0]}, PL:{data.rates[1]}, L:{data.rates[2]}");
+        Debug.Log($"[È®·ü È®ÀÎ] tlRate:{tlRate}, plRate:{plRate}");
+        Debug.Log($"[È®·ü È®ÀÎ] rand ¹üÀ§: 0~9999, TL¹üÀ§: 0~{tlRate - 1}, PL¹üÀ§: {tlRate}~{tlRate + plRate - 1}");
 
         Debug.Log($"[°¡Ã­] tlRate: {tlRate}, plRate: {plRate}, Sum: {tlRate + plRate}");
 
@@ -97,9 +103,9 @@ public class GachaManager : MonoBehaviour
             DataManager.Instance.userData.gachaPityList.Add(pityData);
         }
 
-        if (DataManager.Instance.userData.diamond < 100) return "NotEnoughDiamond";
+        if (DataManager.Instance.userData.diamond < data.costPerPull) return "NotEnoughDiamond";
 
-        DataManager.Instance.userData.diamond -= 100;
+        DataManager.Instance.userData.diamond -= data.costPerPull;
         pityData.currentPity++;
 
         int resultID = 0;

@@ -60,6 +60,7 @@ public class GachaData : ScriptableObject
 
         foreach (var unit in allUnits)
         {
+            Debug.Log($"[풀 분류] ID:{unit.unitID} 이름:{unit.name} Rarity:{unit.rarity}");
             // UnitData에 등급(Rarity) 정보가 있다고 가정
             switch (unit.rarity)
             {

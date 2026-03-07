@@ -90,7 +90,10 @@ public static Action OnUserDataChanged; //유저 정보 변경
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            PlayerPrefs.DeleteKey("SaveFile");
+            //PlayerPrefs.DeleteKey("SaveFile");
+            if (PlayerPrefs.HasKey("Language"))
+                currentLanguage = (Language)PlayerPrefs.GetInt("Language");
+
 
             LoadData();           // 유저 세이브 데이터 먼저
             InitializeLocalization();
@@ -945,6 +948,7 @@ public static Action OnUserDataChanged; //유저 정보 변경
     {
         UnitData originalData = GetPlayerData(characterID);
         Rarity rarity = (originalData != null) ? originalData.rarity : Rarity.L;
+        int rarityOffset = GetRarityOffset(rarity);
 
         // 저장용 데이터 생성 (UserData에 저장될 녀석)
         CharacterSaveData newSaveData = new CharacterSaveData
@@ -954,6 +958,7 @@ public static Action OnUserDataChanged; //유저 정보 변경
             currentExp = 0,
             currentBreakthrough = 0,
             currentRarity = originalData.rarity,
+            totalPoint = rarityOffset,
             customTags = new string[4]
         };
         userData.ownedCharacters.Add(newSaveData);
@@ -965,7 +970,9 @@ public static Action OnUserDataChanged; //유저 정보 변경
             currentLevel = newSaveData.currentLevel,
             currentExp = newSaveData.currentExp,
             currentBreakthrough = newSaveData.currentBreakthrough,
+            currentRarity = rarity,        // 추가
             baseRarity = rarity,
+            totalPoint = rarityOffset,     // 추가
             equippedTags = newSaveData.customTags
         });
 
@@ -1092,6 +1099,12 @@ public static Action OnUserDataChanged; //유저 정보 변경
                               userData.stageHistory.Exists(x => x.stageID == storyData.requiredStoryID && x.isStoryRead);
 
         return stageCondition && storyCondition;
+    }
+
+    public void SetPrologueCompleted()
+    {
+        userData.hasSeenPrologue = true;
+        SaveData();
     }
 }
 

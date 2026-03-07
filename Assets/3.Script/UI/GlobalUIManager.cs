@@ -25,8 +25,9 @@ public enum SceneState
     Stage,                  //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage
     Battle,                 //  Home -> Adventure -> StageSelect -> StageDetailPopup -> Placement -> Stage -> Battle
     Multi,                  //  Home -> Adventure -> Multi
-    Story,                   //  Home -> StorySelect
-
+    Story,                  //  Home -> StorySelect
+    Prologue,
+    Title,                  //  Title
 }
 
 public class GlobalUIManager : MonoBehaviour
@@ -36,7 +37,10 @@ public class GlobalUIManager : MonoBehaviour
     [Header("Global UI")]
     [SerializeField] private GameObject topUI;   // 배틀 씬 등에서 필요없을 경우 끄기.
     [SerializeField] private GameObject bottomUI;// 배틀 씬 등에서 필요없을 경우 끄기.
-   
+
+    [Header("Settings")]
+    [SerializeField] private GameObject settingsPanel;
+
     [Header("Top Bar Controller")]
     [SerializeField] private TopBarUI topBarUI;
 
@@ -117,7 +121,8 @@ public class GlobalUIManager : MonoBehaviour
                       currentState == SceneState.CharacterList ||
                       currentState == SceneState.StorySelect ||
                       currentState == SceneState.Adventure ||
-                      currentState == SceneState.Gacha);
+                      currentState == SceneState.Gacha ||
+                      currentState == SceneState.Settings);
 
         // 1. 뒤로가기 버튼 활성화
         BackButton.SetActive(!isMainTab && stateStack.Count > 0 && currentState != SceneState.Battle);
@@ -127,6 +132,11 @@ public class GlobalUIManager : MonoBehaviour
         // 2. 상태에 따른 실제 씬 전환 로직 추가
         switch (currentState)
         {
+            case SceneState.Title:
+                topUI.SetActive(false);
+                bottomUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                break;
             case SceneState.Home:
                 topUI.SetActive(true);
                 bottomUI.SetActive(true);
@@ -167,9 +177,11 @@ public class GlobalUIManager : MonoBehaviour
                 SceneManager.LoadScene("StorySelectScene");
                 break;
             case SceneState.Story:
+            case SceneState.Prologue:
                 topUI.SetActive(false);
                 PlayerInfo.SetActive(false);
                 bottomUI.SetActive(false);
+                if (currentSceneName != "StoryScene") SceneManager.LoadScene("StoryScene");
                 break;
             case SceneState.CharacterList:
                 SceneManager.LoadScene("CharacterListScene");
@@ -182,6 +194,10 @@ public class GlobalUIManager : MonoBehaviour
                 topUI.SetActive(false);
                 PlayerInfo.SetActive(false);
                 break;
+            case SceneState.Settings:
+                Debug.Log($"[Settings] settingsPanel null? {settingsPanel == null}");
+                settingsPanel.SetActive(true);
+                break;
 
         }
 
@@ -192,7 +208,7 @@ public class GlobalUIManager : MonoBehaviour
     public void RefreshCurrentUI()
     {
 
-        topBarUI.RefreshUI();
+        if (topBarUI != null) topBarUI.RefreshUI();
 
         string currentSceneName = SceneManager.GetActiveScene().name;
 

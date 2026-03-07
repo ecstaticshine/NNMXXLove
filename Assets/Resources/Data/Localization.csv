@@ -74,3 +74,30 @@ UNIT_NAME_14,플로라,フローラ
 UNIT_NAME_15,아루네,アルネ
 UNIT_NAME_9,릭시,リクシー
 UNIT_NAME_6,뷔아,ヴィア
+synergy_title_direct,Direct 시너지,ダイレクト・シナジー
+synergy_desc_direct_1,직접 공격 데미지 +25%,ダイレクトアタックのダメージ +25%
+synergy_desc_direct_2,직접 공격 데미지 +60%,ダイレクトアタックのダメージ +60%
+synergy_desc_direct_3,직접 공격 데미지 +100%,ダイレクトアタックのダメージ +100%
+synergy_title_splash,Splash 시너지,スプラッシュ・シナジー
+synergy_desc_splash_1,확산 피해 비율 +15%,スプラッシュアタックの拡散ダメージ比率 +15%
+synergy_desc_splash_2,확산 피해 비율 +35%,スプラッシュアタックの拡散ダメージ比率 +35%
+synergy_desc_splash_3,확산 피해 비율 +60%,スプラッシュアタックの拡散ダメージ比率 +60%
+synergy_title_dot,Dot 시너지,ドット・シナジー
+synergy_desc_dot_1,추가 공격 횟수 +1,ドットアタックの回数 +1
+synergy_desc_dot_2,추가 공격 횟수 +2,ドットアタックの回数 +2
+synergy_desc_dot_3,추가 공격 횟수 +4,ドットアタックの回数 +4
+UNIT_DESC_1,늠름한 용족 아내,凛々しい竜族の嫁
+UNIT_DESC_2,츳코미를 넣는 츤데레 아내,ツッコミを入れるツンデレ嫁
+UNIT_DESC_3,기억상실의 아내,記憶喪失の嫁（？）
+UNIT_DESC_4,다중방어진의 천재 아내,多重防御陣天才の嫁
+UNIT_DESC_5,힐링되는 작은 아내,癒し系の小さな嫁
+UNIT_DESC_6,화내게 하면 안 되는 착한 엘프 아내,怒らせてはいけない優しいエルフの嫁
+UNIT_DESC_7,중2병 아내,中二病をこじらせている嫁
+UNIT_DESC_8,겉과 속이 다른 아내,表と裏が違う嫁
+UNIT_DESC_9,갸루 아내,ギャル嫁
+UNIT_DESC_10,연금술사 아내,錬金術師の嫁
+UNIT_DESC_11,맹독주의 아내,猛毒注意の嫁
+UNIT_DESC_12,터프한 늑대 수인 아내,タフな狼獣人の嫁
+UNIT_DESC_13,달의 공주 아내,月の姫嫁
+UNIT_DESC_14,은은한 꽃향기 나는 아내,花の香りがする嫁
+UNIT_DESC_15,의외로 외로움쟁이인 아내,意外に寂しがり屋の嫁

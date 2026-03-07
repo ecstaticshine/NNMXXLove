@@ -29,11 +29,8 @@ public class TopBarUI : MonoBehaviour
 
     void OnEnable()
     {
-        // 데이터가 변경될 때마다 UI를 갱신하도록 이벤트 구독
         if (DataManager.Instance != null)
             DataManager.Instance.OnDataChanged += RefreshUI;
-
-        RefreshUI();
     }
 
     void OnDisable()

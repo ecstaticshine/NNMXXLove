@@ -15,6 +15,8 @@ public class UserData
     public int stamina = 120;         // 스태미너
     public string lastStaminaUpdateTime; // 스테미나 회복 계산용 시간
 
+    public bool hasSeenPrologue = false;
+
     public float textSpeed =0.05f;
 
     // 각 유저가 보유한 모든 캐릭터들의 상세 정보 리스트

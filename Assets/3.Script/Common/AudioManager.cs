@@ -10,9 +10,10 @@ public class AudioManager : MonoBehaviour
 
     [Header("Mixer Settings")]
     public AudioMixer mainMixer;
-    public string bgmParamName = "BGMVolume"; // 믹서에서 노출한 파라미터 이름
-    public string seParamName = "SEVolume"; // 믹서에서 노출한 파라미터 이름
-    public string voiceParamName = "VoiceVolume"; // 믹서에서 노출한 파라미터 이름
+    public string bgmParamName = "Volume_BGM"; // 믹서에서 노출한 파라미터 이름
+    public string seParamName = "Volume_SE"; // 믹서에서 노출한 파라미터 이름
+    public string voiceParamName = "Volume_Voice"; // 믹서에서 노출한 파라미터 이름
+    public string masterParamName = "Volume_Master"; // 믹서에서 노출한 파라미터 이름
 
     [Header("Audio Sources")]
     public AudioSource bgmSource;

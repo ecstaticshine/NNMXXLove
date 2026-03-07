@@ -77,8 +77,16 @@ public class CharacterTagPanel : MonoBehaviour
                 slotButtons[i].onClick.RemoveAllListeners();
                 slotButtons[i].onClick.AddListener(() => {
                     // 이미 장착된 상태이므로, 클릭 시 상세 설명 팝업을 띄우기
-                    DetailInfoPopup.Instance.Setup(data);
+                    OnClickRemoveTag(index);
                 });
+
+                // 슬롯 아이콘 클릭 → 상세 정보
+                Button iconBtn = tagSlots[i].GetComponent<Button>();
+                if (iconBtn != null)
+                {
+                    iconBtn.onClick.RemoveAllListeners();
+                    iconBtn.onClick.AddListener(() => DetailInfoPopup.Instance.Setup(data));
+                }
             }
         }
     }
