@@ -706,6 +706,24 @@ public class DataManager : MonoBehaviour
 
     }
 
+    public bool AddExp(CharacterInfo info, int amount)
+    {
+        if (info == null) return false;
+
+        int beforeLevel = info.currentLevel;
+        info.currentExp += amount;
+
+        int requiredExp = GetRequiredExp(info.currentLevel);
+        while (info.currentExp >= requiredExp && info.currentLevel < 100)
+        {
+            info.currentExp -= requiredExp;
+            info.currentLevel++;
+            requiredExp = GetRequiredExp(info.currentLevel);
+        }
+
+        return info.currentLevel > beforeLevel; // 레벨업 했으면 true
+    }
+
     public void RemoveInventoryItem(int id, int count)
     {
         // 1. 인벤토리에서 해당 아이템 찾기

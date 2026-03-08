@@ -200,7 +200,8 @@ public class BattleUIManager : MonoBehaviour
     }
 
 
-    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null, List<Character> characterParties = null)
+    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null,
+        List<Character> characterParties = null, Dictionary<int, bool> levelUpMap = null)
     {
 
         // 패널 활성화 및 초기화
@@ -220,8 +221,9 @@ public class BattleUIManager : MonoBehaviour
                 rewards = DataManager.Instance.GetLastEarnedRewards();
             }
 
+
             // 코루틴 시작
-            StartCoroutine(ResultSequence_Co(isVictory, rewards, characterParties));
+            StartCoroutine(ResultSequence_Co(isVictory, rewards, characterParties, levelUpMap));
 
 
         }
@@ -427,8 +429,9 @@ public class BattleUIManager : MonoBehaviour
         OnClickExitResult();
     }
 
-    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards, List<Character> characterParties = null)
-    {
+    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards,
+        List<Character> characterParties = null, Dictionary<int, bool> levelUpMap = null)
+        {
         // --- [1단계: 아이템 표시] ---
         resultPanel.DOFade(1f, fadeDuration);
         DisplayRewards(rewards); // 기존 아이템 생성 로직 호출
@@ -466,14 +469,18 @@ public class BattleUIManager : MonoBehaviour
                         // 기본 정보 세팅 (기존 함수 재사용)
                         unitIcon.SetUnitIcon(character.data, character.level, character.breakthroughCount);
 
+                        CharacterInfo info = DataManager.Instance.GetUserUnitInfo(character.data.unitID);
+
                         // 경험치/레벨업 연출 (만렙 100 체크 포함)
-                        if (character.level < 100)
+                        if (info != null && character.level < 100)
                         {
-                            // TODO: 실제 DataManager의 경험치 테이블과 연동 필요
-                            float currentExp = 0; // 실제 데이터 연결 필요
-                            float nextExp = 1000f;
-                            bool isLevelUp = (currentExp + gainExp >= nextExp);
-                            unitIcon.SetExpUI(currentExp + gainExp, nextExp, isLevelUp);
+                            float currentExp = info.currentExp;
+                            float nextExp = DataManager.Instance.GetRequiredExp(info.currentLevel);
+
+                            bool isLevelUp = levelUpMap != null &&
+                                        levelUpMap.TryGetValue(character.data.unitID, out bool lu) && lu;
+
+                            unitIcon.SetExpUI(currentExp, nextExp, isLevelUp);
                         }
 
                         // 죽은 애들은 살짝 어둡게 (선택 사항)

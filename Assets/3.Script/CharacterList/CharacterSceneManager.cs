@@ -215,6 +215,12 @@ public class CharacterSceneManager : MonoBehaviour
             }
         }
 
+        int requiredExp = DataManager.Instance.GetRequiredExp(info.currentLevel);
+        float expRatio = requiredExp > 0 ? (float)info.currentExp / requiredExp : 0f;
+        expSlider.value = expRatio;
+        expText.text = $"{info.currentExp} / {requiredExp}";
+        levelText.text = $"{info.currentLevel}";
+
         // (선택) 배경이 바뀔 때 살짝 페이드 연출을 주면 더 고급스럽습니다.
         detailImage.transform.DOKill();
         detailImage.transform.localPosition = new Vector3(-50f, 0, 0); // 살짝 왼쪽에서

@@ -633,8 +633,20 @@ public class BattleManager : MonoBehaviour
 
         if (victory)
         {
-            Debug.Log(" 전투 승리! 보상을 획득합니다.");
-            // DataManager에 클리어 알림 (보상 지급 및 다음 스테이지 해금이 여기서 처리됨)
+            int gainExp = 150;
+            Dictionary<int, bool> levelUpMap = new Dictionary<int, bool>();
+
+            foreach (Character character in characterParties)
+            {
+                CharacterInfo info = DataManager.Instance.GetUserUnitInfo(character.data.unitID);
+                if (info != null)
+                {
+                    bool didLevelUp = DataManager.Instance.AddExp(info, gainExp); // 딱 1번만
+                    levelUpMap[character.data.unitID] = didLevelUp;
+                }
+            }
+            DataManager.Instance.SaveData();
+
             List<ItemInventoryData> earnedRewards = DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
             AudioManager.Instance.PlaySE("Victory_Fanfare");
             uiManager.ShowResult(victory, earnedRewards, characterParties);

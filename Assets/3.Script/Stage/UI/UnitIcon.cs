@@ -145,9 +145,10 @@ public class UnitIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (expSlider != null)
         {
+            expSlider.transform.parent.gameObject.SetActive(true);
             expSlider.gameObject.SetActive(true);
             expSlider.maxValue = maxExp;
-            // DOTween으로 부드럽게 차오르는 연출
+            expSlider.value = 0f;
             expSlider.DOValue(currentExp, 1f).SetEase(Ease.OutCubic);
         }
 
