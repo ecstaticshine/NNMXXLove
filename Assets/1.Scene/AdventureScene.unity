@@ -299,6 +299,8 @@ MonoBehaviour:
     diamond: 0
     stamina: 0
     lastStaminaUpdateTime: 
+    hasSeenPrologue: 0
+    isInitialItemGiven: 0
     textSpeed: 0.05
     ownedCharacters: []
     inventory: []

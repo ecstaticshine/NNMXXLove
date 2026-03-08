@@ -25,13 +25,6 @@ public class CharacterListUI : MonoBehaviour
         // 2. DataManager 인벤토리 사용
         List<CharacterInfo> characterInventory = DataManager.Instance.userInventory;
 
-        // 만약 인벤토리가 비어있다면 테스트를 위해 기본 캐릭터 2개를 넣어줌
-        if (characterInventory.Count == 0)
-        {
-            characterInventory.Add(new CharacterInfo { unitID = 1, currentLevel = 1 ,currentRarity = Rarity.PL, currentBreakthrough = 4  });
-            characterInventory.Add(new CharacterInfo { unitID = 2, currentLevel = 1, currentRarity = Rarity.EL, currentBreakthrough = 0 });
-        }
-
         foreach (CharacterInfo info in characterInventory)
         {
             // 3. 실제 데이터(ScriptableObject)를 가져옴

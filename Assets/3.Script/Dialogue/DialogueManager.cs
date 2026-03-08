@@ -529,8 +529,11 @@ public class DialogueManager : MonoBehaviour
 
         if (GlobalUIManager.Instance != null)
         {
-            // 스토리 선택 화면으로 상태 변경 (내부에서 LoadScene("StorySelectScene") 실행됨)
-            GlobalUIManager.Instance.ChangeState(SceneState.StorySelect, true);
+            // 프롤로그면 홈으로, 아니면 스토리 선택으로
+            if (data.storyID == "Prologue")
+                GlobalUIManager.Instance.ChangeState(SceneState.Home, true);
+            else
+                GlobalUIManager.Instance.ChangeState(SceneState.StorySelect, true);
         }
         else
         {
@@ -661,8 +664,7 @@ public class DialogueManager : MonoBehaviour
     public void ConfirmSkip()
     {
         summaryPanel.SetActive(false);
-
-        // 4. 모든 대사를 소모한 것으로 처리하고 종료
+        Time.timeScale = 1f; // 이거 추가!
         sentences.Clear();
         EndStory();
     }

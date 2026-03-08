@@ -229,6 +229,9 @@ public class BattleUIManager : MonoBehaviour
         {
             resultText.text = "Defeated";
             resultText.color = Color.red;
+
+            // 패배도 클릭하면 나가도록 코루틴 추가
+            StartCoroutine(DefeatSequence_Co());
         }
 
         // 페이드 인 완료 후 상호작용 허용
@@ -313,6 +316,8 @@ public class BattleUIManager : MonoBehaviour
 
     public void OnClickExitResult()
     {
+        Time.timeScale = 1f;
+
         // 1. 결과창 페이드 아웃
         resultPanel.DOFade(0f, 0.3f).OnComplete(() =>
         {
@@ -408,6 +413,18 @@ public class BattleUIManager : MonoBehaviour
         {
             autoText.color = isActive ? Color.yellow : Color.white;
         }
+    }
+
+    private IEnumerator DefeatSequence_Co()
+    {
+        yield return new WaitForSeconds(fadeDuration);
+        resultPanel.blocksRaycasts = true;
+
+        // 클릭 대기
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                   (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        OnClickExitResult();
     }
 
     private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards, List<Character> characterParties = null)

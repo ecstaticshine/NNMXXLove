@@ -15,12 +15,43 @@ public class HomeManager : MonoBehaviour
     private List<PartyMember> currentParty = new List<PartyMember>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
+    private void OnEnable()
     {
-        AudioManager.Instance.PlayBGM("Summer_ice_flower");
+        StopAllCoroutines();
+        StartCoroutine(InitHome());
+
+    }
+    private void OnDestroy()
+    {
+        DOTween.KillAll();
+    }
+
+    private IEnumerator InitHome()
+    {
+        yield return new WaitUntil(() =>
+            DataManager.Instance != null &&
+            DataManager.Instance.userData != null &&
+            DataManager.Instance.userData.stageHistory != null);
+
+        DOTween.Init();
+        yield return null; // 한 프레임 대기
+
+        Debug.Log("[HomeManager] 데이터 준비 완료, 캐릭터 세팅 시작");
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayBGM("Summer_ice_flower");
+
+        // 기존 캐릭터 이미지 초기화
+        foreach (var img in characterImages)
+        {
+            img.DOKill(); // DOTween 트윈 제거
+            img.gameObject.SetActive(false);
+        }
 
         // 1. 배경 설정
         WorldDataInfo info = DataManager.Instance.GetCurrentWorldInfo();
+        Debug.Log($"[HomeManager] WorldInfo: {info != null}");
+
         if (info != null)
         {
             backgroundImage.sprite = Resources.Load<Sprite>($"Backgrounds/home_{info.background}");
@@ -28,6 +59,8 @@ public class HomeManager : MonoBehaviour
         // 2. 파티 멤버 중 5명 무작위 선택 및 생성
         List<PartyMember> currentParty = DataManager.Instance.GetCurrentParty();
         List<PartyMember> selectedMembers = GetRandomFiveMembers(currentParty);
+
+        Debug.Log($"[HomeManager] 파티 인원: {currentParty.Count}");
 
         for (int i = 0; i < characterImages.Length; i++)
         {
@@ -37,12 +70,20 @@ public class HomeManager : MonoBehaviour
 
                 // 데이터 로드
                 UnitData data = DataManager.Instance.GetPlayerData(selectedMembers[i].unitID);
+                Debug.Log($"[HomeManager] unitID:{selectedMembers[i].unitID}, data:{data != null}, sprite:{data?.unitBattleSD != null}");
+
+                if (data == null || data.unitBattleSD == null)
+                {
+                    Debug.LogError($"[HomeManager] 데이터 또는 스프라이트 없음! unitID:{selectedMembers[i].unitID}");
+                    continue; // 에러 나도 다음으로 진행
+                }
 
                 // 이미지 교체 (Battle SD 이미지를 사용하거나 Portrait 사용)
                 characterImages[i].sprite = data.unitBattleSD;
-
+                characterImages[i].transform.DOKill();
                 // 여기에 위에서 만든 로밍(Roam) 루틴을 실행시키면 됩니다.
                 StartCoroutine(RoamRoutine(characterImages[i].transform));
+                Debug.Log($"[HomeManager] RoamRoutine 시작!");
             }
             else
             {
@@ -51,7 +92,6 @@ public class HomeManager : MonoBehaviour
             }
         }
     }
-
     private List<PartyMember> GetRandomFiveMembers(List<PartyMember> fullList)
     {
         // 원본 리스트 복사 (원본 보존을 위함)

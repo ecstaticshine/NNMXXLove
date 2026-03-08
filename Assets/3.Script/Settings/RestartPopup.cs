@@ -10,7 +10,7 @@ public class RestartPopup : MonoBehaviour
     {
         PlayerPrefs.Save();
         GlobalUIManager.Instance.ClearStateStack();
-        SceneManager.LoadScene("TitleScene"); // 타이틀씬 이름으로 바꿔주세요
+        SceneManager.LoadScene("TitleScene"); 
     }
 
     public void OnClickLater()

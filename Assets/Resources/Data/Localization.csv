@@ -15,8 +15,8 @@ ITEM_NAME_2001,일반 강화석,一般強化石
 ITEM_DESC_2001,캐릭터 레벨업에 소모되는 돌,キャラクターレベルアップに使用される石
 ITEM_NAME_3001,하급 진화석,下級進化石
 ITEM_DESC_3001,캐릭터 레벨 한계치를 60에서 70으로 올려주는 돌,キャラクターレベルを60から70まで上げられる石
-ITEM_NAME_4001,귀여운,かわいい
-ITEM_DESC_4001,캐릭터 태그,キャラクターカスタムタグ
+ITEM_NAME_4001,귀여움,かわいさ
+ITEM_DESC_4001,공격력이 증가하는 캐릭터 태그,攻撃力が増加するキャラクターカスタムタグ
 STAMINA_NAME,스테미나,スタミナ
 STAMINA_DESC,5분마다 1씩 회복됩니다.\n최대 회복까지 남은 시간: {0},5分毎に1回復します。\n最大回復まで残り時間 : {0}
 STAMINA_FULL,이미 가득 찼습니다.,スタミナが満タンです。
@@ -101,3 +101,42 @@ UNIT_DESC_12,터프한 늑대 수인 아내,タフな狼獣人の嫁
 UNIT_DESC_13,달의 공주 아내,月の姫嫁
 UNIT_DESC_14,은은한 꽃향기 나는 아내,花の香りがする嫁
 UNIT_DESC_15,의외로 외로움쟁이인 아내,意外に寂しがり屋の嫁
+UNIT_NAME_Goblin,고블린,ゴブリン
+UNIT_DESC_Goblin,무리 지어서 다니지만 그렇게 쎄지 않다.,群れるが、そこまで強くない。
+UNIT_NAME_Golem,골렘,ゴーレム
+UNIT_DESC_Golem,HP가 높아서 쉽게 쓰러뜨리지 못한다.,HPが高くて、すぐ倒せそうにない。
+UNIT_NAME_Leopard,표범,レオパード
+UNIT_DESC_Leopard,귀여우니깐 때리지 마세요.,かわいいから、殴らないで。
+UNIT_NAME_MiniDragon,미니 드래곤,ミニドラゴン
+UNIT_DESC_MiniDragon,드래곤인지 애매한 몬스터.,ドラゴンなのかもあいまいなモンスター。
+UNIT_NAME_Lycan,라이칸,ライカン
+UNIT_DESC_Lycan,늑대남.,狼男。
+UNIT_NAME_WildBoar,맷돼지,猪
+UNIT_DESC_WildBoar,돌진할 뿐.,突進するのみ。
+UNIT_NAME_PoisonBee,독이 있는 벌,毒バチ
+UNIT_DESC_PoisonBee,꽤나 빠르게 단체로 움직인다.,結構素早く、群れで動く。
+UNIT_NAME_PoisonSnake,독사,毒ヘビ
+UNIT_DESC_PoisonSnake,맹독주의.,猛毒注意。
+UNIT_NAME_Skeleton,스켈레톤,スケルトン
+UNIT_DESC_Skeleton,보통은 검 들고 있지 않나?,なんで斧持ってるの？そこは剣だろうが。
+Pull1,1회 거래,1回取引
+Pull10,10회 거래,10回取引
+Gacha_DESC_1,50회 거래 내에 픽업 캐릭터 출현,50回取引で、ピックアップキャラクター出現
+Gacha_DESC_2,"10회 거래 시, PL 이상 부인 확정!",10回取引時、PL以上の嫁確定ゲット！
+Rate_Info,확률 정보,確率詳細
+Wife_Info,부인 정보,キャラ詳細
+Story_Main,메인 스토리,メインストーリー
+ITEM_NAME_4002,빠름,素早さ
+ITEM_DESC_4002,속도가 증가하는 캐릭터 태그,速さが増加するキャラクターカスタムタグ
+ITEM_NAME_4003,튼튼함,頑丈
+ITEM_DESC_4003,HP가 증가하는 캐릭터 태그,HPが増加するキャラクターカスタムタグ
+UI_PLAYER_NAME,- 플레이어명 :,- プレイヤー名：
+UI_LOGIN_NONE,로그인 안됨,ログインなし
+UI_LOGIN_GUEST,게스트 로그인 중,ゲストログイン中
+UI_LOGIN_GOOGLE,구글 로그인 중,Googleログイン中
+UI_CHANGE_CONFIRM,변경,変更
+UI_LANGUAGE_CURRENT_KO,- 언어 : 한국어 적용 중,- 言語：韓国語 適用中
+UI_LANGUAGE_CURRENT_JP,- 언어 : 일본어 적용 중,- 言語：日本語 適用中
+UI_BUTTON_LOGIN_GUEST,게스트 로그인,ゲストログイン
+UI_BUTTON_LOGOUT,로그아웃,ログアウト
+UI_BUTTON_LOGIN_GOOGLE,구글 로그인 준비중,グーグルログイン準備中

@@ -134,6 +134,19 @@ public class TitleSceneController : MonoBehaviour
             yield return null;
         }
 
+        // 게스트 로그인 먼저
+        if (AuthManager.Instance != null && !AuthManager.Instance.IsLoggedIn)
+        {
+            var loginTask = AuthManager.Instance.LoginAsGuest();
+            yield return new WaitUntil(() => loginTask.IsCompleted);
+        }
+
+        yield return new WaitUntil(() =>
+            AuthManager.Instance != null &&
+            AuthManager.Instance.IsLoggedIn &&
+            DataManager.Instance.userData != null &&
+            DataManager.Instance.userData.stageHistory != null);
+
         bool hasSeenPrologue = DataManager.Instance.userData.stageHistory
     .Exists(x => x.stageID == "Prologue" && x.isStoryRead);
 

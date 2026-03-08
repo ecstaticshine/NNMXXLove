@@ -16,6 +16,7 @@ public class UserData
     public string lastStaminaUpdateTime; // 스테미나 회복 계산용 시간
 
     public bool hasSeenPrologue = false;
+    public bool isInitialItemGiven = false;
 
     public float textSpeed =0.05f;
 
@@ -45,8 +46,9 @@ public class UserData
         this.lastStaminaUpdateTime = DateTime.Now.ToString();
 
         // 초기 캐릭터 지급 (예: 1번 캐릭터)
-        this.ownedCharacters.Add(new CharacterSaveData(1));
-        this.ownedCharacters.Add(new CharacterSaveData(2));
+        this.ownedCharacters.Add(new CharacterSaveData(3));
+        this.inventory.Add(new ItemInventoryData { itemID = 2001, count = 50 });
+        this.inventory.Add(new ItemInventoryData { itemID = 4001, count = 3 });
     }
 }
 

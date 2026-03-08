@@ -84,6 +84,16 @@ public class GlobalUIManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name == "TitleScene")
+        {
+            topUI.SetActive(false);
+            bottomUI.SetActive(false);
+            PlayerInfo.SetActive(false);
+            settingsPanel.SetActive(false);
+            stateStack.Clear();
+            currentState = SceneState.Title;
+        }
+
         // 씬이 바뀔 때마다 현재 상태에 맞춰 UI를 강제 동기화
         RefreshCurrentUI();
     }
@@ -133,11 +143,13 @@ public class GlobalUIManager : MonoBehaviour
         switch (currentState)
         {
             case SceneState.Title:
+                BackButton.SetActive(false);
                 topUI.SetActive(false);
                 bottomUI.SetActive(false);
                 PlayerInfo.SetActive(false);
                 break;
             case SceneState.Home:
+                gameObject.SetActive(true);
                 topUI.SetActive(true);
                 bottomUI.SetActive(true);
                 PlayerInfo.SetActive(true);
@@ -195,8 +207,9 @@ public class GlobalUIManager : MonoBehaviour
                 PlayerInfo.SetActive(false);
                 break;
             case SceneState.Settings:
-                Debug.Log($"[Settings] settingsPanel null? {settingsPanel == null}");
-                settingsPanel.SetActive(true);
+                settingsPanel.SetActive(!settingsPanel.activeSelf);
+                if (!settingsPanel.activeSelf)
+                    currentState = stateStack.Count > 0 ? stateStack.Peek() : SceneState.Home;
                 break;
 
         }
@@ -249,7 +262,8 @@ public class GlobalUIManager : MonoBehaviour
     public void OnTabMenuButtonClicked(int targetState)
     {
         SceneState target = (SceneState)targetState;
-        if (currentState == target)
+
+        if (currentState == target && target != SceneState.Settings)
         {
             return;
         }
@@ -274,5 +288,13 @@ public class GlobalUIManager : MonoBehaviour
     public void ClearStateStack()
     {
         stateStack.Clear();
+    }
+
+    // 타이틀 초기화 후 세팅 패널 지워두기
+    public void CloseSettingsPanel()
+    {
+
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
     }
 }

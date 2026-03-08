@@ -81,16 +81,23 @@ public class GachaResultUI : MonoBehaviour
         foreach (Transform child in cardContainer) Destroy(child.gameObject);
 
         Debug.Log("연출 대기 중... 화면을 클릭하세요.");
+
+        Debug.Log($"[GachaResultUI] coverEffectPanel Active:{coverEffectPanel.activeSelf}, Alpha:{coverCanvas?.alpha}, BlocksRaycasts:{coverCanvas?.blocksRaycasts}, Interactable:{coverCanvas?.interactable}");
+
     }
 
     // 화면 전체를 덮는 투명 버튼 등에 연결할 함수
     public void OnScreenClick()
     {
+        Debug.Log($"[GachaResultUI] OnScreenClick 호출! 현재 상태: {currentState}");
+
+
         if (currentState == ResultState.WaitingForFirstClick)
         {
             // [단계 1] 커버 치우기
             currentState = ResultState.AnimatingCards;
-            coverEffectPanel.GetComponent<CanvasGroup>()?.DOFade(0, 0.5f).OnComplete(() => {
+            coverEffectPanel.GetComponent<CanvasGroup>()?.DOFade(0, 0.5f).OnComplete(() =>
+            {
                 coverEffectPanel.SetActive(false);
                 DisplayCards();
             });
@@ -121,7 +128,8 @@ public class GachaResultUI : MonoBehaviour
                 iconObj.GetComponent<UnitIcon>()?.SetUnitIcon(data, 1);
                 iconObj.transform.DOScale(1f, 0.4f).SetDelay(i * 0.1f).SetEase(Ease.OutBack)
                     .OnStart(() => AudioManager.Instance?.PlaySE("Pon"))
-                    .OnComplete(() => {
+                    .OnComplete(() =>
+                    {
                         // 마지막 카드 연출이 끝나면 상태를 Finished로 변경
                         if (i == storedResults.Count - 1) currentState = ResultState.Finished;
                     });
@@ -134,7 +142,8 @@ public class GachaResultUI : MonoBehaviour
         currentState = ResultState.None;
         mainCanvasGroup.blocksRaycasts = false; // 중요: 모든 입력 차단 해제
 
-        mainCanvasGroup.DOFade(0, 0.3f).OnComplete(() => {
+        mainCanvasGroup.DOFade(0, 0.3f).OnComplete(() =>
+        {
             gameObject.SetActive(false);
             darkArea.SetActive(false);
         });

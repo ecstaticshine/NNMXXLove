@@ -78,7 +78,7 @@ public class DataManager : MonoBehaviour
 
     public StoryData selectedStoryData { get; set; } // 선택한 스토리 데이터
 
-public static Action OnUserDataChanged; //유저 정보 변경
+    public static Action OnUserDataChanged; //유저 정보 변경
 
     // 로컬라이제이션맵
     private Dictionary<string, string> localizationMap = new Dictionary<string, string>();
@@ -99,10 +99,6 @@ public static Action OnUserDataChanged; //유저 정보 변경
             InitializeLocalization();
             // 유저가 있는 월드 데이터만 로드
             LoadGameDataByWorld(currentWorldIndex);
-
-            GiveItem(2001, 50);
-            GiveItem(4001, 5);
-            GiveItem(5001, 7);
 
             if (userData.stamina <= 0 && !PlayerPrefs.HasKey("SaveFile"))
             {
@@ -136,12 +132,16 @@ public static Action OnUserDataChanged; //유저 정보 변경
 
     public List<PartyMember> GetCurrentParty()
     {
-        // 만약 파티가 비어있다면, 기본 유닛을 넣어주기
+        int slotIndex = 0;
         if (currentParty.Count == 0)
         {
-            Debug.LogWarning("파티가 비어있습니다! 임시 데이터를 생성합니다.");
-            currentParty.Add(new PartyMember(0, 1)); // 0번 슬롯에 1번 유닛
-            currentParty.Add(new PartyMember(1, 2)); // 1번 슬롯에 2번 유닛
+            foreach (var character in userInventory)
+            {
+                if (slotIndex >= 5) break; // 최대 5명
+
+                currentParty.Add(new PartyMember(slotIndex, character.unitID));
+                slotIndex++;
+            }
         }
 
         return currentParty;
@@ -183,6 +183,12 @@ public static Action OnUserDataChanged; //유저 정보 변경
 
         Debug.Log("로컬 데이터 저장 완료");
 
+
+        // Firebase 저장 추가
+        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
+        {
+            _ = AuthManager.Instance.SaveUserDataToFirestore();
+        }
         // [미래] 파이어베이스 연동 시 이곳에 추가
         // FirebaseManager.Instance.UploadUserData(json);
     }
@@ -193,7 +199,6 @@ public static Action OnUserDataChanged; //유저 정보 변경
         if (!PlayerPrefs.HasKey("SaveFile"))
         {
             userData = new UserData(); // 객체 생성
-
             userData.InitDefaultData();
 
             SaveData();
@@ -518,10 +523,8 @@ public static Action OnUserDataChanged; //유저 정보 변경
     public void ChangeLanguage(Language newLang)
     {
         currentLanguage = newLang;
-        // PlayerPrefs.SetInt("SettingLanguage", (int)newLang); // 설정 저장
         LoadLocalization();
-
-        // 이벤트 등을 활용해 현재 열려있는 UI들의 텍스트를 갱신하도록 신호를 보낼 수 있음
+        OnDataChanged?.Invoke();
     }
 
     public void AttachTag(Character target, int tagItemID, int slotIndex)
@@ -771,6 +774,8 @@ public static Action OnUserDataChanged; //유저 정보 변경
 
     private void RegenrateStamina()
     {
+        if (userData == null) return;
+
         // 최대치 이상이면 충전 중지
         if (userData.stamina >= maxStamina)
         {
@@ -1057,7 +1062,7 @@ public static Action OnUserDataChanged; //유저 정보 변경
     }
 
     public List<ItemInventoryData> GiveStoryReward(int itemID, int count)
-{
+    {
         // 1. 보상 리스트 생성 (결과창 연출용)
         List<ItemInventoryData> storyRewards = new List<ItemInventoryData>();
 
@@ -1105,6 +1110,24 @@ public static Action OnUserDataChanged; //유저 정보 변경
     {
         userData.hasSeenPrologue = true;
         SaveData();
+    }
+
+    public void ResetForNewSession()
+    {
+        currentParty.Clear();
+        userInventory.Clear();
+        itemDataCache.Clear();
+        allUnitDatas.Clear();
+        stageList.Clear();
+        stageDetailDict.Clear();
+
+        // userData는 null로 두지 말고 빈 객체로!
+        userData = new UserData();
+
+        // 스태미나 코루틴 재시작
+        StopAllCoroutines();
+        StartCoroutine(StaminaRegenerateRoutine());
+
     }
 }
 

@@ -79,7 +79,9 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            currentSpeed = 1f;
             Time.timeScale = 1f;
+            uiManager.UpdateSpeedUI(1f);
             Debug.Log("재개: 신부들을 향한 여정이 계속됩니다!");
         }
     }
@@ -291,9 +293,17 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log(isAutoBattle ? "AutoBattle" : "Not AutoBattle");
 
-        if (isAutoBattle && currentPhase == BattlePhase.PlayerSelectPhase)
+        if (isAutoBattle)
         {
-            OnAttackButtonClicked();
+            battleTimer.StopTimer(); // 자동전투 켜면 타이머 멈춤
+            if (currentPhase == BattlePhase.PlayerSelectPhase)
+                OnAttackButtonClicked();
+        }
+        else
+        {
+            // 자동전투 끄면 다음 아군 페이즈 때 타이머 다시 시작
+            if (currentPhase == BattlePhase.PlayerSelectPhase)
+                battleTimer.StartTimer();
         }
     }
 
@@ -597,8 +607,15 @@ public class BattleManager : MonoBehaviour
             uiManager.UpdateSpeedUI(1f);
         }
 
-        // 타이머 시작
-        battleTimer.StartTimer();
+        // 자동전투 중이 아닐 때만 타이머 시작
+        if (!isAutoBattle)
+        {
+            battleTimer.StartTimer();
+        }
+        else
+        {
+            battleTimer.StopTimer(); // 자동전투 중엔 타이머 멈춤
+        }
 
         // 아군 페이즈
         OnPhaseChanged(BattlePhase.PlayerSelectPhase);
@@ -641,7 +658,6 @@ public class BattleManager : MonoBehaviour
         {
             case BattlePhase.PlayerSelectPhase:
                 uiManager.RefreshTimeline(playerTurnOrder);
-                battleTimer.StartTimer();
                 Debug.Log("플레이어의 턴입니다.");
                 break;
             case BattlePhase.PlayerActionPhase:
@@ -660,16 +676,10 @@ public class BattleManager : MonoBehaviour
     {
         if (currentPhase.Equals(BattlePhase.PlayerSelectPhase))
         {
-            if (isAutoBattle)
-            {
-                OnAttackButtonClicked();
-            }
-            else
-            {
-                _currentPhase = BattlePhase.BattleEnd;
-
-                EndBattle(false);
-            }
+            // 타이머 종료 시 자동전투 켜고 공격 실행
+            isAutoBattle = true;
+            uiManager.UpdateAutoBattleUI(true);
+            OnAttackButtonClicked();
         }
     }
 

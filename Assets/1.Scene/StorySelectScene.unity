@@ -573,6 +573,8 @@ MonoBehaviour:
     diamond: 0
     stamina: 120
     lastStaminaUpdateTime: 
+    hasSeenPrologue: 0
+    isInitialItemGiven: 0
     textSpeed: 0
     ownedCharacters: []
     inventory: []
@@ -957,7 +959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e19ef2578c9c5f46be00e38a1712e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UILocalizeText
-  localizationKey: Adventure_Travel
+  localizationKey: Story_Main
 --- !u!224 &822033248670373190
 RectTransform:
   m_ObjectHideFlags: 0

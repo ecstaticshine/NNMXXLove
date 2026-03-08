@@ -8,7 +8,6 @@ using UnityEngine.Video;
 
 public class GachaManager : MonoBehaviour
 {
-    public static GachaManager Instance = null;
 
     [Header("Data")]
     public List<GachaData> allGachaDatas;
@@ -27,14 +26,6 @@ public class GachaManager : MonoBehaviour
     public GachaResultUI resultUI; // 가챠 결과
 
     private System.Random rng = new System.Random();
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-    }
 
     private void Start()
     {
@@ -58,7 +49,7 @@ public class GachaManager : MonoBehaviour
             Debug.Log($"{data.gachaTitle} 체크 -> TL:{data.tlPool.Count}, PL:{data.plPool.Count}, L:{data.lPool.Count}");
 
             GameObject go = Instantiate(bannerPrefab, bannerParent);
-            go.GetComponent<GachaBannerButton>().Setup(data);
+            go.GetComponent<GachaBannerButton>().Setup(data,this);
         }
 
         // 2. 초기 가챠 설정
@@ -178,5 +169,6 @@ public class GachaManager : MonoBehaviour
             DataManager.Instance.OnDataChanged?.Invoke();
         }
     }
+
 }
 
