@@ -1,0 +1,143 @@
+Key,KO (1번 열),JP (2번 열)
+WORLD_01_NAME,시작의 해변,始まりの浜辺
+WORLD_02_NAME,깊은 숲,深い森
+STAGE_STAMINA,스테미나,スタミナ
+BTN_START,전투 시작,戦闘開始
+UNIT_NAME_SLIME,슬라임,スライム
+UNIT_DESC_SLIME,최약체의 몬스터. 핵을 부시면 죽는다.,最弱のモンスター、核を壊すと死ぬ。
+ITEM_NAME_1001,코인,コイン
+ITEM_DESC_1001,하트 무늬의 세잎 클로버가 그려져 있는 코인.\n캐릭터 강화 시 소모되는 기본 화폐,ハート型の三つ葉が描かれているコイン。\nキャラクター強化時に使用される基本貨幣
+ITEM_NAME_1002,다이아,ダイア
+ITEM_DESC_1002,반짝이는 작은 다이아.\n뽑기 시스템에서 사용되는 재화,輝く小さなダイア。\nガチャシステムに使用される財貨
+ITEM_NAME_1003,경험치,経験値
+ITEM_DESC_1003,스테이지 클리어 시 캐릭터에게 주어지는 경험치,ステージクリア時にキャラクターに与えられる経験値
+ITEM_NAME_2001,일반 강화석,一般強化石
+ITEM_DESC_2001,캐릭터 레벨업에 소모되는 돌,キャラクターレベルアップに使用される石
+ITEM_NAME_3001,하급 진화석,下級進化石
+ITEM_DESC_3001,캐릭터 레벨 한계치를 60에서 70으로 올려주는 돌,キャラクターレベルを60から70まで上げられる石
+ITEM_NAME_4001,귀여움,かわいさ
+ITEM_DESC_4001,공격력이 증가하는 캐릭터 태그,攻撃力が増加するキャラクターカスタムタグ
+STAMINA_NAME,스테미나,スタミナ
+STAMINA_DESC,5분마다 1씩 회복됩니다.\n최대 회복까지 남은 시간: {0},5分毎に1回復します。\n最大回復まで残り時間 : {0}
+STAMINA_FULL,이미 가득 찼습니다.,スタミナが満タンです。
+STAMINA_TIME_FORMAT,{0}분 {1}초,{0}分 {1}秒
+Menu_Character,캐릭터,キャラ
+Menu_Story,스토리,ストーリー
+Menu_Adventure,모험,冒険
+Menu_Home,홈,ホーム
+Menu_Gacha,가챠,ガチャ
+Menu_Setting,설정,設定
+Adventure_Travel,여정의 기록,旅路の記録
+Adventure_Raid,레이드,レイド
+Adventure_Detachment,파견,派遣
+Adventure_Placement,편성,編成
+Adventure_Cancel,취소,キャンセル
+Adventure_Start,출발,出発
+Adventure_Enemy,적,エネミー
+Adventure_Item,획득,アイテム
+Adventure_Rewards,보상,報酬
+Adventure_Stamina,스테미나,スタミナ
+Character_Upgrade,강화,強化
+Character_Tag,태그,タグ
+Character_BT,돌파,突破
+Character_Detail,상세,詳細
+Character_Rarity,등급,レアリティ
+Character_Piece,보유 조각,保有中のカケラ
+Character_Amount,개,個
+Character_Upgrade_Btn,강화하기,強化する
+Character_Use,사용,使う
+Character_HP,캐릭터 HP,キャラクター HP
+synergy_direct,<color=#FFCC00>[직접공격 시너지]</color> 피해 {0}%,<color=#FFCC00>[ダイレクトシナジー]</color> ダメージ {0}%
+synergy_dot,<color=#FFCC00>[지속피해 시너지]</color> 타격 +{0}회,<color=#FFCC00>[持続シナジー]</color> 打撃 +{0}回
+synergy_splash,<color=#FFCC00>[확산피해]</color> 주변에 {0}% 확산 피해,<color=#FFCC00>[スプラッシュシナジー]</color> 周りに {0}% 拡散ダメージ
+synergy_none,활성화된 시너지 없음,活性化中のシナジーなし
+shield_info_format,남은 횟수: {0}회\n방어 상한: {1},残り回数：{0}回\n防御上限: {1}
+tag_equip_question,해당 태그를 장착하시겠습니까?,こちらのタグを装備しますか？
+tag_equip_confirm,장착,装備
+tag_equip_cancel,취소,キャンセル
+UI_SUMMARY_LABEL,줄거리,あらすじ
+Prologue,프롤로그,プロローグ
+UNIT_NAME_3,에피메라,エピメラ
+UNIT_NAME_2,세레나,セレナ
+UNIT_NAME_1,이그나,イグナ
+UNIT_NAME_5,하루,ハル
+NoName,현자,賢者
+Prologue_S,"""여신 스쿨드의 집착을 피해 부인들을 카드에 봉인하고\n이세계 전이를 감행하던 현자는, 이를 방해하는 에피미라마저\n살리기 위해 자신의 기억을 희생하며 동반 전이한다. \n\n하지만 차원 이동 중 발생한 충돌로 현자와 에피미라는 기억을 잃고, 소중한 부인들이 담긴 마법 카드들마저 새로운 세계 곳곳으로\n뿔뿔이 흩어지게 된다. \n\n기억을 잃은 채 낯선 세계에 떨어진 현자는, 에피미라와 함께 흩어진 부인들을 되찾고 다시 재회하기 위한 고난의 여정을 시작하게 된다.""",女神「スクルド」の執着から逃れるため、\n嫁たちをカードに封印して異世界への転移を敢行した賢者。\nしかし、自分を阻止しようとしたスクルドの部下\n「エピミラ」をも見捨てられず、自らの記憶を犠牲にして\n彼女と共に異世界へと転移してしまう。\n\nしかし、次元移動中の衝突により賢者とエピミラは\n記憶を失い、大事な嫁たちが封印された魔法カードも\nまた、新しい世界各地へと散り散りになってしまった。\n\n記憶を失ったまま未知の世界へ放り出された賢者は、\nエピミラと共に散り散りになった嫁たちの\nカードを回収し、彼女たちと再会を果たすための\n過酷な旅路へと足を踏み入れる。
+UNIT_NAME_7,에리카,エリカ
+UNIT_NAME_4,멜로리스,メロリス
+UNIT_NAME_8,다투라,ダトゥラ
+UNIT_NAME_10,미리안,ミリアン
+UNIT_NAME_11,아이비,アイヴィ
+UNIT_NAME_12,벨라,ベラ
+UNIT_NAME_13,루나,ルナ
+UNIT_NAME_14,플로라,フローラ
+UNIT_NAME_15,아루네,アルネ
+UNIT_NAME_9,릭시,リクシー
+UNIT_NAME_6,뷔아,ヴィア
+synergy_title_direct,Direct 시너지,ダイレクト・シナジー
+synergy_desc_direct_1,직접 공격 데미지 +25%,ダイレクトアタックのダメージ +25%
+synergy_desc_direct_2,직접 공격 데미지 +60%,ダイレクトアタックのダメージ +60%
+synergy_desc_direct_3,직접 공격 데미지 +100%,ダイレクトアタックのダメージ +100%
+synergy_title_splash,Splash 시너지,スプラッシュ・シナジー
+synergy_desc_splash_1,확산 피해 비율 +15%,スプラッシュアタックの拡散ダメージ比率 +15%
+synergy_desc_splash_2,확산 피해 비율 +35%,スプラッシュアタックの拡散ダメージ比率 +35%
+synergy_desc_splash_3,확산 피해 비율 +60%,スプラッシュアタックの拡散ダメージ比率 +60%
+synergy_title_dot,Dot 시너지,ドット・シナジー
+synergy_desc_dot_1,추가 공격 횟수 +1,ドットアタックの回数 +1
+synergy_desc_dot_2,추가 공격 횟수 +2,ドットアタックの回数 +2
+synergy_desc_dot_3,추가 공격 횟수 +4,ドットアタックの回数 +4
+UNIT_DESC_1,늠름한 용족 아내,凛々しい竜族の嫁
+UNIT_DESC_2,츳코미를 넣는 츤데레 아내,ツッコミを入れるツンデレ嫁
+UNIT_DESC_3,기억상실의 아내,記憶喪失の嫁（？）
+UNIT_DESC_4,다중방어진의 천재 아내,多重防御陣天才の嫁
+UNIT_DESC_5,힐링되는 작은 아내,癒し系の小さな嫁
+UNIT_DESC_6,화내게 하면 안 되는 착한 엘프 아내,怒らせてはいけない優しいエルフの嫁
+UNIT_DESC_7,중2병 아내,中二病をこじらせている嫁
+UNIT_DESC_8,겉과 속이 다른 아내,表と裏が違う嫁
+UNIT_DESC_9,갸루 아내,ギャル嫁
+UNIT_DESC_10,연금술사 아내,錬金術師の嫁
+UNIT_DESC_11,맹독주의 아내,猛毒注意の嫁
+UNIT_DESC_12,터프한 늑대 수인 아내,タフな狼獣人の嫁
+UNIT_DESC_13,달의 공주 아내,月の姫嫁
+UNIT_DESC_14,은은한 꽃향기 나는 아내,花の香りがする嫁
+UNIT_DESC_15,의외로 외로움쟁이인 아내,意外に寂しがり屋の嫁
+UNIT_NAME_Goblin,고블린,ゴブリン
+UNIT_DESC_Goblin,무리 지어서 다니지만 그렇게 쎄지 않다.,群れるが、そこまで強くない。
+UNIT_NAME_Golem,골렘,ゴーレム
+UNIT_DESC_Golem,HP가 높아서 쉽게 쓰러뜨리지 못한다.,HPが高くて、すぐ倒せそうにない。
+UNIT_NAME_Leopard,표범,レオパード
+UNIT_DESC_Leopard,귀여우니깐 때리지 마세요.,かわいいから、殴らないで。
+UNIT_NAME_MiniDragon,미니 드래곤,ミニドラゴン
+UNIT_DESC_MiniDragon,드래곤인지 애매한 몬스터.,ドラゴンなのかもあいまいなモンスター。
+UNIT_NAME_Lycan,라이칸,ライカン
+UNIT_DESC_Lycan,늑대남.,狼男。
+UNIT_NAME_WildBoar,맷돼지,猪
+UNIT_DESC_WildBoar,돌진할 뿐.,突進するのみ。
+UNIT_NAME_PoisonBee,독이 있는 벌,毒バチ
+UNIT_DESC_PoisonBee,꽤나 빠르게 단체로 움직인다.,結構素早く、群れで動く。
+UNIT_NAME_PoisonSnake,독사,毒ヘビ
+UNIT_DESC_PoisonSnake,맹독주의.,猛毒注意。
+UNIT_NAME_Skeleton,스켈레톤,スケルトン
+UNIT_DESC_Skeleton,보통은 검 들고 있지 않나?,なんで斧持ってるの？そこは剣だろうが。
+Pull1,1회 거래,1回取引
+Pull10,10회 거래,10回取引
+Gacha_DESC_1,50회 거래 내에 픽업 캐릭터 출현,50回取引で、ピックアップキャラクター出現
+Gacha_DESC_2,"10회 거래 시, PL 이상 부인 확정!",10回取引時、PL以上の嫁確定ゲット！
+Rate_Info,확률 정보,確率詳細
+Wife_Info,부인 정보,キャラ詳細
+Story_Main,메인 스토리,メインストーリー
+ITEM_NAME_4002,빠름,素早さ
+ITEM_DESC_4002,속도가 증가하는 캐릭터 태그,速さが増加するキャラクターカスタムタグ
+ITEM_NAME_4003,튼튼함,頑丈
+ITEM_DESC_4003,HP가 증가하는 캐릭터 태그,HPが増加するキャラクターカスタムタグ
+UI_PLAYER_NAME,- 플레이어명 :,- プレイヤー名：
+UI_LOGIN_NONE,로그인 안됨,ログインなし
+UI_LOGIN_GUEST,게스트 로그인 중,ゲストログイン中
+UI_LOGIN_GOOGLE,구글 로그인 중,Googleログイン中
+UI_CHANGE_CONFIRM,변경,変更
+UI_LANGUAGE_CURRENT_KO,- 언어 : 한국어 적용 중,- 言語：韓国語 適用中
+UI_LANGUAGE_CURRENT_JP,- 언어 : 일본어 적용 중,- 言語：日本語 適用中
+UI_BUTTON_LOGIN_GUEST,게스트 로그인,ゲストログイン
+UI_BUTTON_LOGOUT,로그아웃,ログアウト
+UI_BUTTON_LOGIN_GOOGLE,구글 로그인 준비중,グーグルログイン準備中
+UI_AUDIO,오디오,オーディオ

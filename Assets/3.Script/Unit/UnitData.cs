@@ -8,8 +8,14 @@ public enum UnitType { Dealer, Healer, Buffer }
 [CreateAssetMenu(fileName = "NewUnitData", menuName = "ScriptableObjects/UnitData")]
 public class UnitData : ScriptableObject
 {
+    [Header("고유 ID")]
+    public int unitID;
+
+    [Header("Localization Keys")]
+    public string unitNameKey;
+    public string descriptionKey;
+
     [Header("기본 정보")]
-    public string unitName;
     public UnitType unitType;           // 유닛 타입 : 힐러 / 딜러 / 버퍼
 
     [Header("태그 정보")]

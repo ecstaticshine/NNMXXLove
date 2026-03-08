@@ -15,7 +15,7 @@ MonoBehaviour:
   unitName: "\uC774\uADF8\uB2C8"
   unitType: 0
   defaultTag: Direct
-  unitPortrait: {fileID: 6120914730915384989, guid: e9f386e64ab32fd4fba63fa1f0d2ff19, type: 3}
+  unitPortrait: {fileID: 21300000, guid: e9f386e64ab32fd4fba63fa1f0d2ff19, type: 3}
   unitBattleSD: {fileID: -6295731107033180628, guid: 01936ec8dc6f1274a9a94e68a2db65d4, type: 3}
   unitAttackSD: {fileID: -7630217312728748310, guid: 847272620a3ce1e499b70119274ab624, type: 3}
   unitTakeDamageSD: {fileID: 117189903056207879, guid: 7c762bf8fd65c8b4fa91386944ffefb4, type: 3}

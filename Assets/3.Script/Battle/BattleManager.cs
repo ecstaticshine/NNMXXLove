@@ -29,11 +29,21 @@ public class BattleManager : MonoBehaviour
     [Header("Game speed")]
     public float currentSpeed = 1f; // 기본 1배속
 
+    // 순서
     public List<Unit> playerTurnOrder = new List<Unit>();
     public List<Unit> enemyTurnOrder = new List<Unit>();
 
+    // 슬롯
     public Dictionary<int, Unit> playerSlot = new Dictionary<int, Unit>();
     public Dictionary<int, Unit> enemySlot = new Dictionary<int, Unit>();
+
+    // 경험치 먹인 모든 캐릭터 리스트
+    public List<Character> characterParties = new List<Character>();
+
+    // 캐릭터 스폰 지역
+    [Header("Slot Assignments")]
+    public Transform[] playerSlotTransforms = new Transform[9];
+    public Transform[] enemySlotTransforms = new Transform[9];
 
     public static BattleManager instance = null;
 
@@ -41,6 +51,8 @@ public class BattleManager : MonoBehaviour
     public SynergyManager enemySynergy = new SynergyManager();
 
     private int _actionIndex = 0;
+
+    public bool isPrologue = false;
 
     private void Awake()
     {
@@ -67,14 +79,26 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            currentSpeed = 1f;
             Time.timeScale = 1f;
+            uiManager.UpdateSpeedUI(1f);
             Debug.Log("재개: 신부들을 향한 여정이 계속됩니다!");
         }
     }
 
     private void Start()
     {
-        InitBattleUnits();
+        AudioManager.Instance.PlayBGM("Drumnbass_02");
+
+        if (isPrologue)
+        {
+            InitPrologueBattle();
+        }
+        else
+        {
+            InitBattleUnits();
+        }
+
         RefreshSynergies();
 
         battleTimer.OnTimerOut += HandleTimerOut;
@@ -90,8 +114,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+
+
     public void BattleStart()
     {
+        AudioManager.Instance.PlaySE("Battle_Start_Horn");
         Debug.Log("전투 개시!");
         EnterTurnStart();
     }
@@ -102,91 +129,158 @@ public class BattleManager : MonoBehaviour
         enemySynergy.UpdateSynergy(enemySlot, false);
     }
 
+    private void SpawnEnemiesFromData()
+    {
+        //데이터 매니저에 저장한 내용 가지고 오기
+        string stageID = DataManager.Instance.selectedStageID;
+        StageDetailData detail = DataManager.Instance.GetStageDetail(stageID);
+
+        if (detail == null) return;
+
+        foreach (var enemyInfo in detail.enemies)
+        {
+            // 1. 유닛 데이터 로드
+            UnitData data = DataManager.Instance.GetEnemyData(enemyInfo.unitID);
+            GameObject commonMonsterPrefab = Resources.Load<GameObject>("Prefabs/Units/Monster");
+            GameObject commonCharacterPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+            GameObject prefabToUse = (data is CharacterData) ? commonCharacterPrefab : commonMonsterPrefab;
+
+            if (prefabToUse != null && enemyInfo.slotIndex < enemySlotTransforms.Length)
+            {
+                Transform targetSlot = enemySlotTransforms[enemyInfo.slotIndex];
+
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
+                GameObject instance = Instantiate(prefabToUse, anchor);
+                instance.transform.localPosition = Vector3.zero; // 위치 초기화
+                Unit unit = instance.GetComponent<Unit>();
+
+                // [수정] 클래스 타입에 따른 초기화 분기
+                if (unit is Character character && data is CharacterData charData)
+                {
+                    // 적군 캐릭터라면 레벨과 돌파 정보 설정 (enemyInfo에 해당 데이터가 있다면 넣어주세요)
+                    character.SetCharacterData(charData, 10, 0, (0, 0, 0));
+                }
+                else
+                {
+                    // 일반 몬스터 초기화
+                    unit.data = data;
+                    unit.InitUnitStat();
+                }
+
+                unit.SetSlotIndex(enemyInfo.slotIndex);
+                enemySlot[enemyInfo.slotIndex] = unit;
+                enemyTurnOrder.Add(unit);
+
+                SlotController sc = targetSlot.GetComponent<SlotController>();
+                if (sc != null)
+                {
+                    sc.RefreshColor(unit.data.defaultTag);
+                }
+            }
+        }
+    }
+
+    private void SpawnPlayersFromData()
+    {
+        // 1. 데이터 매니저에서 현재 편성된 파티 정보를 가지고 오기
+        var partyData = DataManager.Instance.GetCurrentParty();
+
+        if (partyData == null) return;
+
+        //아군 캐릭터는 캐릭터만 있음.
+        GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+        foreach (var member in partyData)
+        {
+            // 2. 유닛 데이터 및 프리팹 로드
+            UnitData data = DataManager.Instance.GetPlayerData(member.unitID);
+
+            // [중요] 유저의 실제 성장 데이터를 가져옴
+            CharacterInfo userInfo = DataManager.Instance.GetUserUnitInfo(member.unitID);
+            if (playerPrefab != null && member.slotIndex < playerSlotTransforms.Length)
+            {
+                Transform targetSlot = playerSlotTransforms[member.slotIndex];
+
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
+                // 3. 실제 생성 및 배치
+                GameObject instance = Instantiate(playerPrefab, anchor);
+                instance.transform.localPosition = Vector3.zero;
+
+                Character character = instance.GetComponent<Character>();
+
+                if (character != null && data is CharacterData charData)
+                {
+                    var tagStats = DataManager.Instance.GetTotalTagStats(userInfo.unitID);
+
+                    character.SetCharacterData(charData, userInfo.currentLevel, userInfo.currentBreakthrough, tagStats);
+
+                    characterParties.Add(character);
+
+                    character.SetSlotIndex(member.slotIndex);
+                    playerSlot[member.slotIndex] = character;
+                    playerTurnOrder.Add(character);
+
+                    SlotController sc = targetSlot.GetComponent<SlotController>();
+                    if (sc != null)
+                    {
+                        sc.RefreshColor(character.data.defaultTag);
+                    }
+                }
+            }
+        }
+    }
+
     private void InitBattleUnits()
     {
         playerSlot.Clear();
         enemySlot.Clear();
         playerTurnOrder.Clear();
         enemyTurnOrder.Clear();
+        characterParties.Clear();
 
-        Unit[] unitsInfield = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        SpawnPlayersFromData();
 
-        foreach (Unit unit in unitsInfield)
-        {
-            string parentName = unit.transform.parent.parent.name;
-            Image plateImage = unit.transform.parent.parent.GetChild(0).GetComponent<Image>();
+        SpawnEnemiesFromData();
 
-
-            if (parentName.Contains("Slot_"))
-            {
-                string indexStr = parentName.Replace("Slot_", "");
-                if (int.TryParse(indexStr, out int index))
-                {
-                    unit.SetSlotIndex(index);
-                }
-            }
-            // 색깔 칠하기
-            ApplyPlateColorByTag(unit, plateImage);
-
-            // 이제 어느 팀인지에 따라 맵에 등록합니다.
-            if (unit.data.isEnemy)
-            {
-                enemySlot[unit.GetSlotIndex()] = unit;
-                enemyTurnOrder.Add(unit);
-
-            }
-            else
-            {
-                playerSlot[unit.GetSlotIndex()] = unit;
-                playerTurnOrder.Add(unit);
-
-            }
-        }
         // 스피드 빠른 순서로 재정렬
         SortTurnOrder();
+
+        RefreshSynergies();
+
+        ForceUpdateAllSlotColors();
     }
 
-    private void ApplyPlateColorByTag(Unit unit, Image plate)
+    private void ForceUpdateAllSlotColors()
     {
-        if (plate == null) return;
-
-        // 2. 유닛이 없거나 유닛의 데이터가 없다면 '기본 색상'을 칠하고 리턴 (Null 에러 방지)
-        if (unit == null || unit.data == null)
+        // 플레이어 슬롯 갱신
+        for (int i = 0; i < playerSlotTransforms.Length; i++)
         {
-            plate.color = new Color(1f, 1f, 1f, 0.4f); // 기본 반투명 흰색
-            return;
-        }
-        Color targetColor = Color.white; // 기본값
-
-        // 태그에 따른 색상 설정
-        switch (unit.data.defaultTag)
-        {
-            case "Direct":
-                targetColor = new Color(1f, 0.3f, 0.3f, 0.6f); // 연한 빨강
-                break;
-            case "Splash":
-                targetColor = new Color(0.3f, 0.5f, 1f, 0.6f); // 연한 파랑
-                break;
-            case "Dot":
-                targetColor = new Color(0.3f, 1f, 0.3f, 0.6f); // 연한 초록
-                break;
-            default:
-                targetColor = new Color(1f, 1f, 1f, 0.4f); // 태그 없을 시 반투명 흰색
-                break;
+            playerSlot.TryGetValue(i, out Unit unit);
+            UpdateSlotColor(playerSlotTransforms[i], unit);
         }
 
-        plate.color = targetColor;
+        // 적 슬롯 갱신
+        for (int i = 0; i < enemySlotTransforms.Length; i++)
+        {
+            enemySlot.TryGetValue(i, out Unit unit);
+            UpdateSlotColor(enemySlotTransforms[i], unit);
+        }
     }
 
     public void UpdateSlotColor(Transform slotTransform, Unit unit = null)
     {
         if (slotTransform == null) return;
 
-        // 구조: Slot_X -> Plate_UI (첫 번째 자식)
-        Image plateImage = slotTransform.GetChild(0).GetComponent<Image>();
-        if (plateImage != null)
+        // slotTransform은 Slot_0, Slot_1 같은 최상위 슬롯
+        SlotController slotCtrl = slotTransform.GetComponent<SlotController>();
+
+        if (slotCtrl != null)
         {
-            ApplyPlateColorByTag(unit, plateImage);
+            // 유닛이 있으면 해당 태그 색상으로, 없으면 투명하게(null)
+            slotCtrl.RefreshColor(unit?.data?.defaultTag);
         }
     }
 
@@ -199,14 +293,24 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log(isAutoBattle ? "AutoBattle" : "Not AutoBattle");
 
-        if (isAutoBattle && currentPhase == BattlePhase.PlayerSelectPhase)
+        if (isAutoBattle)
         {
-            OnAttackButtonClicked();
+            battleTimer.StopTimer(); // 자동전투 켜면 타이머 멈춤
+            if (currentPhase == BattlePhase.PlayerSelectPhase)
+                OnAttackButtonClicked();
+        }
+        else
+        {
+            // 자동전투 끄면 다음 아군 페이즈 때 타이머 다시 시작
+            if (currentPhase == BattlePhase.PlayerSelectPhase)
+                battleTimer.StartTimer();
         }
     }
 
     public void ChangeGameSpeed()
     {
+        AudioManager.Instance.PlaySE("UI_Click_Speed");
+
         if (currentSpeed == 1f) currentSpeed = 2f;
         else if (currentSpeed == 2f) currentSpeed = 3f;
         else currentSpeed = 1f;
@@ -255,7 +359,7 @@ public class BattleManager : MonoBehaviour
             // 시너지 데이터 가지고 오기
             SynergyEffect eff = attacker.data.isEnemy ? enemySynergy.currentEffect : playerSynergy.currentEffect;
 
-            Debug.Log($"{attacker.data.unitName}이(가) {target.data.unitName}을(를) 조준!");
+            Debug.Log($"{attacker.data.unitNameKey}이(가) {target.data.unitNameKey}을(를) 조준!");
 
             // 행동
             switch (attacker.data.unitType)
@@ -269,6 +373,9 @@ public class BattleManager : MonoBehaviour
 
                     int healAmount = Mathf.RoundToInt(attacker.GetCurrentAttack() * attacker.data.skillMultiplier);
                     Debug.Log($"{healAmount} 만큼 힐합니다.");
+                    
+                    AudioManager.Instance.PlaySE("Heal_Magic");
+
                     target.Heal(healAmount);
                     break;
                 case UnitType.Buffer:
@@ -296,7 +403,7 @@ public class BattleManager : MonoBehaviour
             EnterEnemyPhase();
         else // 적군 공격이 끝났다면? 다시 아군 선택으로!
             EnterTurnStart();
-        
+
 
     }
 
@@ -338,7 +445,7 @@ public class BattleManager : MonoBehaviour
                     return GetHighestAttackTarget(allySlots);
                 }
                 else
-                {   
+                {
                     return GetLowestHPTarget(allySlots);
                 }
             default:    // 딜러
@@ -471,7 +578,7 @@ public class BattleManager : MonoBehaviour
         else
             playerSlot[slotIndex] = unit;
 
-        Debug.Log($"{slotIndex}번 슬롯에 {unit.data.unitName} 님이 배치되었습니다!");
+        Debug.Log($"{slotIndex}번 슬롯에 {unit.data.unitNameKey} 님이 배치되었습니다!");
     }
 
     public void TestBattle()
@@ -482,7 +589,7 @@ public class BattleManager : MonoBehaviour
             Unit attacker = playerTurnOrder[0];
             Unit target = enemyTurnOrder[0];
 
-            Debug.Log($"{attacker.data.unitName}의 공격!");
+            Debug.Log($"{attacker.data.unitNameKey}의 공격!");
             target.TakeDamage(attacker.GetCurrentAttack());
         }
     }
@@ -493,15 +600,22 @@ public class BattleManager : MonoBehaviour
         turnCount++;
 
         uiManager.UpdateTurnUI(turnCount);
-        
+
         if (!isPaused && !isAutoBattle)
         {
             Time.timeScale = 1f;
             uiManager.UpdateSpeedUI(1f);
         }
 
-        // 타이머 시작
-        battleTimer.StartTimer();
+        // 자동전투 중이 아닐 때만 타이머 시작
+        if (!isAutoBattle)
+        {
+            battleTimer.StartTimer();
+        }
+        else
+        {
+            battleTimer.StopTimer(); // 자동전투 중엔 타이머 멈춤
+        }
 
         // 아군 페이즈
         OnPhaseChanged(BattlePhase.PlayerSelectPhase);
@@ -515,8 +629,35 @@ public class BattleManager : MonoBehaviour
     public void EndBattle(bool victory)
     {
         battleTimer.StopTimer();
+        OnPhaseChanged(BattlePhase.BattleEnd);
 
-        uiManager.ShowResult(victory);
+        if (victory)
+        {
+            int gainExp = 150;
+            Dictionary<int, bool> levelUpMap = new Dictionary<int, bool>();
+
+            foreach (Character character in characterParties)
+            {
+                CharacterInfo info = DataManager.Instance.GetUserUnitInfo(character.data.unitID);
+                if (info != null)
+                {
+                    bool didLevelUp = DataManager.Instance.AddExp(info, gainExp); // 딱 1번만
+                    levelUpMap[character.data.unitID] = didLevelUp;
+                }
+            }
+            DataManager.Instance.SaveData();
+
+            List<ItemInventoryData> earnedRewards = DataManager.Instance.CompleteStage(DataManager.Instance.selectedStageID);
+            AudioManager.Instance.PlaySE("Victory_Fanfare");
+            uiManager.ShowResult(victory, earnedRewards, characterParties);
+        }
+        else
+        {
+            Debug.Log(" 전투 패배... 강해져서 돌아오세요.");
+            uiManager.ShowResult(victory);
+        }
+
+
     }
     public void OnPhaseChanged(BattlePhase battlePhase)
     {
@@ -529,7 +670,6 @@ public class BattleManager : MonoBehaviour
         {
             case BattlePhase.PlayerSelectPhase:
                 uiManager.RefreshTimeline(playerTurnOrder);
-                battleTimer.StartTimer();
                 Debug.Log("플레이어의 턴입니다.");
                 break;
             case BattlePhase.PlayerActionPhase:
@@ -548,16 +688,10 @@ public class BattleManager : MonoBehaviour
     {
         if (currentPhase.Equals(BattlePhase.PlayerSelectPhase))
         {
-            if (isAutoBattle)
-            {
-                OnAttackButtonClicked();
-            }
-            else
-            {
-                _currentPhase = BattlePhase.BattleEnd;
-
-                EndBattle(false);
-            }
+            // 타이머 종료 시 자동전투 켜고 공격 실행
+            isAutoBattle = true;
+            uiManager.UpdateAutoBattleUI(true);
+            OnAttackButtonClicked();
         }
     }
 
@@ -586,14 +720,14 @@ public class BattleManager : MonoBehaviour
             // [수정] 현재 플레이어 페이즈라면 플레이어 리스트로 타임라인 유지
             if (currentPhase == BattlePhase.PlayerSelectPhase || currentPhase == BattlePhase.PlayerActionPhase)
             {
-                uiManager.RefreshTimeline(playerTurnOrder);
+                //uiManager.RefreshTimeline(playerTurnOrder);
             }
             else
             {
                 uiManager.RefreshTimeline(enemyTurnOrder);
             }
 
-            Debug.Log($"{unit.data.unitName} 적을 물리쳤습니다. 남은 적: {enemySlot.Count}명");
+            Debug.Log($"{unit.data.unitNameKey} 적을 물리쳤습니다. 남은 적: {enemySlot.Count}명");
 
             // 승리 조건 체크 (딕셔너리의 개수가 0인지 확인)
             if (enemySlot.Count <= 0)
@@ -614,7 +748,7 @@ public class BattleManager : MonoBehaviour
 
             uiManager.RefreshTimeline(playerTurnOrder);
 
-            Debug.Log($"{unit.data.unitName} 아군이 퇴각했습니다... 남은 아군: {playerSlot.Count}명");
+            Debug.Log($"{unit.data.unitNameKey} 아군이 퇴각했습니다... 남은 아군: {playerSlot.Count}명");
 
             if (playerSlot.Count <= 0)
             {
@@ -650,6 +784,8 @@ public class BattleManager : MonoBehaviour
             // 애니메이션 및 타격
             attacker.GetComponentInChildren<UnitAnimationController>().SetState(UnitAnimState.Attack);
             yield return new WaitForSeconds(0.4f);
+
+            AudioManager.Instance.PlaySE("Attack1");
 
             // --- 합산을 위한 저장소 ---
             HashSet<int> processedIndices = new HashSet<int>();
@@ -741,7 +877,7 @@ public class BattleManager : MonoBehaviour
         return areaTargets;
     }
 
-    private List<int>GetNeighborIndices(int center)
+    private List<int> GetNeighborIndices(int center)
     {
         List<int> neighborIndices = new List<int>();
         int centerRow = center / 3; // 현재 행 (0, 1, 2)
@@ -775,8 +911,9 @@ public class BattleManager : MonoBehaviour
             int shieldHP = Mathf.RoundToInt(baseShieldAmount * 0.5f);
             ApplyBuffToLine(0, attacker.data.isEnemy, (u) =>
             {
+                AudioManager.Instance.PlaySE("Shield1");
                 u.AddShield(1, shieldHP);
-                Debug.Log($"{u.data.unitName}: 전열 쉴드 부여 (내구도: {shieldHP})");
+                Debug.Log($"{u.data.unitNameKey}: 전열 쉴드 부여 (내구도: {shieldHP})");
             });
         }
         else if (mySlot < 6) // [중열] 다중 편광막
@@ -786,7 +923,7 @@ public class BattleManager : MonoBehaviour
             if (target != null)
             {
                 target.AddShield(3, shieldHP);
-                Debug.Log($"{target.data.unitName}: 중열 쉴드 부여 (내구도: {shieldHP} / 3회)");
+                Debug.Log($"{target.data.unitNameKey}: 중열 쉴드 부여 (내구도: {shieldHP} / 3회)");
             }
         }
         else // [후열] 안개 장막
@@ -822,4 +959,67 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    #region 프롤로그용 배틀
+    private void InitPrologueBattle()
+    {
+        playerSlot.Clear();
+        enemySlot.Clear();
+
+        // 1. 프롤로그 전용 아군 스폰 (데이터 매니저의 실제 파티 무시)
+        SpawnProloguePlayers();
+
+        // 2. 프롤로그 전용 적 스폰
+        SpawnEnemiesFromData(); // selectedStageID를 "STAGE_PROLOGUE"로 미리 세팅
+
+        SortTurnOrder();
+        RefreshSynergies();
+        ForceUpdateAllSlotColors();
+    }
+
+    private void SpawnProloguePlayers()
+    {
+        // 프롤로그용 프리팹 로드
+        GameObject playerPrefab = Resources.Load<GameObject>("Prefabs/Units/Character");
+
+        var prologueMembers = new List<(int unitID, int slotIndex)>
+    {
+        (991, 0),
+        (992, 3),
+        (993, 6),
+        (994, 1),
+        (995, 4),
+        (996, 7),
+        (997, 2),
+        (998, 5),
+        (999, 8)
+    };
+
+        foreach(var member in prologueMembers)
+    {
+            UnitData data = DataManager.Instance.GetPlayerData(member.unitID);
+
+            if (playerPrefab != null && member.slotIndex < playerSlotTransforms.Length)
+            {
+                Transform targetSlot = playerSlotTransforms[member.slotIndex];
+                Transform anchor = targetSlot.Find("Character_Anchor");
+
+                GameObject instance = Instantiate(playerPrefab, anchor);
+                instance.transform.localPosition = Vector3.zero;
+
+                Character character = instance.GetComponent<Character>();
+
+                if (character != null && data is CharacterData charData)
+                {
+                    // 프롤로그니까 다들 든든한 레벨로 설정해 주세요!
+                    character.SetCharacterData(charData, 50, 0, (5, 5, 5));
+
+                    character.SetSlotIndex(member.slotIndex);
+                    playerSlot[member.slotIndex] = character;
+                    playerTurnOrder.Add(character);
+                    characterParties.Add(character); // 결과창에 보여주기 위해 추가
+                }
+            }
+        }
+    }
+    #endregion
 }

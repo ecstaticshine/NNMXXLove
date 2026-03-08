@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31325d7f0dbba254f905b233b4619108, type: 3}
+  m_Name: UnitData_5
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  unitID: 5
+  unitNameKey: UNIT_NAME_5
+  descriptionKey: UNIT_DESC_5
+  unitType: 1
+  defaultTag: Splash
+  unitPortrait: {fileID: -4027452960032655383, guid: 9e2b49a47f7f40e4783df1b32be02276, type: 3}
+  unitBattleSD: {fileID: -3362255311268882673, guid: 488325164d8f3f54aab8413bb5e27bec, type: 3}
+  unitAttackSD: {fileID: 6666385881707925761, guid: 0d7e3d984425ef743948e5bc38e7006a, type: 3}
+  unitTakeDamageSD: {fileID: 3328398684408651565, guid: 29095f2c799b59e43be3cf5fa78651fe, type: 3}
+  unitFullIllust: {fileID: 6769554357655804626, guid: 4cbec8d692418cb43ac2d5d106ef8346, type: 3}
+  rarity: 1
+  isEnemy: 0
+  baseHp: 10000
+  baseAttack: 1200
+  baseSpeed: 10
+  skillArea: 0
+  skillMultiplier: 1.2
+  hpGrowth: 0.02
+  attackGrowth: 0.01
+  customTags: []

@@ -1,0 +1,3 @@
+WorldIndex,WorldNameKey,StartRow,EndRow,Background
+1,WORLD_01_NAME,0,9,bg_beach
+2,WORLD_02_NAME,10,19,bg_forest

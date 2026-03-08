@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31325d7f0dbba254f905b233b4619108, type: 3}
+  m_Name: UnitData_10
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  unitID: 10
+  unitNameKey: UNIT_NAME_10
+  descriptionKey: UNIT_DESC_10
+  unitType: 1
+  defaultTag: Direct
+  unitPortrait: {fileID: -7365632028530144620, guid: 8881cb8737049ad40ab83fcce75f0e04, type: 3}
+  unitBattleSD: {fileID: 5142372283162597595, guid: 97715ba1667e9f64ead2ccbc2b3c7f84, type: 3}
+  unitAttackSD: {fileID: 5787758707999102340, guid: 1ca9c34873b6cc942958ebbd07f81721, type: 3}
+  unitTakeDamageSD: {fileID: 1738699229326669483, guid: f3faa3876ff1e744fa761ae455b94145, type: 3}
+  unitFullIllust: {fileID: 2807733283279295028, guid: 23c461e39b0474b45bb0703d062da089, type: 3}
+  rarity: 0
+  isEnemy: 0
+  baseHp: 10000
+  baseAttack: 1200
+  baseSpeed: 10
+  skillArea: 0
+  skillMultiplier: 1.2
+  hpGrowth: 0.02
+  attackGrowth: 0.01
+  customTags: []

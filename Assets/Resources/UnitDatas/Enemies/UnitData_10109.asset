@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b48e94152c2193e4fb7178a5fc27a3c0, type: 3}
+  m_Name: UnitData_10109
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  unitID: 0
+  unitNameKey: UNIT_NAME_PoisonSnake
+  descriptionKey: UNIT_DESC_PoisonSnake
+  unitType: 0
+  defaultTag: Dot
+  unitPortrait: {fileID: -6789000243297847877, guid: 686db7880a90c96438413ba25f9b8237, type: 3}
+  unitBattleSD: {fileID: -6789000243297847877, guid: 686db7880a90c96438413ba25f9b8237, type: 3}
+  unitAttackSD: {fileID: 0}
+  unitTakeDamageSD: {fileID: 0}
+  unitFullIllust: {fileID: 0}
+  rarity: 0
+  isEnemy: 1
+  baseHp: 3500
+  baseAttack: 1500
+  baseSpeed: 15
+  skillArea: 0
+  skillMultiplier: 1

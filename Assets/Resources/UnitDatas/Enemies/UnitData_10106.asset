@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b48e94152c2193e4fb7178a5fc27a3c0, type: 3}
+  m_Name: UnitData_10106
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  unitID: 0
+  unitNameKey: UNIT_NAME_Lycan
+  descriptionKey: UNIT_DESC_Lycan
+  unitType: 0
+  defaultTag: Direct
+  unitPortrait: {fileID: -1884577626539656162, guid: 00f782693e2f03547bc6860c2ac78ee4, type: 3}
+  unitBattleSD: {fileID: -1884577626539656162, guid: 00f782693e2f03547bc6860c2ac78ee4, type: 3}
+  unitAttackSD: {fileID: 0}
+  unitTakeDamageSD: {fileID: 0}
+  unitFullIllust: {fileID: 0}
+  rarity: 0
+  isEnemy: 1
+  baseHp: 3000
+  baseAttack: 1200
+  baseSpeed: 20
+  skillArea: 0
+  skillMultiplier: 1

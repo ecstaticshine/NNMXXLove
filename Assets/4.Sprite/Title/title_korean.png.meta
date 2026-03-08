@@ -1,0 +1,780 @@
+fileFormatVersion: 2
+guid: ebf1e913dc5b41c4fbe7c921a3a64886
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3358305402968141498
+    second: title_korean_0
+  - first:
+      213: -1737932670075606614
+    second: title_korean_1
+  - first:
+      213: -476334414319979478
+    second: title_korean_2
+  - first:
+      213: -6334416474852086820
+    second: title_korean_3
+  - first:
+      213: -1920973181970691249
+    second: title_korean_4
+  - first:
+      213: -2878023267625890917
+    second: title_korean_5
+  - first:
+      213: -7370602144125804435
+    second: title_korean_6
+  - first:
+      213: 1328056553520494770
+    second: title_korean_7
+  - first:
+      213: 154193789789860324
+    second: title_korean_8
+  - first:
+      213: -3516922072817228110
+    second: title_korean_9
+  - first:
+      213: -2071197160030727212
+    second: title_korean_10
+  - first:
+      213: -8770241745827426993
+    second: title_korean_11
+  - first:
+      213: -3714031229479109241
+    second: title_korean_12
+  - first:
+      213: -3233563536136175531
+    second: title_korean_13
+  - first:
+      213: 2573709996183234391
+    second: title_korean_14
+  - first:
+      213: 7421016311699190828
+    second: title_korean_15
+  - first:
+      213: -9032058890512891241
+    second: title_korean_16
+  - first:
+      213: 2270756872800708551
+    second: title_korean_17
+  - first:
+      213: 272811130150260848
+    second: title_korean_18
+  - first:
+      213: 4396464974177045435
+    second: title_korean_19
+  - first:
+      213: 6089217795042035187
+    second: title_korean_20
+  - first:
+      213: -7077426951129385153
+    second: title_korean_21
+  - first:
+      213: -6313669152787503593
+    second: title_korean_22
+  - first:
+      213: -7323871289129977802
+    second: title_korean_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: title_korean_0
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 199
+        width: 49
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abee03f88f81b9e20800000000000000
+      internalID: 3358305402968141498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_1
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 161
+        width: 27
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa9e89cc17f91e7e0800000000000000
+      internalID: -1737932670075606614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_2
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 176
+        width: 84
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a24f928bf58b369f0800000000000000
+      internalID: -476334414319979478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_3
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 177
+        width: 66
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdb2f0df6c1a718a0800000000000000
+      internalID: -6334416474852086820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_4
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 208
+        width: 74
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4bc59991155755e0800000000000000
+      internalID: -1920973181970691249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_5
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 222
+        width: 54
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9b89d526153f08d0800000000000000
+      internalID: -2878023267625890917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_6
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 197
+        width: 54
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6026aaa66c56b990800000000000000
+      internalID: -7370602144125804435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_7
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 148
+        width: 217
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b8f73a26643e6210800000000000000
+      internalID: 1328056553520494770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_8
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 173
+        width: 94
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e1fef25f6ec32200800000000000000
+      internalID: 154193789789860324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_9
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 182
+        width: 56
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b6affa1202613fc0800000000000000
+      internalID: -3516922072817228110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_10
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 83
+        width: 112
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d312981821a143e0800000000000000
+      internalID: -2071197160030727212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_11
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 25
+        width: 60
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4d87a15997d94680800000000000000
+      internalID: -8770241745827426993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_12
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 84
+        width: 53
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78db03a464c157cc0800000000000000
+      internalID: -3714031229479109241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_13
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 67
+        width: 24
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55082f598131023d0800000000000000
+      internalID: -3233563536136175531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_14
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 72
+        width: 71
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757af5dfa97a7b320800000000000000
+      internalID: 2573709996183234391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_15
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 22
+        width: 279
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c24b53b640fbcf660800000000000000
+      internalID: 7421016311699190828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_16
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 56
+        width: 33
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79202900b4ea7a280800000000000000
+      internalID: -9032058890512891241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_17
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 74
+        width: 53
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c720964859538f10800000000000000
+      internalID: 2270756872800708551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_18
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 56
+        width: 19
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0701167074839c300800000000000000
+      internalID: 272811130150260848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_19
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 64
+        width: 57
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbb054db991630d30800000000000000
+      internalID: 4396464974177045435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_20
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 65
+        width: 65
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f5c771925f318450800000000000000
+      internalID: 6089217795042035187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_21
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 21
+        width: 140
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f37382e8fade7cd90800000000000000
+      internalID: -7077426951129385153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_22
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 43
+        width: 72
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71662c65b575168a0800000000000000
+      internalID: -6313669152787503593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: title_korean_23
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 56
+        width: 58
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 638b9b6bdd16c5a90800000000000000
+      internalID: -7323871289129977802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      title_korean_0: 3358305402968141498
+      title_korean_1: -1737932670075606614
+      title_korean_10: -2071197160030727212
+      title_korean_11: -8770241745827426993
+      title_korean_12: -3714031229479109241
+      title_korean_13: -3233563536136175531
+      title_korean_14: 2573709996183234391
+      title_korean_15: 7421016311699190828
+      title_korean_16: -9032058890512891241
+      title_korean_17: 2270756872800708551
+      title_korean_18: 272811130150260848
+      title_korean_19: 4396464974177045435
+      title_korean_2: -476334414319979478
+      title_korean_20: 6089217795042035187
+      title_korean_21: -7077426951129385153
+      title_korean_22: -6313669152787503593
+      title_korean_23: -7323871289129977802
+      title_korean_3: -6334416474852086820
+      title_korean_4: -1920973181970691249
+      title_korean_5: -2878023267625890917
+      title_korean_6: -7370602144125804435
+      title_korean_7: 1328056553520494770
+      title_korean_8: 154193789789860324
+      title_korean_9: -3516922072817228110
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

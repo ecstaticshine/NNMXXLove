@@ -25,14 +25,21 @@ public class Unit : MonoBehaviour
     [SerializeField] protected GameObject healBubble;
     [SerializeField] protected TMP_Text healText;
 
+    [Header("Unit Stats")]
+    [SerializeField] public int level;
     [SerializeField] protected int currentHp;
     [SerializeField] protected int currentAttack;
     [SerializeField] protected int currentSpeed;
+    [SerializeField] protected int multiplier;
     [SerializeField] protected int finalSkillMultiplier; // 최종 스킬 배율
 
     [SerializeField] protected int maxHp;   // 현재 유닛의 실제 최대 체력을 저장할 변수
-
+    protected (int hp, int atk, int spd) tagBonus;
     [SerializeField] private int slotIndex;     // 유닛이 위치한 슬롯
+
+    [SerializeField] private SpriteRenderer spriteRenderer; //캐릭터 이미지를 바꿀 컴포넌트
+
+
 
     [Header("Shield System")]
     public int shieldCount = 0; // 쉴드 횟수
@@ -41,22 +48,44 @@ public class Unit : MonoBehaviour
     [Header("Bonus Stats")]
     [SerializeField] private int bonusAttackFromShield = 0;
 
+    private CanvasGroup canvasGroup;
+
+    // 죽었을 때
+    private bool isDead = false;
+
     protected virtual void Awake()
     {
         InitUnitStat();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     protected virtual void Start()
     {
 
-        Debug.Log($"{data.unitName} 등장! 공격 범위는 {data.skillArea}입니다.");
+        Debug.Log($"{data.unitNameKey} 등장! 공격 범위는 {data.skillArea}입니다.");
     }
 
     public virtual void InitUnitStat()
     {
+        // 데이터가 없으면 리턴
+        if (data == null) return;
+
         currentHp = data.baseHp;
         currentAttack = data.baseAttack;
         currentSpeed = data.baseSpeed;
+
+        // 레벨에 따라서 몬스터도 성장하게 변경
+        // 적 캐릭터가 아닌 이상, 레어도가 없기에 일단 아군 캐릭터가 더 강하게 적용
+        float growthFactor = 1f + (level - 1) * 0.05f;
+        currentHp = Mathf.RoundToInt(currentHp * growthFactor);
+        currentAttack = Mathf.RoundToInt(currentAttack * growthFactor);
+
+        // CSV에서 가져온 Multiplier 적용
+        currentHp = Mathf.RoundToInt(currentHp * multiplier);
+
+        Debug.Log($"{data.unitNameKey} 초기화 - 최종 HP: {currentHp}, Multiplier: {multiplier}");
+
+        maxHp = currentHp;
 
         if (hpBar != null)
         {
@@ -64,7 +93,7 @@ public class Unit : MonoBehaviour
             hpBar.value = currentHp;
         }
 
-        Debug.Log($"[Monster] {data.unitName} 세팅 완료! HP: {currentHp}");
+        Debug.Log($"[Monster] {data.unitNameKey} 세팅 완료! HP: {currentHp}");
 
     }
 
@@ -102,8 +131,25 @@ public class Unit : MonoBehaviour
     {
         if (hpBar != null)
         {
-            hpBar.DOValue(currentHp, 0.5f).SetEase(Ease.OutQuad);
+            hpBar.DOValue(currentHp, 0.5f)
+                .SetEase(Ease.OutQuad)
+                .SetLink(hpBar.gameObject);
         }
+    }
+
+    public void SetUnit(UnitData newData)
+    {
+        if (newData == null) return;
+
+        this.data = newData;
+
+        // 배치용 SD 이미지로 외형 변경
+        if (spriteRenderer != null && data.unitBattleSD != null)
+        {
+            spriteRenderer.sprite = data.unitBattleSD;
+        }
+
+        // 추가로 이름이나 능력치 초기화 로직이 필요하다면 여기서 처리합니다.
     }
     public void Heal(int healAmount)
     {
@@ -120,7 +166,7 @@ public class Unit : MonoBehaviour
         UpdateHPUI();
 
         // 힐 받는 연출
-        transform.DOScale(1.05f, 0.15f).SetLoops(2, LoopType.Yoyo);
+        transform.DOScale(1.05f, 0.15f).SetLoops(2, LoopType.Yoyo).SetLink(gameObject);
     }
 
     public void TakeDamage(int damage)
@@ -163,10 +209,22 @@ public class Unit : MonoBehaviour
     {
         UpdateHPUI();
 
-        if (currentHp <= 0)
+        if (currentHp <= 0 && !isDead)
         {
+            isDead = true;
             currentHp = 0;
             BattleManager.instance.RemoveUnit(this);
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.DOFade(0, 0.5f).OnComplete(() => {
+                    gameObject.SetActive(false);
+                });
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 
@@ -192,7 +250,7 @@ public class Unit : MonoBehaviour
         leafPrefab.transform.localScale = Vector3.one * 0.5f;
 
         // 2. DOTween Sequence 시작
-        Sequence healSeq = DOTween.Sequence();
+        Sequence healSeq = DOTween.Sequence().SetLink(gameObject); ;
 
         // A. 나뭇잎 연출: 좌우로 흔들리며(살랑살랑) 내려옴
         healSeq.Append(leafPrefab.transform.DOLocalMoveY(120, 1.0f).SetEase(Ease.OutQuad)) // 하강
@@ -257,7 +315,7 @@ public class Unit : MonoBehaviour
 
         UpdateShieldUI();
 
-        Debug.Log($"{data.unitName}에게 {count}회(내구도 {amount}) 쉴드 생성!");
+        Debug.Log($"{data.unitNameKey}에게 {count}회(내구도 {amount}) 쉴드 생성!");
 
 
     }
@@ -275,7 +333,7 @@ public class Unit : MonoBehaviour
             // 쉴드가 깨지면 공격력 보너스도 증발
             if (bonusAttackFromShield > 0)
             {
-                Debug.Log($"{data.unitName}의 쉴드가 사라져 추가 공격력이 환원되었습니다.");
+                Debug.Log($"{data.unitNameKey}의 쉴드가 사라져 추가 공격력이 환원되었습니다.");
                 bonusAttackFromShield = 0;
             }
             return;
@@ -297,13 +355,14 @@ public class Unit : MonoBehaviour
         damageBubble.gameObject.SetActive(true); // 활성화
 
         //연출
-        damageBubble.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack);
-        damageBubble.transform.DOLocalMoveY(100f, 0.6f).SetRelative().OnComplete(() =>
+        damageBubble.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack).SetLink(damageBubble);
+        damageBubble.transform.DOLocalMoveY(100f, 0.6f).SetRelative().SetLink(damageBubble).OnComplete(() =>
         {
             // 사라질 때 살짝 작아지면서 사라지면 더 예뻐요
             damageBubble.transform.DOScale(0f, 0.2f).OnComplete(() => {
                 damageBubble.SetActive(false);
-            });
+            })
+            .SetLink(damageBubble);
         });
     }
 
@@ -318,6 +377,9 @@ public class Unit : MonoBehaviour
         return tags;
     }
 
-
+    protected virtual void OnDestroy()
+    {
+        transform.DOKill();
+    }
 
 }

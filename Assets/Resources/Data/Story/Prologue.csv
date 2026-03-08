@@ -1,0 +1,88 @@
+Speaker,Emotion,Voice,Sound(BGM/SE),BG,Position,KO,JP
+None,None,v_Skuld_Prologue_001,bgm_MusicBox_03,BlackOut,None,"""있잖아? 만약 네가 미래를 담당하는 여신이고,\n네 운명의 상대를 미리 알 수 있다면 어떻게 할 것 같아?""",あのね、もしも君が<r=スクルド>未来を司る女神</r>だとして、\n君の運命の相手が誰なのか先に知ることが出来たら、君はどうしたい？
+None,None,v_Skuld_Prologue_002,None,None,Center,"""보통은 그 사람과 행복해지는 미래를 꿈꾸겠지.""",まぁ、普通にその者と幸せな未来を描くだろう。
+None,None,v_Skuld_Prologue_003,None,None,Center,"""하지만... 그 사람 곁에 이미 다른 여자가 있다면?""",でもね。その者に別の女がいるんだとしたら？
+None,None,v_Skuld_Prologue_004,None,None,Center,"""그게 한 명이면 어떻게 이해를 해보겠는데...""",それが、一人ならともかく
+None,None,v_Skuld_Prologue_005,"""bgm_stop, se_glitch3""",None,Center,"""<color=#FF0000>XX명이나 된다면?</color>""",<color=#FF0000>XX名もいるなら。</color>
+None,None,v_Skuld_Prologue_006,se_glitch1,None,Center,"""<color=#FF0000>전부 죽여서라도 내 것으로 만들고 싶지 않겠어?</color>""",<color=#FF0000>皆〇して独り占めしたいと思わない？</color>
+None,None,None,"""bgm_stop, se_jingle_06""",None,Center,프롤로그,プロローグ
+NoName,Default,None,bgm_EarthQuake,forest-dungeon1,left,"""이런, """,あちゃー
+NoName,Default,None,None,None,left,"""이건 위험한데?""",こりゃ、まずいな。
+UNIT_NAME_1,Default,None,None,None,right,"""무슨일인가? 서방님""",何事か？旦那様！
+NoName,Default,None,None,None,left,"""이그나, 다들 그 곳으로 불러주게""",イグナ、みんなを例の場所に集めてくれ
+UNIT_NAME_1,Default,None,None,None,right,"""알겠다!""",承知した！
+None,None,None,"""bgm_stop, bgm_Forest_01""",BlackOut,Center,- 숲 어딘가 -,ー　深き森のどこか　ー
+NoName,Default,None,None,Leaves2,left,"""다들 잘 모여줬어""",みんな、よく集まった。
+NoName,Default,None,None,None,left,"""더 오래 걸릴 거라 예상했지만\n무언가로 인해 갑자기 이 별의 수명이 다 한 것 같다.""",もうちょっと先の話になると思ったが、\n何かによって急遽この星の寿命が尽きたようだ。
+UNIT_NAME_1,Default,None,None,None,right,"""그게 사실인 거냐? 서방님""",それは誠か！旦那様
+NoName,Default,None,None,None,left,"""그러기에 계획Ｂ를 실시하려고 판단했다.""",だから、計画Bを実施することにした。
+NoName,Default,None,None,None,left,"""모두에게는 위험한 길을 걷게 해서 미안하지만,\n우리 모두가 살 수 있는 방법은 이 방법밖에 없다.""",みんなには危ない橋を渡らせて申し訳ないと思ってるが、\nみんなが生きる<r=すべ>道</r>はこれしかない。
+UNIT_NAME_2,Default,None,None,None,right2,"""애초에 다들 너를 믿으니깐, 여기에 모인거지.""",大体、みんなアンタを信じてるから、\nここに集まっているわけよ。
+NoName,Default,None,None,None,left,"""고마워 세레나!""",フォローありがとう。セレナ！
+UNIT_NAME_2,Default,None,None,None,right2,"""그래서 계획이라는 게 그 카드 한장 한장에 우리를 봉인시키고,""",それで、計画って、そのカードに私たちを封印して、
+UNIT_NAME_2,Default,None,None,None,right2,"""이세게로 이동한다는 소리인 거지?""",異世界へ転移するっていう話だったよね？
+NoName,Default,None,None,None,left,"""원래라면 계획A인 대규모 전이 마법으로 이동할 계획이였지만""",本来なら、<r=計画A>大規模転移魔法</r>で転移するつもりだったけど。
+NoName,Default,None,None,None,left,"""갑자기 결정된 일이라 준비할 시간이 없었다.""",急に決まった事だから、用意する時間なんてなかった。
+UNIT_NAME_2,Default,None,None,None,right2,"""그러니깐 평소에 마력을 아끼라고 그렇게 말을 했을 텐데.""",だから、普段から魔力は温存しなさいと\nあれだけ言ってたのに。
+UNIT_NAME_5,Default,None,None,None,right,"""죄송해요. 집안일이 너무 많아서 부탁드렸어요.""",ご、ごめんなさい。家事の量が多くて\nお願いしちゃいました。
+UNIT_NAME_2,Default,None,None,None,toleft2,"""아니야, 하루. 보통 집안일은 육체노동이니깐.""",違うよ、ハル。家事って基本肉体労働だから。
+UNIT_NAME_2,Default,None,None,None,left2,"""남편한테 부탁하는 건 큰 문제가 되는 게 아니지""",こういう時こそ、旦那さんに頼むのは\n全然間違った選択ではないのよ。
+UNIT_NAME_2,Default,None,None,None,left2,"""단지, 이 바보가 모든 일을 마법으로 해결하려고 하니깐 문제지.""",ただ、このバカがあらゆることに魔法を使って\n解決しようとするからダメなわけだよ。
+NoName,Default,None,None,None,left,"""마법으로 딸깍. 세탁에 마법을 사용한다는 내 선택은 잘못된 게 아니다.""",魔法の言葉でぽぽぽぽーん！\n洗濯に魔法を使う俺の選択って間違ってないのだ。
+NoName,Default,None,None,None,left,"""보아라, 저번에 소스를 흘려서 자국이 생겼던 이 옷을!""",ご覧あれ！この間、ソースがついてしまったこの服を！
+NoName,Default,None,None,None,left,"""깨끗하지요? 이것이 바로 최첨단 마법 사이클론 V3!""",綺麗でしょう？これこそが最近開発した魔法、\nサイクロンV3！
+UNIT_NAME_5,Default,None,None,None,right,"""와! 대단해요!""",わぁ！すごいです！
+UNIT_NAME_2,Default,None,None,None,toright2,"""하루, 그렇게 반응하면 버릇 나빠져.""",ハル、反応しないほうが奴のためよ。
+NoName,Default,None,None,None,left,"""잡담은 여기까지 하고 지금부터 전이마법을 사용하기 전에.""",さーて、雑談はここまでにして、転移魔法を使う前に。
+NoName,Default,None,None,None,left,"""다들 미안하지만, 카드에 잠시 들어가 있어줘. \n새로운 세상에서 다시 만나자.""",みんな、悪いけど。カードに<r=入って>封印されて</r>くれ。\nまた新しい世界で会おうね！
+None,None,None,se_kirakira,MagicCircle,None,,
+NoName,Default,None,None,Leaves2,left,"""흠, 이걸로 나도 전이 마법만 쓰면...""",ふむ、後は転移魔法を使えば。。
+NoName,Default,None,None,None,left,"""저기요? 거기 있는 거 다 아니깐 나오세요?""",あの、もしもし。そこにいるお方！\n出ておいでくださいね？
+UNIT_NAME_3,Default,None,se_bush,None,right,"""내 이름은 에피메라, 당신을 잡으러 왔다.""",我が名はエピメラ、あなたを捕まえに来た。
+NoName,Default,None,None,None,left,"""보아하니, 인간은 아닌 거 같은데요?""",見るからには、ただ者ではなさそうですが。
+UNIT_NAME_3,Default,None,None,None,right,"""그렇다. 미래를 담당하는 여신, 스쿨드님의 부하다.""",ああ。未来を司る女神、スクルド様の部下だ。
+NoName,Default,None,None,None,left,"""그런 귀하신 분이 도대체 왜 여기에?""",そんなお偉いさんが何故ここにいらっしゃると？
+UNIT_NAME_3,Default,None,None,None,right,"""너는 여신님의 반려가 될 남자.\n그러니, 지금 혼자일 때 데리러 왔다.""",あなたは、女神様の伴侶になる男。\nそのため、一人でいる今迎えに来た。
+NoName,Default,None,None,None,left,"”이 별의 수명이 갑자기 짧아진 것도\n그 대단하신 여신의 짓인거 같은데요?""",この星の寿命が短くなったのも、\nあのお偉いさんの仕業だと見受けられますが？
+UNIT_NAME_3,Default,None,None,None,right,"""어차피 사라질 운명이였으니, 빨리 앞당긴 것이다.""",結局、消えていく<r=さだめ>運命</r>だから、少し早めただけだ。
+UNIT_NAME_3,Default,None,None,None,right,”별반 차이가 없다.”,さほど変わらない。
+NoName,Default,None,None,None,left,"”흠, 반려가 될 수도 있는 사람의 의견은\n 듣지도 않고 결정하신다니,”",ほへぇ、伴侶になるかもしれない方の意見なんて\n聞かずに独断で進める相方なんて、
+UNIT_NAME_3,Default,None,None,None,right,"""너의 의견은 필요없다.""",あなたの意見なんて要らない。
+UNIT_NAME_3,Default,None,None,None,right,"""스쿨드님과 함께하는 미래에는 불행 따윈 없다. """,スクルド様と過ごす未来に不幸なんてない。
+UNIT_NAME_3,Default,None,None,None,right,"""신이 되어 단둘이서 평생 행복하길 바라는 게\n 우리들의 희망이다.""",神となり、スクルド様と二人で幸せに過ごすこと、\nそれが我々の望みだ。
+NoName,Default,None,None,None,left,"""둘이서?""",二人で？
+NoName,Default,None,None,None,left,"""저기요. 저 이래봐도 결혼한 몸이거든요?""",あの、こう見えても結婚した身ですが？
+UNIT_NAME_3,Default,None,None,None,right,"""너의 부인들은 이 별과 함께 사라질 운명이다.""",あなたのご婦人たちはこの星とともに消える運命だ。
+NoName,Default,None,None,None,left,"""네?""",あ？
+NoName,Default,None,None,None,left,"""아 됐습니다. 제안은 감사드리지만 사양하겠습니다.""",もういいです。ご提案のほうはありがたいですが、\nお断りします。
+NoName,Default,None,None,None,left,"""제 운명에는 스쿨드님과 함께하는 미래따윈 없습니다.""",僕とスクルド様が一緒になる<r=運命>未来</r>なんてありません。
+NoName,Default,None,se_Warp,None,left,"”그럼, 이만”",さようなら。
+None,None,None,None,BlackOut,None,,
+None,Default,None,bgm_Thesecretofsiliversteelcolorscity,warp,None,- 이차원 공간 -,ー　異次元空間　ー
+None,Default,None,None,None,None,"""후우, 이걸로 더 이상 날 방해할 건 없어 보이네""",ふぅ、これで邪魔者はいなさそうだな。
+None,None,None,"""bgm_stop, se_glitch3, se_glass""",BlackOut,Center,"""<color=#FF0000>...기다려</color>""",<color=#FF0000>。。。待って！</color>
+None,Default,None,None,None,None,”어?”,あ、あれ？
+None,Default,None,None,None,None,”뭐지? 갑자기 마법이 불안정해졌는데...”,なんか急に魔法が不安定になったんだが…
+None,Default,None,None,None,None,"”어? 이봐, 이 마법은 일인용이여서, \n너처럼 질량이 큰 애가 추가되면...”",あー！こら！この魔法は一人用だから、\n君みたいな質量の大きい子が加わることで。。。
+None,None,None,None,None,Center,"""<color=#FF0000>...안 무, 무거워.</color>""",<color=#FF0000>お、重くない。</color>
+UNIT_NAME_3,Default,None,None,None,right,,
+NoName,Default,None,None,None,left,"”아, 하... 괜히 이상한 게 붙어가지고...”",はぁ、変なのがくっつきやがって…
+UNIT_NAME_3,Default,None,None,None,right,"""크으, 안 움직여...""",くっ、体が動かん…
+NoName,Default,None,None,None,left,"""내가 만든 마법 공간이니깐 쟤는 제대로 못 움직일테고...""",僕が作った魔法空間だから、あの子は動けるまいし…
+NoName,Default,None,None,None,left,"""아니 굳이 도와줄 필요는 없는데...""",助ける義理はないけどな…
+NoName,Default,None,None,None,left,"""하... 어쩔 수 없지. 그걸 써야 하나...""",はぁああ、仕方ない。\nあれを使いますか…
+NoName,Default,None,None,None,left,"""그걸 써도 뭐, 미래의 내가 알아서 해결하겠지!""",あれを使って、全部未来の僕に任せますか！
+NoName,Default,None,None,None,left,"""다들 미안해! 어떻게든 기억해낼테니깐!""",ごめんよ。みんな！必ず思い出すから！
+NoName,Default,None,None,None,left,"""됐다! 이걸로 기억의 일부를 희생해서! 전이 마법의 좌표는 문제없고!""",よし！これで記憶の一部を犠牲にして！\n転移魔法の座標は間違いなし！
+NoName,Default,None,None,None,left,"""하아아아아!!""",はぁあああああ‼
+None,None,None,None,BlackOut,None,,
+None,None,None,se_Dokan,None,None,"""쾅!""",ドカーン‼
+None,None,None,None,None,None,,
+None,Default,None,None,None,None,"""이렇게 해서 새로운 세계로 온 건 다행인데.""",こうやって、新しい世界に飛べたのは\nよかったものの。
+None,Default,None,None,None,None,"""이 시점에서, 나는 기억을 잃었던 거 같다.""",この時点で、僕は記憶をなくしたみたいね。
+None,Default,None,None,None,None,"""뭐, 그건 그녀도 마찬가지겠지만.""",まぁ、それは<r=エピメラ>彼女</r>も同じか。
+None,Default,None,None,None,None,<color=#FF0000>... 아니였을 수도 있겠지만.</color>,<color=#FF0000>。。。違ってたかもしれないが</color>
+None,Default,None,None,None,None,"""뭐 그건 됐고, 이 충돌 때문에,\n카드가 흩날려 버렸던 거네.""",それよりも、衝撃のせいで、嫁たちのカードが\nバラバラに散ったみたい。
+None,Default,None,None,None,None,"""기억을 잃어버린 미래의 나, 힘내라.""",<r=未来の僕>記憶を失った者</r>よ、精々頑張ってくれよ。
+None,Default,None,None,None,None,"""힘내서 모두를 찾아줘.""",頑張って、みんなを探し集めてくれ。
+None,Default,None,None,None,None,"""- 프롤로그 엔드 -""",ー プロローグ エンド ー

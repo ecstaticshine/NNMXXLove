@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class BattleUIManager : MonoBehaviour
 {
@@ -43,7 +45,10 @@ public class BattleUIManager : MonoBehaviour
     private List<GameObject> _activeIcons = new List<GameObject>();
 
     public float fadeDuration = 0.5f;
- 
+
+    public Transform container;   // 아이템 아이콘들이 생성될 부모
+    public GameObject rewardItemPrefab;
+
 
     private void Awake()
     {
@@ -77,10 +82,10 @@ public class BattleUIManager : MonoBehaviour
     }
     public void ShowStartUI()
     {
-        StartCoroutine(StartUICo());
+        StartCoroutine(StartUI_Co());
     }
 
-    private IEnumerator StartUICo()
+    private IEnumerator StartUI_Co()
     {
         CanvasGroup cg = startUIPanel.GetComponent<CanvasGroup>();
         if (cg != null) cg.alpha = 0f;
@@ -107,16 +112,16 @@ public class BattleUIManager : MonoBehaviour
     }
 
     public void RefreshTimeline(List<Unit> turnOrder)
-{
-    // 아이콘 풀로 보내기
-    foreach (var icon in _activeIcons)
     {
-        _timelinePool.Release(icon);
-    }
-    _activeIcons.Clear();
+        // 아이콘 풀로 보내기
+        foreach (var icon in _activeIcons)
+        {
+            _timelinePool.Release(icon);
+        }
+        _activeIcons.Clear();
 
         //재배치
-    foreach (Unit unit in turnOrder)
+        foreach (Unit unit in turnOrder)
         {
             // 풀에서 하나 빌려오기!
             GameObject iconObj = _timelinePool.Get();
@@ -125,7 +130,14 @@ public class BattleUIManager : MonoBehaviour
 
             if (unitIcon != null)
             {
-                unitIcon.SetUnitData(unit);
+                int btLevel = 0;
+                if (unit is Character character)
+                {
+                    // Character 클래스에 현재 돌파 단계를 저장하는 변수.
+                    btLevel = character.breakthroughCount;
+                }
+
+                unitIcon.SetUnitIcon(unit.data, unit.level, btLevel);
             }
 
             _activeIcons.Add(iconObj);
@@ -188,20 +200,147 @@ public class BattleUIManager : MonoBehaviour
     }
 
 
-    public void ShowResult(bool isVictory)
+    public void ShowResult(bool isVictory, List<ItemInventoryData> rewards = null,
+        List<Character> characterParties = null, Dictionary<int, bool> levelUpMap = null)
     {
+
+        // 패널 활성화 및 초기화
+        resultPanel.gameObject.SetActive(true);
+        resultPanel.alpha = 0f;
+        resultPanel.blocksRaycasts = false;
+
 
         if (isVictory)
         {
             resultText.text = "Victory";
             resultText.color = Color.yellow;
+
+            // 1. 보상 아이템 UI 생성 로직
+            if (rewards == null)
+            {
+                rewards = DataManager.Instance.GetLastEarnedRewards();
+            }
+
+
+            // 코루틴 시작
+            StartCoroutine(ResultSequence_Co(isVictory, rewards, characterParties, levelUpMap));
+
+
         }
         else
         {
             resultText.text = "Defeated";
             resultText.color = Color.red;
+
+            // 패배도 클릭하면 나가도록 코루틴 추가
+            StartCoroutine(DefeatSequence_Co());
         }
+
+        // 페이드 인 완료 후 상호작용 허용
+        resultPanel.DOFade(1f, fadeDuration).OnComplete(() =>
+        {
+            resultPanel.blocksRaycasts = true;
+        });
+
+        // 텍스트 펀치 연출 (강조)
+        resultText.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f);
+    }
+
+    private void DisplayRewards(List<ItemInventoryData> rewards)
+    {
+        // 기존 아이콘들 청소
+        foreach (Transform child in container)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 보상이 하나도 없을 경우 처리 (선택사항)
+        if (rewards == null || rewards.Count == 0) return;
+
+        for (int i = 0; i < rewards.Count; i++)
+        {
+
+            ItemInventoryData item = rewards[i];
+
+            // 프리팹 생성
+            GameObject itemObj = Instantiate(rewardItemPrefab, container);
+
+            // 3. ItemIcon 컴포넌트 가져오기
+            ItemIcon itemIcon = itemObj.GetComponent<ItemIcon>();
+
+            if (itemIcon != null)
+            {
+                // 데이터 로드
+                ItemData data = DataManager.Instance.GetItemData(item.itemID);
+
+                if (data != null)
+                {
+                    itemIcon.Setup(data, item.count);
+                    itemIcon.ShowChanceText(false);
+                    Debug.Log($"[UI] 보상 생성 성공: {item.itemID} (개수: {item.count})");
+                }
+                else
+                {
+                    Debug.LogError($"[UI] {item.itemID}의 ItemData를 찾을 수 없습니다!");
+                }
+            }
+
+            // [연출] 톡톡 튀어나오는 애니메이션
+            itemObj.transform.localScale = Vector3.zero;
+            itemObj.transform.DOScale(1f, 0.5f)
+                .SetDelay(i * 0.1f)
+                .SetEase(Ease.OutBack);
+        }
+    }
+
+    public void ShowBattleResult()
+    {
         FadeIn(resultPanel);
+
+        // 1. 데이터 매니저에서 방금 얻은 보상 리스트 가져오기
+        List<ItemInventoryData> rewards = DataManager.Instance.GetLastEarnedRewards();
+
+        // 2. 화면에 표시
+        DisplayRewards(rewards);
+    }
+
+    private void DisplayCharacterGrowth(List<Unit> party)
+    {
+        foreach (Unit unit in party)
+        {
+            if (unit is Character character)
+            {
+                // 캐릭터의 레벨업 게이지를 UI로 표현
+                Debug.Log($"{character.data.unitNameKey}: LV.{character.level} EXP 상승 중...");
+            }
+        }
+    }
+
+    public void OnClickExitResult()
+    {
+        Time.timeScale = 1f;
+
+        // 1. 결과창 페이드 아웃
+        resultPanel.DOFade(0f, 0.3f).OnComplete(() =>
+        {
+            resultPanel.gameObject.SetActive(false);
+
+            // 2. 글로벌 UI 다시 켜기
+            if (GlobalUIManager.Instance != null)
+            {
+                // 스텍 지우기
+                //GlobalUIManager.Instance.ClearStateStack();
+
+                // 전투 종료 후 돌아갈 상태 설정 (예: Adventure)
+                // 글로벌UI은 전 상태로 돌아가기
+                GlobalUIManager.Instance.OnBackButtonClicked();
+                GlobalUIManager.Instance.ChangeState(SceneState.StageSelect, true);
+            }
+            else
+            {
+                SceneManager.LoadScene("AdventureScene");
+            }
+        });
     }
 
     public void UpdateTurnUI(int turn)
@@ -268,14 +407,100 @@ public class BattleUIManager : MonoBehaviour
 
     public void UpdateAutoBattleUI(bool isActive)
     {
-            SetButtonState(autoButtonImage, isActive, autoEffectObject);
+        SetButtonState(autoButtonImage, isActive, autoEffectObject);
 
-            // AUTO 텍스트가 있다면 텍스트 색상도 강조
-            TMP_Text autoText = autoButtonImage.GetComponentInChildren<TMP_Text>();
-            if (autoText != null)
+        // AUTO 텍스트가 있다면 텍스트 색상도 강조
+        TMP_Text autoText = autoButtonImage.GetComponentInChildren<TMP_Text>();
+        if (autoText != null)
+        {
+            autoText.color = isActive ? Color.yellow : Color.white;
+        }
+    }
+
+    private IEnumerator DefeatSequence_Co()
+    {
+        yield return new WaitForSeconds(fadeDuration);
+        resultPanel.blocksRaycasts = true;
+
+        // 클릭 대기
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                   (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        OnClickExitResult();
+    }
+
+    private IEnumerator ResultSequence_Co(bool isVictory, List<ItemInventoryData> rewards,
+        List<Character> characterParties = null, Dictionary<int, bool> levelUpMap = null)
+        {
+        // --- [1단계: 아이템 표시] ---
+        resultPanel.DOFade(1f, fadeDuration);
+        DisplayRewards(rewards); // 기존 아이템 생성 로직 호출
+
+        yield return new WaitForSeconds(fadeDuration);
+        resultPanel.blocksRaycasts = true;
+
+        // 유저 클릭 대기 (3초 자동 넘김을 원하시면 타이머를 섞어도 됩니다)
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                 (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        // --- [2단계: 컨테이너 비우고 캐릭터 경험치 표시] ---
+        // 기존 아이템 아이콘들 제거
+        foreach (Transform child in container)
+        {
+            Destroy(child.gameObject);
+        }
+
+
+        int gainExp = 150; // 전투 승리 기본 획득 경험치량
+
+        if (characterParties != null)
+        {
+            foreach (Unit unit in characterParties)
             {
-                autoText.color = isActive ? Color.yellow : Color.white;
+                if (unit is Character character)
+                {
+                    // 프리팹 생성 및 배치 (rewardContainer 재활용)
+                    GameObject iconObj = Instantiate(unitIconPrefab, container);
+                    UnitIcon unitIcon = iconObj.GetComponent<UnitIcon>();
+
+                    if (unitIcon != null)
+                    {
+
+                        // 기본 정보 세팅 (기존 함수 재사용)
+                        unitIcon.SetUnitIcon(character.data, character.level, character.breakthroughCount);
+
+                        CharacterInfo info = DataManager.Instance.GetUserUnitInfo(character.data.unitID);
+
+                        // 경험치/레벨업 연출 (만렙 100 체크 포함)
+                        if (info != null && character.level < 100)
+                        {
+                            float currentExp = info.currentExp;
+                            float nextExp = DataManager.Instance.GetRequiredExp(info.currentLevel);
+
+                            bool isLevelUp = levelUpMap != null &&
+                                        levelUpMap.TryGetValue(character.data.unitID, out bool lu) && lu;
+
+                            unitIcon.SetExpUI(currentExp, nextExp, isLevelUp);
+                        }
+
+                        // 죽은 애들은 살짝 어둡게 (선택 사항)
+                        if (unit.GetCurrentHP() <= 0)
+                        {
+                            iconObj.GetComponent<CanvasGroup>().alpha = 0.6f;
+                        }
+                    }
+                }
             }
         }
-    
+
+
+
+        // 결과창 최종 종료 대기 (한 번 더 클릭하면 나감)
+        yield return new WaitForSeconds(0.5f); // 연출 직후 바로 꺼짐 방지
+        yield return new WaitUntil(() => Mouse.current.leftButton.wasPressedThisFrame ||
+                                         (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame));
+
+        OnClickExitResult();
+    }
+
 }
