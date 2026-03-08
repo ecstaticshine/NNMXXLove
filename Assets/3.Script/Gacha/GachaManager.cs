@@ -98,6 +98,7 @@ public class GachaManager : MonoBehaviour
 
         DataManager.Instance.userData.diamond -= data.costPerPull;
         pityData.currentPity++;
+        pityData.plPity++;
 
         int resultID = 0;
 
@@ -107,12 +108,19 @@ public class GachaManager : MonoBehaviour
             resultID = data.pickupUnitID;
             pityData.currentPity = 0;
         }
+        else if (pityData.plPity >= 10)
+        {
+            resultID = data.plPool[UnityEngine.Random.Range(0, data.plPool.Count)];
+            pityData.plPity = 0;
+        }
         else
         {
             int totalRate = 10000;                   // 10000 (100%)
 
             // 2. 0 ~ 9999 사이의 정수 생성
             int rand = rng.Next(0, totalRate);
+
+            Debug.Log($"[뽑기] rand:{rand}, tlRate:{tlRate}, plRate:{plRate}, 결과등급:{(rand < tlRate ? "TL" : rand < tlRate + plRate ? "PL" : "L")}");
 
             // 3. 누적 확률 비교
             if (rand < tlRate)

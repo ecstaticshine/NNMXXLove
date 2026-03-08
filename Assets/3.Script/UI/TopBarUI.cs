@@ -55,8 +55,10 @@ public class TopBarUI : MonoBehaviour
 
         UserData data = DataManager.Instance.userData;
 
+        playerNameText.text = data.playerName;
+
         // 1. 레벨 & 경험치 (현재 UserData에 레벨/경험치가 있다면 연결)
-         levelText.text = $"Lv. { data.currentLevel.ToString()}";
+        levelText.text = $"Lv. { data.currentLevel.ToString()}";
          expSlider.value = (float)data.currentExp / DataManager.Instance.GetRequiredExp(data.currentLevel);
 
         // 2. 스태미나 (현재/최대값)

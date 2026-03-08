@@ -73,6 +73,7 @@ public class GachaSaveData
 {
     public int gachaID;      // 어떤 가챠인지 구분
     public int currentPity;  // 현재 쌓인 천장 스택
+    public int plPity;
 }
 
 [Serializable]
