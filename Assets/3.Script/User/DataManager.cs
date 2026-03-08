@@ -132,16 +132,17 @@ public class DataManager : MonoBehaviour
 
     public List<PartyMember> GetCurrentParty()
     {
-        int slotIndex = 0;
         if (currentParty.Count == 0)
         {
+            // 저장된 파티도 없을 때만 자동 배치 (신규 유저)
+            int slotIndex = 0;
             foreach (var character in userInventory)
             {
-                if (slotIndex >= 5) break; // 최대 5명
-
+                if (slotIndex >= 5) break;
                 currentParty.Add(new PartyMember(slotIndex, character.unitID));
                 slotIndex++;
             }
+            SaveData(); // 자동 배치 후 바로 저장
         }
 
         return currentParty;
@@ -163,6 +164,9 @@ public class DataManager : MonoBehaviour
 
     public void SaveData()
     {
+        //파티 저장
+        userData.savedParty = currentParty;
+
         string json = JsonUtility.ToJson(userData);
         PlayerPrefs.SetString("SaveFile", json);
 
@@ -228,6 +232,9 @@ public class DataManager : MonoBehaviour
                 baseRarity = rarity,
                 equippedTags = charData.customTags ?? new string[4]
             });
+
+            // 파티 로드
+            currentParty = userData.savedParty ?? new List<PartyMember>();
         }
     }
     public void LoadGameDataByWorld(int worldIndex)

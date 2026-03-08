@@ -216,4 +216,16 @@ public class AuthManager : MonoBehaviour
         Destroy(gameObject);
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
+
+    public void RestartToTitleForLanguage()
+    {
+        Time.timeScale = 1f;
+        // SaveFile은 삭제하지 않음!
+
+        DOTween.KillAll();
+
+        Instance = null;
+        Destroy(gameObject);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
 }

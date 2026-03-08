@@ -125,10 +125,11 @@ public class SettingsPanel : MonoBehaviour
         // 언어 변경 확인 설정
         restartConfirmButton.onClick.AddListener(() =>
         {
+            restartPopup.SetActive(false);
             PlayerPrefs.SetInt("Language", (int)pendingLanguage);
             PlayerPrefs.Save();
             DataManager.Instance.ChangeLanguage(pendingLanguage);
-            AuthManager.Instance.RestartToTitle();
+            AuthManager.Instance.RestartToTitleForLanguage();
         });
 
         restartCancelButton.onClick.AddListener(() =>

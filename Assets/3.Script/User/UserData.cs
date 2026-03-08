@@ -29,6 +29,8 @@ public class UserData
     public List<StageHistory> stageHistory = new List<StageHistory>();
     // 가챠별 천장 데이터 리스트
     public List<GachaSaveData> gachaPityList = new List<GachaSaveData>();
+    // 최근 썼던 파티
+    public List<PartyMember> savedParty = new List<PartyMember>();
 
     // [기본 생성자] JsonUtility가 로드할 때 사용
     public UserData() { }
