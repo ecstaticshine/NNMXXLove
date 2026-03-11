@@ -49,7 +49,6 @@ public class AuthManager : MonoBehaviour
             db = FirebaseFirestore.DefaultInstance;
             currentUser = auth.CurrentUser;
 
-            // 자동 로그인 (이전에 로그인한 적 있으면)
             if (currentUser == null)
             {
                 var guestTask = LoginAsGuest();
@@ -58,11 +57,23 @@ public class AuthManager : MonoBehaviour
             else
             {
                 Debug.Log($"[Firebase] 자동 로그인 성공! ID: {currentUser.UserId}");
+
+                // 타임아웃 추가
                 var syncTask = SyncUserData();
-                yield return new WaitUntil(() => syncTask.IsCompleted);
+                float timeout = 10f;
+                float elapsed = 0f;
+                while (!syncTask.IsCompleted && elapsed < timeout)
+                {
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+
+                if (!syncTask.IsCompleted)
+                {
+                    Debug.LogWarning("[Firebase] Firestore 타임아웃 - 로컬 데이터 사용");
+                }
             }
 
-            // Firebase 완료 후 DataManager 초기화!
             DataManager.Instance.LoadData();
             DataManager.Instance.LoadGameDataByWorld(DataManager.Instance.currentWorldIndex);
 
@@ -109,6 +120,9 @@ public class AuthManager : MonoBehaviour
     // Firestore에 UserData 저장
     public async Task SaveUserDataToFirestore()
     {
+#if UNITY_EDITOR || UNITY_STANDALONE
+        return;
+#endif
         if (currentUser == null) return;
         try
         {
@@ -148,6 +162,11 @@ public class AuthManager : MonoBehaviour
 
     private async Task SyncUserData()
     {
+#if UNITY_EDITOR || UNITY_STANDALONE
+        // PC/에디터에서는 Firestore 스킵, 로컬만 사용
+        Debug.Log("[Firebase] PC 빌드 - Firestore 스킵, 로컬 데이터 사용");
+        return;
+#endif
         bool hasCloudData = await LoadUserDataFromFirestore();
         if (!hasCloudData)
         {
