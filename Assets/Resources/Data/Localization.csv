@@ -141,3 +141,7 @@ UI_BUTTON_LOGIN_GUEST,게스트 로그인,ゲストログイン
 UI_BUTTON_LOGOUT,로그아웃,ログアウト
 UI_BUTTON_LOGIN_GOOGLE,구글 로그인 준비중,グーグルログイン準備中
 UI_AUDIO,오디오,オーディオ
+UI_ACCOUNT_RESET,계정을 초기화하시겠습니까?,アカウントを初期化しますか？
+UI_ACCOUNT_RESET_WARNING,※ 모든 데이터가 삭제되며 복구할 수 없습니다. ※,※ すべてのデータが削除されます。復旧することはできません。※
+UI_LANGUAGE_WARNING,"※ 바꾸실 경우, 타이틀화면으로 이동합니다.",※ 変更時、タイトル画面へ戻ります。
+UI_LANGUAGE_CHANGE,언어 설정을 바꾸시겠습니까?,言語設定を変更しますか？
