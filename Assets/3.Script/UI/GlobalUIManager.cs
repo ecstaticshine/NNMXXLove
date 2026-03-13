@@ -119,103 +119,34 @@ public class GlobalUIManager : MonoBehaviour
 
     public void ChangeState(SceneState newState, bool isBack = false)
     {
-        if (!isBack && currentState != newState)
+        if (newState == SceneState.Settings)
         {
-            stateStack.Push(currentState);
+            HandleSettingsToggle();
+            return;
         }
+
+        if (!isBack && currentState != newState)
+            stateStack.Push(currentState);
 
         currentState = newState;
 
-
-        bool isMainTab = (currentState == SceneState.Home ||
-                      currentState == SceneState.CharacterList ||
-                      currentState == SceneState.StorySelect ||
-                      currentState == SceneState.Adventure ||
-                      currentState == SceneState.Gacha ||
-                      currentState == SceneState.Settings);
-
-        // 1. 뒤로가기 버튼 활성화
-        BackButton.SetActive(!isMainTab && stateStack.Count > 0 && currentState != SceneState.Battle);
-
-        string currentSceneName = SceneManager.GetActiveScene().name;
-
-        // 2. 상태에 따른 실제 씬 전환 로직 추가
-        switch (currentState)
-        {
-            case SceneState.Title:
-                BackButton.SetActive(false);
-                topUI.SetActive(false);
-                bottomUI.SetActive(false);
-                PlayerInfo.SetActive(false);
-                break;
-            case SceneState.Home:
-                gameObject.SetActive(true);
-                topUI.SetActive(true);
-                bottomUI.SetActive(true);
-                PlayerInfo.SetActive(true);
-                if (currentSceneName != "HomeScene") SceneManager.LoadScene("HomeScene");
-                break;
-            case SceneState.Adventure:
-            case SceneState.StageSelect:
-            case SceneState.StageDetailPopup: // 추가
-            case SceneState.Placement:        // 추가
-                PlayerInfo.SetActive(false);
-                topUI.SetActive(true);
-                bottomUI.SetActive(true);
-                if (currentSceneName != "AdventureScene") { 
-                SceneManager.LoadScene("AdventureScene");
-                }
-                else
-                {
-                    RefreshCurrentUI();
-                }
-                break;
-            case SceneState.Battle:
-                SetBattleLayout(false);
-                PlayerInfo.SetActive(false);
-                if (currentSceneName != "BattleScene")
-                {
-                    SceneManager.LoadScene("BattleScene");
-                }
-                SetBattleLayout(false);
-                break;
-            case SceneState.Gacha:
-                topUI.SetActive(true);
-                SceneManager.LoadScene("GachaScene");
-                break;
-            case SceneState.StorySelect:
-                topUI.SetActive(true);
-                bottomUI.SetActive(true);
-                SceneManager.LoadScene("StorySelectScene");
-                break;
-            case SceneState.Story:
-            case SceneState.Prologue:
-                topUI.SetActive(false);
-                PlayerInfo.SetActive(false);
-                bottomUI.SetActive(false);
-                if (currentSceneName != "StoryScene") SceneManager.LoadScene("StoryScene");
-                break;
-            case SceneState.CharacterList:
-                SceneManager.LoadScene("CharacterListScene");
-                topUI.SetActive(false);
-                PlayerInfo.SetActive(false);
-                break;
-            case SceneState.CharacterUpgrade:
-            case SceneState.CharacterCustomTag:
-            case SceneState.CharacterBreakThrough:
-                topUI.SetActive(false);
-                PlayerInfo.SetActive(false);
-                break;
-            case SceneState.Settings:
-                settingsPanel.SetActive(!settingsPanel.activeSelf);
-                if (!settingsPanel.activeSelf)
-                    currentState = stateStack.Count > 0 ? stateStack.Peek() : SceneState.Home;
-                break;
-
-        }
-
-        // 3. UI 업데이트 호출 (월드 버튼 노출 등)
+        UpdateBackButton();
+        HandleSceneTransition();
         UpdateUIByState();
+    }
+    private void HandleSettingsToggle()
+    {
+        bool isOpening = !settingsPanel.activeSelf;
+        settingsPanel.SetActive(isOpening);
+
+        if (!isOpening)
+        {
+            // 닫을 때만 이전 상태 복원 + UI 갱신
+            currentState = stateStack.Count > 0 ? stateStack.Pop() : SceneState.Home;
+            UpdateBackButton();
+            UpdateUIByState();
+            RefreshCurrentUI();
+        }
     }
 
     public void RefreshCurrentUI()
@@ -253,6 +184,86 @@ public class GlobalUIManager : MonoBehaviour
         }
     }
 
+    private void HandleSceneTransition()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // 2. 상태에 따른 실제 씬 전환 로직 추가
+        switch (currentState)
+        {
+            case SceneState.Title:
+                BackButton.SetActive(false);
+                SetMainLayout(false);
+                break;
+            case SceneState.Home:
+                SetMainLayout(true);
+                LoadSceneIfNeeded("HomeScene", currentSceneName);
+                break;
+            case SceneState.Adventure:
+            case SceneState.StageSelect:
+            case SceneState.StageDetailPopup: // 추가
+            case SceneState.Placement:        // 추가
+                PlayerInfo.SetActive(false);
+                topUI.SetActive(true);
+                bottomUI.SetActive(true);
+                if (!LoadSceneIfNeeded("AdventureScene", currentSceneName))
+                    RefreshCurrentUI(); // 이미 AdventureScene이면 패널만 갱신
+                break;
+            case SceneState.Battle:
+                SetBattleLayout(false);
+                PlayerInfo.SetActive(false);
+                LoadSceneIfNeeded("BattleScene", currentSceneName);
+                SetBattleLayout(false);
+                break;
+            case SceneState.Gacha:
+                topUI.SetActive(true);
+                LoadSceneIfNeeded("GachaScene", currentSceneName);
+                break;
+            case SceneState.StorySelect:
+                topUI.SetActive(true);
+                bottomUI.SetActive(true);
+                LoadSceneIfNeeded("StorySelectScene", currentSceneName);
+                break;
+            case SceneState.Story:
+            case SceneState.Prologue:
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                bottomUI.SetActive(false);
+                LoadSceneIfNeeded("StoryScene", currentSceneName);
+                break;
+            case SceneState.CharacterList:
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                LoadSceneIfNeeded("CharacterListScene", currentSceneName);
+                break;
+            case SceneState.CharacterUpgrade:
+            case SceneState.CharacterCustomTag:
+            case SceneState.CharacterBreakThrough:
+                topUI.SetActive(false);
+                PlayerInfo.SetActive(false);
+                break;
+            case SceneState.Settings:
+                settingsPanel.SetActive(!settingsPanel.activeSelf);
+                if (!settingsPanel.activeSelf)
+                    currentState = stateStack.Count > 0 ? stateStack.Pop() : SceneState.Home;
+                RefreshCurrentUI();
+                break;
+
+        }
+    }
+
+    private bool LoadSceneIfNeeded(string targetScene, string currentScene)
+    {
+        if (currentScene != targetScene)
+        {
+            SceneManager.LoadScene(targetScene);
+            return true;
+        }
+        return false;
+    }
+
+
+
     private void UpdateUIByState()
     {
         // 스테이지 상태일 때만 월드 버튼 보이게 설정
@@ -263,20 +274,13 @@ public class GlobalUIManager : MonoBehaviour
     {
         SceneState target = (SceneState)targetState;
 
-        if (currentState == target && target != SceneState.Settings)
-        {
-            return;
-        }
+        if (currentState == target && target != SceneState.Settings) return;
 
-        // 1. 하단 탭으로 이동할 경우 기존의 스택 클리어
-        stateStack.Clear();
+        // Settings는 스택 클리어 없이 처리
+        if (target != SceneState.Settings)
+            stateStack.Clear();
 
-
-        // 2. 뒤로가기 버튼 숨기기
-        ChangeState(target, true); // true를 넣어서 현재 상태가 스택에 쌓이지 않게 합니다.
-
-        // 3. 리프레쉬
-        RefreshCurrentUI();
+        ChangeState(target, true);
     }
 
     public void SetBattleLayout(bool isActive)
@@ -290,11 +294,28 @@ public class GlobalUIManager : MonoBehaviour
         stateStack.Clear();
     }
 
+    private void SetMainLayout(bool isActive)
+    {
+        topUI.SetActive(isActive);
+        bottomUI.SetActive(isActive);
+        PlayerInfo.SetActive(isActive);
+        gameObject.SetActive(isActive);
+    }
+
     // 타이틀 초기화 후 세팅 패널 지워두기
     public void CloseSettingsPanel()
     {
 
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
+    }
+
+    private void UpdateBackButton()
+    {
+        bool isMainTab = currentState is SceneState.Home or SceneState.CharacterList
+            or SceneState.StorySelect or SceneState.Adventure
+            or SceneState.Gacha or SceneState.Settings;
+
+        BackButton.SetActive(!isMainTab && stateStack.Count > 0 && currentState != SceneState.Battle);
     }
 }

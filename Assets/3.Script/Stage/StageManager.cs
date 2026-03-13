@@ -108,6 +108,8 @@ public class StageManager : MonoBehaviour
 
     public void SyncPanelWithState(SceneState state)
     {
+        if (state == SceneState.Settings) return;
+
         mainPanel.SetActive(state == SceneState.Adventure);
         stageSelectPanel.SetActive(state == SceneState.StageSelect ||
                                    state == SceneState.StageDetailPopup ||
