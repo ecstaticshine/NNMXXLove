@@ -48,9 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   mainMixer: {fileID: 24100000, guid: 1383d5131f9d6cf41939e5b80964028a, type: 2}
-  bgmParamName: BGMVolume
-  seParamName: SEVolume
-  voiceParamName: VoiceVolume
+  bgmParamName: Volume_BGM
+  seParamName: Volume_SE
+  voiceParamName: Volume_Voice
+  masterParamName: Volume_Master
   bgmSource: {fileID: 5111871345386293994}
   seSource: {fileID: 708495178180374095}
   voiceSource: {fileID: 1307292951930454135}

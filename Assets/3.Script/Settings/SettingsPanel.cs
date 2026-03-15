@@ -298,11 +298,6 @@ public class SettingsPanel : MonoBehaviour
                 AudioManager.Instance.masterParamName,
                 Mathf.Log10(Mathf.Max(val, 0.0001f)) * 20f);
         PlayerPrefs.SetFloat(KEY_MASTER, val);
-
-        // 시각적으로 비례해서 슬라이더 움직이기
-        bgmSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat(KEY_BGM, 0.8f) * val);
-        seSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat(KEY_SE, 0.8f) * val);
-        voiceSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat(KEY_VOICE, 0.8f) * val);
     }
 
     // ── 언어 ──────────────────────────────────────────
