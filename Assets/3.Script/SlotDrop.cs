@@ -153,6 +153,8 @@ public class SlotDrop : MonoBehaviour, IDropHandler
 
         foreach (var slot in allSlots)
         {
+            if (!slot.isPlayerSlot) continue;
+
             if (slot.characterAnchorSlot.childCount > 0)
             {
                 Unit unit = slot.characterAnchorSlot.GetChild(0).GetComponent<Unit>();

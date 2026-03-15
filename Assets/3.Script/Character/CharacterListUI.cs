@@ -13,6 +13,16 @@ public class CharacterListUI : MonoBehaviour
         RefreshList();
     }
 
+    private void OnEnable()
+    {
+        DataManager.OnUserDataChanged += RefreshList;
+    }
+
+    private void OnDisable()
+    {
+        DataManager.OnUserDataChanged -= RefreshList;
+    }
+
     public void RefreshList()
     {
 

@@ -199,20 +199,17 @@ public class CharacterSceneManager : MonoBehaviour
         background.color = DataManager.Instance.GetRarityColor(data.rarity);
 
         //4. 돌파 UI 설정 (오른쪽 하트 표시)
-        bool isMaxRarity = (data.rarity == Rarity.EL);
+        bool isMaxRarity = (currentRarity == Rarity.EL);
+
+        int rarityOffset = DataManager.Instance.GetRarityOffset(currentRarity);
+        int stepInCurrentRarity = info.totalPoint - rarityOffset;
 
         for (int i = 0; i < breakThrough.Length; i++)
         {
             if (isMaxRarity)
-            {
-                // EL 등급일 때는 하트를 모두 비활성화 (혹은 필요에 따라 변경)
                 breakThrough[i].SetActive(false);
-            }
             else
-            {
-                // 현재 돌파 수(info.breakthroughCount)보다 작은 인덱스의 하트만 활성화
-                breakThrough[i].SetActive(i < info.currentBreakthrough);
-            }
+                breakThrough[i].SetActive(i < stepInCurrentRarity);
         }
 
         int requiredExp = DataManager.Instance.GetRequiredExp(info.currentLevel);
@@ -322,6 +319,9 @@ public class CharacterSceneManager : MonoBehaviour
     {
         if (currentSelectedInfo == null) return;
 
+        currentSelectedInfo = DataManager.Instance.GetUserUnitInfo(currentSelectedInfo.unitID);
+        if (currentSelectedInfo == null) return;
+
         int previousLevel = int.Parse(levelText.text);
         int currentLevel = currentSelectedInfo.currentLevel;
 
@@ -337,10 +337,13 @@ public class CharacterSceneManager : MonoBehaviour
 
         // 3. 돌파 하트(breakThrough) UI 갱신
         bool isMaxRarity = (currentRarity == Rarity.EL);
+        int rarityOffset = DataManager.Instance.GetRarityOffset(currentRarity);
+        int stepInCurrentRarity = currentSelectedInfo.totalPoint - rarityOffset;
+
         for (int i = 0; i < breakThrough.Length; i++)
         {
             if (isMaxRarity) breakThrough[i].SetActive(false);
-            else breakThrough[i].SetActive(i < currentSelectedInfo.currentBreakthrough);
+            else breakThrough[i].SetActive(i < stepInCurrentRarity);
         }
 
         // 레벨 텍스트 갱신
