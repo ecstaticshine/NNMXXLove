@@ -85,7 +85,7 @@ public class DialogueManager : MonoBehaviour
 
     private Dictionary<string, Vector2> posAnchors = new Dictionary<string, Vector2>();
 
-
+    private Coroutine typingCoroutine;
     void Start()
     {
         SaveAnchorPositions();
@@ -138,7 +138,7 @@ public class DialogueManager : MonoBehaviour
         if (isTyping)
         {
             // 1. 타이핑 코루틴 중단
-            StopAllCoroutines();
+            StopCoroutine(typingCoroutine);
             isTyping = false;
 
             // 2. 미리 저장해둔 현재 문장 전체를 즉시 출력
@@ -432,7 +432,7 @@ public class DialogueManager : MonoBehaviour
         narrativePanel.SetActive(true);
         currentActiveText = narrativeContentText;
 
-        StartCoroutine(TypeSentence(content, narrativeContentText));
+        typingCoroutine = StartCoroutine(TypeSentence(content, narrativeContentText));
     }
 
     public void ShowSpeakerDialogue(string name, string content)
@@ -442,7 +442,7 @@ public class DialogueManager : MonoBehaviour
         speakerNameText.text = DataManager.Instance.GetLocalizedText(name);
         currentActiveText = speakerContentText;
 
-        StartCoroutine(TypeSentence(content, speakerContentText));
+        typingCoroutine = StartCoroutine(TypeSentence(content, speakerContentText));
     }
 
     IEnumerator TypeSentence(string sentence, TextMeshProRuby rubyComponent)
@@ -619,30 +619,28 @@ public class DialogueManager : MonoBehaviour
 
     public void ShowSummaryAndSkip()
     {
-        ToggleSkipMode();
+        // 진행 중인 타이핑만 멈추기
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
 
-        // 1. 진행 중인 모든 연출 중단
-        StopAllCoroutines();
         isTyping = false;
         Time.timeScale = 0f;
 
-        // 2. 제목 세팅 (storyTitle 활용)
         if (summaryTitleText != null)
         {
-            // 예: [시작의 해변] 줄거리
             string localizedTitle = DataManager.Instance.GetLocalizedText(currentStoryData.storyTitle);
             summaryTitleText.text = $"[{localizedTitle}] {DataManager.Instance.GetLocalizedText("UI_SUMMARY_LABEL")}";
         }
 
-        // 3. 내용 세팅 (로컬라이제이션 키 활용)
         if (summaryContentText != null)
         {
-            // StoryData에 추가한 summaryLogKey를 사용하여 다국어 텍스트를 가져옵니다.
             summaryContentText.text = DataManager.Instance.GetLocalizedText(currentStoryData.summaryLogKey);
-
-            // 레이아웃 강제 갱신 및 스크롤 위치 조정
             StartCoroutine(UpdateSummaryLayout());
         }
+
         summaryPanel.SetActive(true);
     }
 
@@ -664,13 +662,16 @@ public class DialogueManager : MonoBehaviour
     public void ConfirmSkip()
     {
         summaryPanel.SetActive(false);
-        Time.timeScale = 1f; // 이거 추가!
+        Time.timeScale = 1f;
+        isSkipMode = true;
+        UpdateButtonVisuals();
         sentences.Clear();
         EndStory();
     }
     public void CancelSummarySkip()
     {
-        ToggleSkipMode();
+        isSkipMode = false;
+        isAutoMode = false;
 
         // 1. 시간 다시 흐르게 하기
         Time.timeScale = 1f;
@@ -682,6 +683,12 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
+
+        if (currentActiveText != null)
+        {
+            TMP_Text textMesh = currentActiveText.GetComponent<TMP_Text>();
+            textMesh.maxVisibleCharacters = 999;
+        }
     }
 
     private void UpdateButtonVisuals()
