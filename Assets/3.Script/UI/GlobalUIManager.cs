@@ -212,7 +212,20 @@ public class GlobalUIManager : MonoBehaviour
             case SceneState.Battle:
                 SetBattleLayout(false);
                 PlayerInfo.SetActive(false);
-                LoadSceneIfNeeded("BattleScene", currentSceneName);
+
+                List<string> battlePreloadKeys = new List<string>();
+                StageDetailData stageDetail = DataManager.Instance.GetStageDetail(
+                    DataManager.Instance.selectedStageID);
+
+                if (stageDetail != null)
+                {
+                    foreach (var reward in stageDetail.firstRewards)
+                        battlePreloadKeys.Add($"ItemData_{reward.itemID}");
+                    foreach (var drop in stageDetail.dropItems)
+                        battlePreloadKeys.Add($"ItemData_{drop.itemID}");
+                }
+
+                LoadSceneIfNeeded("BattleScene", currentSceneName, battlePreloadKeys);
                 SetBattleLayout(false);
                 break;
             case SceneState.Gacha:
@@ -252,11 +265,11 @@ public class GlobalUIManager : MonoBehaviour
         }
     }
 
-    private bool LoadSceneIfNeeded(string targetScene, string currentScene)
+    private bool LoadSceneIfNeeded(string targetScene, string currentScene, List<string> preloadKeys = null)
     {
         if (currentScene != targetScene)
         {
-            SceneManager.LoadScene(targetScene);
+            LoadingSceneController.LoadScene(targetScene);
             return true;
         }
         return false;

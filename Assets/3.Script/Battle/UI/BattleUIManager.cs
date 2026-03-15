@@ -246,7 +246,7 @@ public class BattleUIManager : MonoBehaviour
         resultText.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f);
     }
 
-    private void DisplayRewards(List<ItemInventoryData> rewards)
+    private async void DisplayRewards(List<ItemInventoryData> rewards)
     {
         // 기존 아이콘들 청소
         foreach (Transform child in container)
@@ -271,7 +271,7 @@ public class BattleUIManager : MonoBehaviour
             if (itemIcon != null)
             {
                 // 데이터 로드
-                ItemData data = DataManager.Instance.GetItemData(item.itemID);
+                ItemData data = await DataManager.Instance.GetItemDataAsync(item.itemID);
 
                 if (data != null)
                 {

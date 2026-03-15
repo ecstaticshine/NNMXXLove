@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Threading.Tasks;
 
 [System.Serializable]
 public class CharacterInfo
@@ -471,6 +474,33 @@ public class DataManager : MonoBehaviour
         if (data != null) itemDataCache[itemID] = data;
 
         return data;
+    }
+
+    public async Task<ItemData> GetItemDataAsync(int itemID)
+    {
+        if (itemDataCache.ContainsKey(itemID)) return itemDataCache[itemID];
+
+        try
+        {
+            var handle = Addressables.LoadAssetAsync<ItemData>($"ItemData_{itemID}");
+            await handle.Task;
+
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                itemDataCache[itemID] = handle.Result;
+                return handle.Result;
+            }
+            else
+            {
+                Debug.LogError($"[Addressable] 로드 실패: ItemData_{itemID}");
+                return null;
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[Addressable] 예외 발생: {e.Message}");
+            return null;
+        }
     }
 
     // 
