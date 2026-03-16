@@ -137,20 +137,30 @@ public class DialogueManager : MonoBehaviour
 
         if (isTyping)
         {
-            // 1. 타이핑 코루틴 중단
-            StopCoroutine(typingCoroutine);
+            // 타이핑 코루틴 중단
+            if (typingCoroutine != null)
+            {
+                StopCoroutine(typingCoroutine);
+                typingCoroutine = null;
+            }
             isTyping = false;
 
-            // 2. 미리 저장해둔 현재 문장 전체를 즉시 출력
-            TMP_Text textMesh = currentActiveText.GetComponent<TMP_Text>();
-            textMesh.maxVisibleCharacters = 999;
+
+            // 즉시 완성
+            if (currentActiveText != null)
+            {
+                TMP_Text textMesh = currentActiveText.GetComponent<TMP_Text>();
+                textMesh.maxVisibleCharacters = 999;
+            }
 
             //즉시 완성 후 Auto 모드라면 대기 시작
             if (isAutoMode) StartCoroutine(AutoNextRoutine());
         }
         else
         {
-            DisplayNextSentence();
+            // 타이핑 중 아닐 때만 다음 대사로
+            if (!isAutoMode)
+                DisplayNextSentence();
         }
     }
 
@@ -552,15 +562,6 @@ public class DialogueManager : MonoBehaviour
         if (isAutoMode && !isTyping) DisplayNextSentence();
     }
 
-    public void ToggleSkipMode()
-    {
-        isSkipMode = !isSkipMode;
-        if (isSkipMode) isAutoMode = false;
-
-        UpdateButtonVisuals();
-
-        if (isSkipMode && !isTyping) DisplayNextSentence();
-    }
 
     public void ShowLog()
     {
@@ -627,6 +628,15 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
+        isAutoMode = false;
+        UpdateButtonVisuals();
+
+        if (currentActiveText != null)
+        {
+            TMP_Text textMesh = currentActiveText.GetComponent<TMP_Text>();
+            textMesh.maxVisibleCharacters = 999;
+        }
+
         Time.timeScale = 0f;
 
         if (summaryTitleText != null)
@@ -693,12 +703,11 @@ public class DialogueManager : MonoBehaviour
 
     private void UpdateButtonVisuals()
     {
-        // Auto 버튼 처리
         if (autoBtnImage != null)
             autoBtnImage.sprite = isAutoMode ? autoActive : autoDefault;
 
-        // Skip 버튼 처리
         if (skipBtnImage != null)
             skipBtnImage.sprite = isSkipMode ? skipActive : skipDefault;
+
     }
 }
