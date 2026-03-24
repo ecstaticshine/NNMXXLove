@@ -5,6 +5,8 @@ using Firebase.Auth;
 using Firebase.Firestore;
 using System.Threading.Tasks;
 using DG.Tweening;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
 
 public class AuthManager : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class AuthManager : MonoBehaviour
     public bool IsLoggedIn => currentUser != null;
     public bool IsGuest => currentUser != null && currentUser.IsAnonymous;
     public string UserID => currentUser?.UserId ?? SystemInfo.deviceUniqueIdentifier;
+
+    public bool IsInitialized { get; private set; } = false;
 
     // 로그인 상태 변경 시 UI에 알림
     public static event System.Action OnAuthStateChanged;
@@ -51,14 +55,26 @@ public class AuthManager : MonoBehaviour
 
             if (currentUser == null)
             {
-                var guestTask = LoginAsGuest();
-                yield return new WaitUntil(() => guestTask.IsCompleted);
+
+                string savedMethod = PlayerPrefs.GetString("LoginMethod", "");
+
+                if (savedMethod == "guest")
+                {
+                    var guestTask = LoginAsGuest();
+                    yield return new WaitUntil(() => guestTask.IsCompleted);
+                }
+                else if (savedMethod == "google")
+                {
+                    LoginWithGoogle();
+                }
+                else
+                {
+                    OnAuthStateChanged?.Invoke(); // UI에서 이걸 받아서 선택 패널 열기
+                }
+                
             }
             else
             {
-                Debug.Log($"[Firebase] 자동 로그인 성공! ID: {currentUser.UserId}");
-
-                // 타임아웃 추가
                 var syncTask = SyncUserData();
                 float timeout = 10f;
                 float elapsed = 0f;
@@ -68,16 +84,14 @@ public class AuthManager : MonoBehaviour
                     yield return null;
                 }
 
-                if (!syncTask.IsCompleted)
-                {
-                    Debug.LogWarning("[Firebase] Firestore 타임아웃 - 로컬 데이터 사용");
-                }
+                DataManager.Instance.LoadData();
+                DataManager.Instance.LoadGameDataByWorld(DataManager.Instance.currentWorldIndex);
+                OnAuthStateChanged?.Invoke();
+
+
             }
+            IsInitialized = true;
 
-            DataManager.Instance.LoadData();
-            DataManager.Instance.LoadGameDataByWorld(DataManager.Instance.currentWorldIndex);
-
-            OnAuthStateChanged?.Invoke();
         }
         else
         {
@@ -94,12 +108,30 @@ public class AuthManager : MonoBehaviour
             currentUser = result.User;
             Debug.Log($"[Firebase] 게스트 로그인 성공! ID: {currentUser.UserId}");
             await SyncUserData();
+
+            DataManager.Instance.LoadData();
+            DataManager.Instance.LoadGameDataByWorld(DataManager.Instance.currentWorldIndex);
+
             OnAuthStateChanged?.Invoke();
         }
         catch (System.Exception e)
         {
             Debug.LogError($"[Firebase] 게스트 로그인 실패: {e.Message}");
         }
+    }
+
+    public async Task LoginAsGuestAndSave()
+    {
+        PlayerPrefs.SetString("LoginMethod", "guest");
+        PlayerPrefs.Save();
+        await LoginAsGuest();
+    }
+
+    public void LoginWithGoogleAndSave()
+    {
+        PlayerPrefs.SetString("LoginMethod", "google");
+        PlayerPrefs.Save();
+        LoginWithGoogle();
     }
 
     // 로그아웃
@@ -114,8 +146,63 @@ public class AuthManager : MonoBehaviour
     // 구글 로그인 (추후 연결)
     public void LoginWithGoogle()
     {
-        Debug.Log("구글 로그인 - 추후 지원 예정");
+        PlayGamesPlatform.Activate();
+
+        PlayGamesPlatform.Instance.Authenticate(status =>
+        {
+            if (status != SignInStatus.Success)
+            {
+                Debug.LogError("[Google] 로그인 실패");
+                return;
+            }
+
+            // Firebase용 토큰 가져오기
+            PlayGamesPlatform.Instance.RequestServerSideAccess(true, authCode =>
+            {
+                var credential = PlayGamesAuthProvider.GetCredential(authCode);
+
+                if (IsGuest)
+                    _ = LinkGuestToGoogle(credential);
+                else
+                    _ = SignInWithCredential(credential);
+            });
+        });
     }
+
+    private async Task LinkGuestToGoogle(Credential credential)
+    {
+        try
+        {
+            var result = await currentUser.LinkWithCredentialAsync(credential);
+            currentUser = result.User;
+            await SaveUserDataToFirestore();
+            OnAuthStateChanged?.Invoke();
+            Debug.Log("[Firebase] 게스트 → 구글 연동 완료!");
+        }
+        catch (FirebaseException e)
+        {
+            if (e.ErrorCode == (int)AuthError.CredentialAlreadyInUse)
+            {
+                Debug.LogWarning("[Firebase] 이미 존재하는 구글 계정");
+            }
+        }
+    }
+
+    private async Task SignInWithCredential(Credential credential)
+    {
+        try
+        {
+            currentUser = await auth.SignInWithCredentialAsync(credential);
+            await SyncUserData();
+            OnAuthStateChanged?.Invoke();
+            Debug.Log("[Firebase] 구글 로그인 완료!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[Firebase] 구글 로그인 실패: {e.Message}");
+        }
+    }
+
 
     // Firestore에 UserData 저장
     public async Task SaveUserDataToFirestore()

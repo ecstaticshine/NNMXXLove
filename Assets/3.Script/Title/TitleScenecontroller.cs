@@ -43,11 +43,24 @@ public class TitleSceneController : MonoBehaviour
 
     private bool isReady = false;       // 타이틀 다 뜬 후에만 터치 받기
 
+    [Header("Login")]
+    public LoginSelectPanel loginSelectPanel;
+
     [Header("Prologue")]
     public StoryData prologueStoryData; // 인스펙터에서 프롤로그 StoryData 연결
 
     private float screenHalfWidth;
     private float screenHalfHeight;
+
+    private void OnEnable()
+    {
+        AuthManager.OnAuthStateChanged += HandleAuthStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        AuthManager.OnAuthStateChanged -= HandleAuthStateChanged;
+    }
 
     private void Start()
     {
@@ -66,11 +79,41 @@ public class TitleSceneController : MonoBehaviour
         StartCoroutine(TitleSequence());
     }
 
+    private void HandleAuthStateChanged()
+    {
+        // 로그인 됐으면 패널 닫기
+        if (AuthManager.Instance.IsLoggedIn)
+        {
+            if (loginSelectPanel != null)
+                loginSelectPanel.gameObject.SetActive(false);
+        }
+    }
+
     private IEnumerator TitleSequence()
     {
         StartCoroutine(SpawnCircles());
         yield return new WaitForSeconds(rainDuration);
         yield return StartCoroutine(FadeInTitle());
+
+        yield return new WaitUntil(() =>
+                AuthManager.Instance != null && AuthManager.Instance.IsInitialized);
+
+
+        //로그인 안 됬으면 선택 UI 먼저
+        if (!AuthManager.Instance.IsLoggedIn)
+        {
+            string saveMethod = PlayerPrefs.GetString("LoginMethod", "");
+
+            Debug.Log(saveMethod);
+
+            if (string.IsNullOrEmpty(saveMethod))
+            {
+                loginSelectPanel.gameObject.SetActive(true);
+
+                yield return new WaitUntil(() => AuthManager.Instance.IsLoggedIn);
+                loginSelectPanel.gameObject.SetActive(false);
+            }
+        }
 
         // tapToStart 페이드인 후 깜빡임 시작
         yield return StartCoroutine(FadeInTapToStart());
@@ -132,13 +175,6 @@ public class TitleSceneController : MonoBehaviour
             titleGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
             tapToStartGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
             yield return null;
-        }
-
-        // 게스트 로그인 먼저
-        if (AuthManager.Instance != null && !AuthManager.Instance.IsLoggedIn)
-        {
-            var loginTask = AuthManager.Instance.LoginAsGuest();
-            yield return new WaitUntil(() => loginTask.IsCompleted);
         }
 
         yield return new WaitUntil(() =>
